@@ -56,7 +56,7 @@ app.post('/api/generate-image', async (req, res) => {
         const replicateResponse = await fetch(REPLICATE_API_URL, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${replicateApiToken}`,
+                'Authorization': `Token ${replicateApiToken}`,
                 'Content-Type': 'application/json',
                 'Prefer': 'wait'
             },
