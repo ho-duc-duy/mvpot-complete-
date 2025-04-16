@@ -1,0 +1,2084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Title will be updated by JS -->
+    <title
+        data-lang-en="MV Concept Generator"
+        data-lang-es="Generador de Conceptos MV"
+        data-lang-vi="Trình tạo ý tưởng MV"
+        data-lang-ja="MVコンセプトジェネレーター"
+        data-lang-zhcn="MV概念生成器"
+    >MV Concept Generator</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- NEW DESIGN SYSTEM --- */
+
+        /* CSS Variables for Theme */
+        :root {
+            --bg-dark: #1a1a1d; /* Very dark grey, almost black */
+            --bg-card: #2c2c30; /* Slightly lighter card background */
+            --bg-card-hover: #35353a;
+            --text-primary: #f0f0f5; /* Off-white */
+            --text-secondary: #a9a9b3; /* Lighter grey */
+            --accent-primary: #6a8ee7; /* Soft blue */
+            --accent-secondary: #e476e4; /* Soft magenta/purple */
+            --accent-gradient: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            --border-color: #404045;
+            --success-color: #57cc99;
+            --warning-color: #ffb703;
+            --error-color: #e63946;
+            --font-family: 'Poppins', sans-serif;
+            --nav-height: 70px;
+            --border-radius-sm: 6px;
+            --border-radius-md: 10px;
+            --box-shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.2);
+            --box-shadow-glow: 0 0 15px rgba(106, 142, 231, 0.3); /* Glow for accent elements */
+        }
+
+        /* Basic Reset & Defaults */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; font-size: 16px; }
+        body {
+            font-family: var(--font-family);
+            line-height: 1.7;
+            color: var(--text-primary);
+            background-color: var(--bg-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease;
+        }
+        main {
+            flex-grow: 1;
+            padding-top: calc(var(--nav-height) + 2rem);
+            padding-bottom: 4rem;
+            width: 100%;
+        }
+
+        /* --- LOADING OVERLAY --- */
+        #loading-overlay {
+            position: fixed; inset: 0;
+            background-color: rgba(26, 26, 29, 0.85);
+            backdrop-filter: blur(5px);
+            display: none; justify-content: center; align-items: center;
+            z-index: 9999; flex-direction: column;
+            opacity: 0; transition: opacity 0.4s ease-in-out;
+        }
+        #loading-overlay.show { display: flex; opacity: 1; }
+        #loading-overlay p {
+            font-weight: 500; color: var(--text-primary);
+            margin-bottom: 20px; font-size: 1.2em;
+            text-align: center; max-width: 80%;
+        }
+        .loading-spinner {
+            width: 55px; height: 55px; border-radius: 50%;
+            display: inline-block; position: relative; border: 4px solid;
+            border-color: var(--accent-primary) var(--accent-primary) transparent transparent;
+            animation: spin 1.2s linear infinite;
+        }
+        .loading-spinner::before, .loading-spinner::after {
+            content: ''; position: absolute; left: 0; right: 0; bottom: 0; top: 0;
+            border-radius: 50%; border: 4px solid transparent;
+        }
+        .loading-spinner::before { border-top-color: var(--accent-secondary); animation: spin 1.5s linear infinite; }
+        .loading-spinner::after { border-left-color: rgba(240, 240, 245, 0.5); animation: spin 0.7s linear infinite; animation-direction: reverse; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- Navigation --- */
+        .main-nav {
+            background-color: rgba(44, 44, 48, 0.8); backdrop-filter: blur(10px);
+            color: var(--text-primary); position: fixed; top: 0; left: 0; width: 100%;
+            z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.3); display: flex;
+            justify-content: space-between; align-items: center; padding: 0 2rem; height: var(--nav-height);
+        }
+        .logo {
+            font-weight: 600; font-size: 1.4rem; color: var(--text-primary); text-decoration: none;
+            user-select: none; display: flex; align-items: center; gap: 0.5rem;
+        }
+        .logo img { max-height: 40px; width: auto; object-fit: contain; vertical-align: middle; }
+        .main-nav ul { list-style: none; display: flex; align-items: center; gap: 1.5rem; }
+        .main-nav ul li a {
+            color: var(--text-secondary); text-decoration: none; padding: 0.5rem 0.8rem;
+            font-size: 1rem; font-weight: 500; border-radius: var(--border-radius-sm);
+            transition: color 0.3s ease, background-color 0.3s ease; position: relative; overflow: hidden; cursor: pointer;
+        }
+        .main-nav ul li a::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px;
+            background: var(--accent-gradient); transform: scaleX(0); transform-origin: right;
+            transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .main-nav ul li a:hover, .main-nav ul li a.active { color: var(--text-primary); background-color: rgba(255, 255, 255, 0.05); }
+        .main-nav ul li a.active::after { transform: scaleX(1); transform-origin: left; }
+
+        /* --- Settings Box (Language) --- */
+        #settings-box { display: flex; align-items: center; gap: 0.6rem; }
+        #settings-box label { font-size: 0.9rem; color: var(--text-secondary); }
+        #settings-box select {
+            padding: 0.4rem 0.6rem; border-radius: var(--border-radius-sm); border: 1px solid var(--border-color);
+            background-color: var(--bg-card); color: var(--text-primary); font-size: 0.9rem; cursor: pointer;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        #settings-box select:focus { outline: none; border-color: var(--accent-primary); box-shadow: 0 0 0 2px rgba(106, 142, 231, 0.3); }
+
+        /* --- General Content & Pages --- */
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+        .page { display: none; animation: sectionFadeIn 0.8s ease-out forwards; min-height: calc(100vh - var(--nav-height) - 6rem); }
+        .page.active { display: block; }
+        @keyframes sectionFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Home Page --- */
+        #home-page { text-align: center; padding-top: 3rem; }
+        .hero-section {
+            padding: 4rem 1rem; border-radius: var(--border-radius-md); background: rgba(44, 44, 48, 0.5);
+            margin-bottom: 3rem; position: relative; overflow: hidden;
+        }
+        .hero-section::before {
+            content: ''; position: absolute; inset: 0; z-index: 0; opacity: 0.7;
+            background: radial-gradient(circle at top left, rgba(106, 142, 231, 0.1), transparent 60%),
+                        radial-gradient(circle at bottom right, rgba(228, 118, 228, 0.1), transparent 60%);
+            animation: pulseGlow 10s infinite alternate ease-in-out;
+        }
+        @keyframes pulseGlow { from { opacity: 0.5; transform: scale(1); } to { opacity: 1; transform: scale(1.05); } }
+        .hero-content { position: relative; z-index: 1; }
+        .hero-section h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 700; margin-bottom: 1.5rem; color: var(--text-primary);
+            line-height: 1.3; animation: textFadeUp 1s 0.2s ease-out forwards; opacity: 0;
+        }
+        @keyframes textFadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .hero-section .tagline {
+            font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 2.5rem; max-width: 650px; margin-left: auto; margin-right: auto;
+            animation: textFadeUp 1s 0.4s ease-out forwards; opacity: 0;
+        }
+        .hero-section .btn { animation: buttonScaleIn 0.8s 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; opacity: 0; transform: scale(0.8); }
+        @keyframes buttonScaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+
+        /* --- About Page --- */
+        #about-page .content-container {
+            max-width: 850px; margin: 2rem auto; padding: 2.5rem; background-color: var(--bg-card);
+            border-radius: var(--border-radius-md); box-shadow: var(--box-shadow-soft);
+        }
+        #about-page h2 {
+            font-size: 2rem; font-weight: 600; margin-bottom: 1.5rem; color: var(--accent-primary);
+            text-align: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.8rem;
+        }
+        #about-page p { font-size: 1.05rem; color: var(--text-secondary); text-align: justify; line-height: 1.8; }
+        #about-page .btn-back { display: block; width: fit-content; margin: 2rem auto 0 auto; }
+
+        /* --- Feature Page (Input & Results) --- */
+        .input-section, .results-section { margin-bottom: 3rem; }
+        .form-container {
+            background-color: var(--bg-card); padding: 2.5rem; border-radius: var(--border-radius-md);
+            box-shadow: var(--box-shadow-soft); max-width: 900px; margin: 0 auto;
+        }
+        .form-container h1 {
+            font-size: 2.2rem; font-weight: 600; text-align: center; margin-bottom: 2rem;
+            background: var(--accent-gradient); -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .form-group { margin-bottom: 1.8rem; }
+        .form-group label { display: block; margin-bottom: 0.7rem; font-weight: 500; color: var(--text-secondary); font-size: 1rem; }
+        .form-group input[type="text"], .form-group textarea, .form-group select {
+            width: 100%; padding: 0.9rem 1rem; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm);
+            font-size: 1rem; background-color: var(--bg-dark); color: var(--text-primary);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease; font-family: inherit;
+        }
+        .form-group input[type="text"]:focus, .form-group textarea:focus, .form-group select:focus {
+             outline: none; border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(106, 142, 231, 0.2);
+        }
+        .form-group textarea { resize: vertical; min-height: 140px; }
+        .form-group select {
+            appearance: none; -webkit-appearance: none; -moz-appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23a9a9b3" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+            background-repeat: no-repeat; background-position: right 1rem center; background-size: 20px; padding-right: 3rem; cursor: pointer;
+        }
+        .form-group select option[disabled] { color: #777; }
+        .audio-input-group { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .form-group input[type="file"] {
+             padding: 0; cursor: pointer; flex-grow: 1; min-width: 200px; margin-bottom: 0;
+             background-color: transparent; border: none; box-shadow: none; color: var(--text-secondary);
+        }
+        input[type="file"]::file-selector-button {
+             padding: 0.7rem 1.2rem; margin-right: 1rem; border: none; border-radius: var(--border-radius-sm);
+             background: linear-gradient(135deg, #444, #555); color: var(--text-primary);
+             cursor: pointer; transition: background 0.3s ease, transform 0.1s ease; font-weight: 500;
+        }
+        input[type="file"]::file-selector-button:hover { background: linear-gradient(135deg, #555, #666); transform: translateY(-1px); }
+        #record-status { margin-left: 1rem; font-style: italic; font-weight: 500; display: inline-flex; align-items: center; min-height: 24px; transition: color 0.3s ease; }
+        #record-status.recording { color: var(--error-color); }
+        #record-status.transcribing { color: var(--accent-primary); }
+        #record-status.complete { color: var(--success-color); }
+        #record-status.error { color: var(--error-color); }
+        .recording-dots { display: inline-block; vertical-align: middle; margin-right: 6px; }
+        .recording-dots span {
+            display: inline-block; width: 9px; height: 9px; margin-left: 4px; border-radius: 50%; background-color: var(--error-color);
+            animation: recordingPulse 1.4s infinite ease-in-out;
+        }
+        .recording-dots span:nth-child(1) { animation-delay: 0s; }
+        .recording-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .recording-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes recordingPulse { 0%, 100% { transform: scale(0.5); opacity: 0.5; } 50% { transform: scale(1); opacity: 1; } }
+        #transcript-group { display: none; margin-top: 1.5rem; }
+        #transcript-output { background-color: #333; font-style: italic; color: var(--text-secondary); min-height: 90px; cursor: default; border-color: #444; }
+        .form-group small { display: block; margin-top: 0.8rem; color: var(--text-secondary); font-size: 0.9em; line-height: 1.5; }
+        #generate-concept-button { display: block; width: 100%; max-width: 380px; margin: 2.5rem auto 0 auto; padding: 1rem 1.5rem; font-size: 1.1rem; }
+
+        /* --- Results Section & Cards --- */
+        .results-section { display: none; margin-top: 3rem; }
+        .results-grid { display: grid; grid-template-columns: 1fr; gap: 1.8rem; } /* Single column layout */
+        .result-card {
+            background-color: var(--bg-card); border-radius: var(--border-radius-md); padding: 1.8rem;
+            box-shadow: var(--box-shadow-soft); border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            opacity: 0; transform: translateY(30px); display: flex; flex-direction: column;
+        }
+        .result-card.visible { opacity: 1; transform: translateY(0); transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* delay set by JS */ }
+        .result-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); border-color: var(--accent-primary); }
+        .result-card h2 {
+            font-size: 1.5rem; font-weight: 600; color: var(--accent-primary); margin-bottom: 1.2rem;
+            padding-bottom: 0.6rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0;
+        }
+        .card-content { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7; flex-grow: 1; overflow: hidden; }
+        .card-content p { margin-bottom: 1rem; }
+        .card-content p:last-child { margin-bottom: 0; }
+        .card-content strong { color: var(--text-primary); font-weight: 600; }
+        #result-concept > .card-content { white-space: pre-wrap; } /* Concept text wrapping */
+
+        /* Requirements List */
+        #result-requirements ul { margin: 0.5rem 0 0 0; padding-left: 0; list-style: none; }
+        #result-requirements li { margin-bottom: 0.8rem; padding-left: 1.8rem; position: relative; }
+        #result-requirements li::before {
+            content: '✓'; color: var(--accent-primary); font-size: 1.1em; font-weight: 600;
+            position: absolute; left: 0; top: 1px; transition: transform 0.3s ease;
+        }
+        #result-requirements li:hover::before { transform: scale(1.2) rotate(-10deg); }
+
+        /* MODIFIED: Budget Section Styles */
+        .budget-columns-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Ensure 3 columns */
+            gap: 1.2rem;
+            margin-top: 1rem;
+        }
+        .budget-column {
+            border: 1px solid var(--border-color);
+            padding: 1.2rem;
+            border-radius: var(--border-radius-sm);
+            background-color: rgba(26, 26, 29, 0.7);
+            display: flex; flex-direction: column; /* Stack elements vertically */
+            transition: background-color 0.3s ease;
+            min-height: 180px; /* Ensure columns have some base height */
+        }
+        .budget-column:hover { background-color: rgba(40, 40, 43, 0.8); }
+        .budget-column h3 {
+            margin-top: 0; margin-bottom: 1rem; padding-bottom: 0.5rem;
+            border-bottom: 1px solid #555; color: var(--text-primary);
+            font-size: 1.1rem; font-weight: 600; flex-shrink: 0; /* Prevent shrinking */
+            text-align: center;
+        }
+        .budget-column p { /* Holds the main description and item boxes */
+            font-size: 0.95rem; /* Matches .card-content */
+            line-height: 1.7;    /* Matches .card-content */
+            color: var(--text-secondary);
+            white-space: normal; /* Allow wrapping */
+            margin-bottom: 0;
+            flex-grow: 1; /* Allow description to take space */
+        }
+        /* Style for individual cost items within the description */
+        .budget-column .budget-item-box {
+             border: 1px solid #555;
+             background-color: var(--bg-dark);
+             padding: 0.6rem 0.8rem;
+             margin-top: 0.8rem; /* Space above item */
+             margin-bottom: 0.6rem; /* Space below item */
+             border-radius: 4px;
+             font-size: 0.85em; /* Relative to parent p */
+             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+             display: flex; /* Put item name and cost side-by-side */
+             justify-content: space-between;
+             align-items: center;
+        }
+        .budget-column .budget-item-box strong { /* Style the cost part */
+            color: var(--text-primary);
+            margin-left: 0.5rem; /* Space between item and cost */
+            white-space: nowrap; /* Prevent cost from wrapping */
+            font-weight: 600;
+        }
+        /* Placeholder styling specifically for budget columns */
+        .budget-column.placeholder-notice {
+            border-style: dashed;
+            opacity: 0.7;
+        }
+        .budget-column.placeholder-notice h3 {
+            color: var(--text-secondary);
+            border-bottom-color: rgba(85, 85, 85, 0.5);
+        }
+        .budget-column.placeholder-notice p.placeholder-notice { /* Style placeholder text inside budget P */
+            text-align: center;
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+            font-size: 0.95rem; /* Ensure placeholder text also matches */
+            line-height: 1.7;
+        }
+        /* Main container placeholder */
+        .budget-columns-container.placeholder-notice {
+            display: block; /* Override grid for single placeholder text */
+            text-align: center;
+            padding: 1rem;
+        }
+        .budget-columns-container.placeholder-notice .budget-column {
+            display: none; /* Hide columns when main container has placeholder */
+        }
+        /* --- Style for raw text display on parsing error (MODIFIED) --- */
+        .card-content .raw-budget-output pre { /* Target pre inside raw-budget-output class */
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 1.2em; /* Increased font size */
+            text-align: left;
+            background-color: rgba(0,0,0,0.3); /* Slightly darker background */
+            border: 1px dashed var(--border-color); /* Dashed border */
+            color: var(--text-secondary);
+            padding: 1rem;
+            border-radius: var(--border-radius-sm);
+            margin-top: 0.5rem;
+            max-height: 250px; /* Increased max-height */
+            overflow-y: auto;
+        }
+
+
+        /* Image Placeholder (Inside Card) */
+        .image-placeholder-container { display: grid; gap: 1.2rem; margin-top: 1rem; }
+        #result-visuals .image-placeholder-container { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+        #result-moodboard .image-placeholder-container { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+        .image-placeholder {
+            border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); background-color: var(--bg-dark);
+            overflow: hidden; text-align: center; color: var(--text-secondary); box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease; position: relative;
+        }
+        .image-placeholder:hover { transform: scale(1.03); box-shadow: 0 5px 12px rgba(0,0,0,0.3); z-index: 5; }
+        .image-placeholder img {
+            display: block; width: 100%; object-fit: cover; background-color: #444; border-bottom: 1px solid var(--border-color);
+            opacity: 0; transition: opacity 0.5s ease-in-out;
+        }
+        .image-placeholder img[src]:not([src=""]) { opacity: 1; }
+        #result-visuals .image-placeholder img { height: 160px; }
+        #result-moodboard .image-placeholder img { height: 130px; }
+        .image-placeholder figcaption {
+            font-size: 0.85em; padding: 0.8rem; background-color: var(--bg-card);
+            min-height: 55px; line-height: 1.4; color: var(--text-secondary);
+        }
+        .image-placeholder figcaption strong { color: var(--text-primary); }
+        /* Style for Backend/Fallback source note */
+        .image-placeholder figcaption .generation-source,
+        .image-placeholder figcaption .fallback-notice {
+            font-size: 0.8em; display: block; margin-top: 5px;
+        }
+        .image-placeholder figcaption .generation-source { color: var(--accent-primary); font-style: italic; } /* Backend note */
+        .image-placeholder figcaption .fallback-notice { color: #888; font-style: italic; } /* Fallback notice */
+
+
+        /* Color Palette Display (Inside Card) */
+        .color-palette-display { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; }
+        .color-swatch {
+            min-width: 100px; height: 90px; border-radius: var(--border-radius-sm); border: 1px solid var(--border-color);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.85em;
+            font-weight: 500; text-align: center; overflow: hidden; padding: 0.5rem; box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+            transition: transform 0.25s ease, box-shadow 0.25s ease; flex-grow: 1; opacity: 0; transform: scale(0.8);
+        }
+        .color-swatch.visible { opacity: 1; transform: scale(1); transition: opacity 0.4s ease-out, transform 0.4s ease-out; /* delay handled by JS */ }
+        .color-swatch:hover { transform: scale(1.08) rotate(2deg); box-shadow: 0 4px 10px rgba(0,0,0,0.25); z-index: 5; }
+        .color-swatch span { display: block; word-break: break-word; max-width: 100%; }
+        .color-swatch .hex-code { margin-top: 0.5rem; font-size: 0.9em; font-family: monospace; user-select: all; opacity: 0.8; }
+
+        /* Action Buttons */
+        .action-buttons {
+            margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border-color);
+            display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; flex-shrink: 0;
+        }
+
+        /* --- General Button Styling --- */
+        .btn {
+            display: inline-block; padding: 0.8rem 1.8rem; border: none; border-radius: var(--border-radius-sm);
+            cursor: pointer; font-size: 1rem; font-weight: 600; text-align: center; text-decoration: none;
+            color: var(--text-primary); background: var(--accent-gradient);
+            transition: transform 0.2s ease, box-shadow 0.3s ease, background-size 0.4s ease, opacity 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); position: relative; overflow: hidden; z-index: 1;
+        }
+        .btn::before { /* Subtle shine effect on hover */
+             content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+             background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+             transition: left 0.5s ease; z-index: -1;
+        }
+        .btn:hover:not(:disabled) { transform: translateY(-2px) scale(1.02); box-shadow: 0 5px 15px rgba(106, 142, 231, 0.3); }
+        .btn:hover:not(:disabled)::before { left: 100%; }
+        .btn:active:not(:disabled) { transform: translateY(0) scale(0.98); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; background: #555; box-shadow: none; }
+        .btn-secondary { background: linear-gradient(135deg, #5a5a60, #404045); }
+        .btn-secondary:hover:not(:disabled) { box-shadow: 0 5px 15px rgba(80, 80, 80, 0.3); }
+        .btn-warning { background: linear-gradient(135deg, var(--warning-color), #d4a00e); color: #222; }
+        .btn-warning:hover:not(:disabled) { box-shadow: 0 5px 15px rgba(255, 183, 3, 0.4); color: #000; }
+        .btn-danger { background: linear-gradient(135deg, var(--error-color), #b82c3a); }
+        .btn-danger:hover:not(:disabled) { box-shadow: 0 5px 15px rgba(230, 57, 70, 0.4); }
+        #home-page .btn-back { display: none; } /* Hide back button on home */
+
+        /* --- Error Message --- */
+        .error-message {
+            background-color: rgba(230, 57, 70, 0.15); color: var(--error-color); border: 1px solid rgba(230, 57, 70, 0.5);
+            padding: 1.2rem 1.5rem; border-radius: var(--border-radius-sm); margin: 1.5rem auto; text-align: center;
+            font-weight: 500; display: none; max-width: 800px; white-space: pre-wrap;
+        }
+        /* Specific styling for error paragraphs inside card content */
+        .card-content p.error {
+            color: var(--error-color);
+            font-weight: 500;
+        }
+
+
+        /* --- Footer --- */
+        .main-footer {
+            background-color: #111; color: var(--text-secondary); padding: 1.5rem 0;
+            text-align: center; font-size: 0.9rem; margin-top: auto;
+        }
+        .main-footer p { margin: 0; }
+        .main-footer a { color: var(--accent-primary); text-decoration: none; transition: color 0.3s ease; }
+        .main-footer a:hover { color: var(--accent-secondary); }
+
+        /* --- Utility Placeholders --- */
+        .placeholder-notice {
+            font-style: italic; color: var(--text-secondary); opacity: 0.8;
+            text-align: center; padding: 1rem; font-size: 0.9em;
+        }
+        #result-requirements ul .placeholder-notice { padding: 0; text-align: left; list-style: none; margin-left: 1.8rem; }
+        #result-requirements ul .placeholder-notice::before { display: none; }
+        /* Ensure image/color placeholders inside cards look right */
+        .image-placeholder-container.placeholder-notice,
+        .color-palette-display.placeholder-notice {
+            display: block; /* Override grid/flex for placeholder text */
+            text-align: center; padding: 1rem;
+        }
+         /* Ensure budget note is always visible, even with placeholders */
+         #result-budget > small { display: block; text-align: center; margin-top: 1rem; font-size: 0.85em; opacity: 0.8; }
+
+        /* --- Responsive Adjustments --- */
+        @media (max-width: 992px) {
+            .container { max-width: 90%; }
+            .main-nav ul { gap: 1rem; }
+            .main-nav ul li a { font-size: 0.95rem; padding: 0.4rem 0.6rem; }
+            #settings-box label { display: none; }
+            .form-container { padding: 2rem; }
+        }
+
+        @media (max-width: 768px) {
+            html { font-size: 15px; }
+            :root { --nav-height: 60px; }
+            main { padding-top: calc(var(--nav-height) + 1.5rem); }
+            .main-nav { padding: 0 1.5rem; flex-wrap: wrap; height: auto; min-height: var(--nav-height); align-content: center; }
+            .logo { font-size: 1.2rem; }
+            .main-nav ul { order: 3; width: 100%; justify-content: center; padding: 0.5rem 0; border-top: 1px solid var(--border-color); margin-top: 0.5rem; gap: 0.8rem; }
+            #settings-box { order: 2; margin-left: auto; padding-bottom: 0.5rem; }
+            .hero-section { padding: 3rem 0.5rem; }
+            .hero-section h1 { font-size: clamp(1.8rem, 6vw, 2.5rem); }
+            .hero-section .tagline { font-size: 1rem; }
+            /* Stack budget columns on smaller screens */
+            .budget-columns-container { grid-template-columns: 1fr; gap: 1rem; }
+            .budget-column { min-height: auto; } /* Let height adjust */
+            .result-card { padding: 1.5rem; }
+            .result-card h2 { font-size: 1.4rem; }
+            #result-visuals .image-placeholder-container { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+            #result-moodboard .image-placeholder-container { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+            #about-page .content-container { padding: 1.5rem; }
+        }
+
+        @media (max-width: 480px) {
+            html { font-size: 14px; }
+            .main-nav { padding: 0 1rem; }
+            .main-nav ul { gap: 0.5rem; flex-wrap: wrap; justify-content: space-around; }
+            .main-nav ul li a { padding: 0.4rem; font-size: 0.9rem; }
+            #settings-box { width: 100%; order: 3; justify-content: center; margin-left: 0; margin-top: 0.5rem; padding-bottom: 0.5rem; }
+            .container { padding: 0 1rem; }
+            .form-container { padding: 1.5rem; }
+            .form-container h1 { font-size: 1.8rem; margin-bottom: 1.5rem; }
+            .form-group { margin-bottom: 1.5rem; }
+            .audio-input-group { flex-direction: column; align-items: stretch; gap: 0.8rem; }
+            input[type="file"]::file-selector-button { width: 100%; text-align: center; margin-right: 0; }
+            .audio-input-group .btn { width: 100%; margin: 0;}
+            #record-status { margin-left: 0; justify-content: center; width: 100%; margin-top: 0.3rem; }
+            #generate-concept-button { max-width: 100%; padding: 0.9rem 1.2rem; font-size: 1rem; }
+            .btn { padding: 0.7rem 1.5rem; font-size: 0.95rem; }
+            .action-buttons { gap: 1rem; }
+            #result-visuals .image-placeholder-container,
+            #result-moodboard .image-placeholder-container { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+            #result-visuals .image-placeholder img { height: 130px; }
+            #result-moodboard .image-placeholder img { height: 110px; }
+            .color-palette-display { gap: 0.8rem; }
+            .color-swatch { min-width: 80px; height: 70px; font-size: 0.8rem; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Loading Overlay Div -->
+    <div id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p
+            data-lang-en="Generating creative sparks..."
+            data-lang-es="Generando chispas creativas..."
+            data-lang-vi="Đang tạo ra những tia sáng sáng tạo..."
+            data-lang-ja="創造的な火花を生成中..."
+            data-lang-zhcn="正在生成创意火花..."
+            data-last-key="generatingCreativeSparks"
+        >Generating creative sparks...</p>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <a href="#" data-page="home" class="logo nav-link">
+             <!-- Assume logofinal(white).png exists or replace -->
+             <img src="logofinal(white).png" alt="MV Generator Logo" style="max-height: 40px; width: auto; vertical-align: middle; border-radius: 3px;" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+             <span style="display: none;"
+                data-lang-en="Logo"
+                data-lang-es="Logo"
+                data-lang-vi="Logo"
+                data-lang-ja="ロゴ"
+                data-lang-zhcn="标志"
+             >Logo</span> <!-- Fallback Text -->
+        </a>
+        <ul>
+            <li><a data-page="home" class="nav-link active"
+                   data-lang-en="Home" data-lang-es="Inicio" data-lang-vi="Trang chủ" data-lang-ja="ホーム" data-lang-zhcn="首页"
+                >Home</a></li>
+            <li><a data-page="about" class="nav-link"
+                   data-lang-en="About" data-lang-es="Acerca de" data-lang-vi="Giới thiệu" data-lang-ja="概要" data-lang-zhcn="关于"
+                >About</a></li>
+            <li><a data-page="feature" class="nav-link"
+                   data-lang-en="Generate" data-lang-es="Generar" data-lang-vi="Tạo" data-lang-ja="生成" data-lang-zhcn="生成"
+                >Generate</a></li>
+        </ul>
+        <!-- Settings Box for Language -->
+        <div id="settings-box">
+            <label for="language-select"
+                data-lang-en="Language:" data-lang-es="Idioma:" data-lang-vi="Ngôn ngữ:" data-lang-ja="言語：" data-lang-zhcn="语言："
+            >Language:</label>
+            <select id="language-select">
+                <option value="en">English</option>
+                <option value="es">Español</option>
+                <option value="vi">Tiếng Việt</option>
+                <option value="ja">日本語</option>
+                <option value="zh-CN">中文</option>
+            </select>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Home Page Section -->
+        <section id="home-page" class="page active container">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h1
+                        data-lang-en="Unlock Visual Concepts for Your Music" data-lang-es="Desbloquea Conceptos Visuales para Tu Música" data-lang-vi="Mở khóa ý tưởng hình ảnh cho âm nhạc của bạn" data-lang-ja="あなたの音楽のためのビジュアルコンセプトを解き放つ" data-lang-zhcn="为您的音乐解锁视觉概念"
+                    >Unlock Visual Concepts for Your Music</h1>
+                    <p class="tagline"
+                       data-lang-en="Transform your lyrics and ideas into stunning music video concepts with the power of AI." data-lang-es="Transforma tus letras e ideas en impresionantes conceptos de videos musicales con el poder de la IA." data-lang-vi="Biến lời bài hát và ý tưởng của bạn thành những ý tưởng video âm nhạc tuyệt đẹp với sức mạnh của AI." data-lang-ja="AIの力で、あなたの歌詞やアイデアを見事なミュージックビデオコンセプトに変えましょう。" data-lang-zhcn="借助人工智能的力量，将您的歌词和想法转化为令人惊叹的音乐视频概念。"
+                    >Transform your lyrics and ideas into stunning music video concepts with the power of AI.</p>
+                    <button id="explore-button" class="btn btn-primary"
+                            data-lang-en="Start Generating" data-lang-es="Comenzar a Generar" data-lang-vi="Bắt đầu tạo" data-lang-ja="生成を開始" data-lang-zhcn="开始生成"
+                        >Start Generating</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Page Section -->
+        <section id="about-page" class="page container">
+            <div class="content-container">
+                <h2
+                    data-lang-en="About MV Generator" data-lang-es="Acerca del Generador MV" data-lang-vi="Về Trình tạo MV" data-lang-ja="MVジェネレーターについて" data-lang-zhcn="关于 MV 生成器"
+                >About MV Generator</h2>
+                <p
+                   data-lang-en="Welcome to the MV Generator! We are passionate about helping artists translate their musical creations into compelling visual stories. Crafting the perfect music video concept can be challenging, requiring a blend of artistic vision and practical planning. Our AI-powered tool is designed to bridge that gap. By analyzing your lyrics, keywords, and genre, MV Generator generates tailored suggestions for music video concepts, requirements, budget estimations, visual inspirations, and color palettes. We aim to streamline the creative process, providing a launchpad for your ideas and empowering you to bring your music to life visually, whether you're an indie artist or part of a larger production. Let's make something amazing together!"
+                   data-lang-es="¡Bienvenido al Generador de MV! Nos apasiona ayudar a los artistas a traducir sus creaciones musicales en historias visuales convincentes. Crear el concepto perfecto para un video musical puede ser desafiante, requiriendo una mezcla de visión artística y planificación práctica. Nuestra herramienta impulsada por IA está diseñada para cerrar esa brecha. Al analizar tus letras, palabras clave y género, el Generador de MV genera sugerencias personalizadas para conceptos de videos musicales, requisitos, estimaciones de presupuesto, inspiraciones visuales y paletas de colores. Nuestro objetivo es agilizar el proceso creativo, proporcionando una plataforma de lanzamiento para tus ideas y empoderándote para dar vida visual a tu música, ya seas un artista independiente o parte de una producción más grande. ¡Hagamos algo increíble juntos!"
+                   data-lang-vi="Chào mừng bạn đến với Trình tạo MV! Chúng tôi đam mê giúp các nghệ sĩ chuyển đổi những sáng tạo âm nhạc của họ thành những câu chuyện hình ảnh hấp dẫn. Việc tạo ra ý tưởng video âm nhạc hoàn hảo có thể đầy thử thách, đòi hỏi sự kết hợp giữa tầm nhìn nghệ thuật và kế hoạch thực tế. Công cụ hỗ trợ AI của chúng tôi được thiết kế để thu hẹp khoảng cách đó. Bằng cách phân tích lời bài hát, từ khóa và thể loại của bạn, Trình tạo MV tạo ra các đề xuất phù hợp cho các khái niệm video âm nhạc, yêu cầu, ước tính ngân sách, nguồn cảm hứng trực quan và bảng màu. Chúng tôi mong muốn hợp lý hóa quy trình sáng tạo, cung cấp bệ phóng cho ý tưởng của bạn và trao quyền cho bạn để đưa âm nhạc của mình vào cuộc sống một cách trực quan, cho dù bạn là một nghệ sĩ độc lập hay là một phần của một nhà sản xuất lớn hơn. Hãy cùng nhau tạo ra điều gì đó tuyệt vời!"
+                   data-lang-ja="MVジェネレーターへようこそ！私たちは、アーティストが音楽作品を魅力的なビジュアルストーリーに変換するお手伝いをすることに情熱を注いでいます。完璧なミュージックビデオのコンセプトを作り上げることは、芸術的なビジョンと実践的な計画の融合を必要とする、困難な作業となる場合があります。当社のAI搭載ツールは、そのギャップを埋めるために設計されています。あなたの歌詞、キーワード、ジャンルを分析することにより、MVジェネレーターはミュージックビデオのコンセプト、要件、予算の見積もり、視覚的なインスピレーション、カラーパレットに関するカスタマイズされた提案を生成します。私たちは、インディーズアーティストであろうと大規模なプロダクションの一部であろうと、あなたのアイデアの出発点を提供し、あなたの音楽を視覚的に実現する力を与えることで、創造的なプロセスを合理化することを目指しています。一緒に素晴らしいものを作りましょう！"
+                   data-lang-zhcn="欢迎来到 MV 生成器！我们热衷于帮助艺术家将他们的音乐创作转化为引人入胜的视觉故事。制作完美的音乐视频概念可能具有挑战性，需要艺术视野和实际规划的结合。我们的人工智能工具旨在弥合这一差距。通过分析您的歌词、关键词和流派，MV 生成器会生成量身定制的音乐视频概念、要求、预算估算、视觉灵感和调色板建议。我们的目标是简化创作过程，为您的想法提供一个启动平台，并使您能够将音乐以视觉方式呈现出来，无论您是独立艺术家还是大型制作团队的一员。让我们一起创造一些惊人的东西吧！"
+                >
+                    Welcome to the MV Generator! We are passionate about helping artists translate their musical creations into compelling visual stories. Crafting the perfect music video concept can be challenging, requiring a blend of artistic vision and practical planning. Our AI-powered tool is designed to bridge that gap. By analyzing your lyrics, keywords, and genre, MV Generator generates tailored suggestions for music video concepts, requirements, budget estimations, visual inspirations, and color palettes. We aim to streamline the creative process, providing a launchpad for your ideas and empowering you to bring your music to life visually, whether you're an indie artist or part of a larger production. Let's make something amazing together!
+                </p>
+                 <button class="btn btn-secondary btn-back" data-target="home"
+                    data-lang-en="Back to Home" data-lang-es="Volver al Inicio" data-lang-vi="Về Trang chủ" data-lang-ja="ホームに戻る" data-lang-zhcn="返回首页"
+                >Back to Home</button>
+            </div>
+        </section>
+
+        <!-- Feature Page Section (Input & Results) -->
+        <section id="feature-page" class="page container">
+            <!-- Input Form Area -->
+            <div class="input-section">
+                <div class="form-container">
+                    <h1
+                        data-lang-en="Generate Your MV Concept" data-lang-es="Genera Tu Concepto de MV" data-lang-vi="Tạo ý tưởng MV của bạn" data-lang-ja="MVコンセプトを生成" data-lang-zhcn="生成您的 MV 概念"
+                    >Generate Your MV Concept</h1>
+
+                    <form id="feature-form" onsubmit="return false;">
+                        <div class="form-group">
+                            <label for="lyrics-input"
+                                data-lang-en="Music Lyrics:" data-lang-es="Letra de la Música:" data-lang-vi="Lời bài hát:" data-lang-ja="歌詞：" data-lang-zhcn="歌词："
+                            >Music Lyrics:</label>
+                            <textarea id="lyrics-input" rows="7" required
+                                data-lang-en-placeholder="Paste your complete song lyrics here..." data-lang-es-placeholder="Pega la letra completa de tu canción aquí..." data-lang-vi-placeholder="Dán toàn bộ lời bài hát của bạn vào đây..." data-lang-ja-placeholder="ここに完全な歌詞を貼り付けてください..." data-lang-zhcn-placeholder="在此处粘贴完整的歌词..."
+                                placeholder="Paste your complete song lyrics here..." ></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="keywords-input"
+                                data-lang-en="Keywords / Theme:" data-lang-es="Palabras Clave / Tema:" data-lang-vi="Từ khóa / Chủ đề:" data-lang-ja="キーワード / テーマ：" data-lang-zhcn="关键词/主题："
+                            >Keywords / Theme:</label>
+                            <input type="text" id="keywords-input" required
+                                data-lang-en-placeholder="e.g., nostalgic, summer vibe, urban decay, overcoming struggle" data-lang-es-placeholder="ej., nostálgico, ambiente de verano, decadencia urbana, superación" data-lang-vi-placeholder="vd: hoài cổ, không khí mùa hè, suy tàn đô thị, vượt qua khó khăn" data-lang-ja-placeholder="例：ノスタルジック、夏の雰囲気、都市の荒廃、苦難の克服" data-lang-zhcn-placeholder="例如，怀旧、夏日氛围、城市衰败、克服困难"
+                                placeholder="e.g., nostalgic, summer vibe, urban decay, overcoming struggle" >
+                        </div>
+                        <div class="form-group">
+                            <label for="genre-select"
+                                data-lang-en="Music Genre:" data-lang-es="Género Musical:" data-lang-vi="Thể loại âm nhạc:" data-lang-ja="音楽ジャンル：" data-lang-zhcn="音乐流派："
+                            >Music Genre:</label>
+                            <select id="genre-select" required>
+                                <option value="" disabled selected
+                                    data-lang-en="-- Select a Genre --" data-lang-es="-- Selecciona un Género --" data-lang-vi="-- Chọn một thể loại --" data-lang-ja="-- ジャンルを選択 --" data-lang-zhcn="-- 选择流派 --"
+                                >-- Select a Genre --</option>
+                                <option value="RnB">RnB / Soul</option>
+                                <option value="Folk">Folk / Acoustic</option>
+                                <option value="Rock">Rock</option>
+                                <option value="Pop">Pop</option>
+                                <option value="Hiphop">Hip-hop / Rap</option>
+                                <option value="Electronic">Electronic</option>
+                                <option value="Classical">Classical</option>
+                                <option value="Country">Country</option>
+                                <option value="Jazz">Jazz / Blues</option>
+                                <option value="Reggae">Reggae</option>
+                                <option value="Metal">Metal</option>
+                                <option value="Other">Other / Fusion</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="track-upload"
+                                data-lang-en="Track Input (Optional):" data-lang-es="Entrada de Pista (Opcional):" data-lang-vi="Nhập bản nhạc (Tùy chọn):" data-lang-ja="トラック入力（任意）：" data-lang-zhcn="音轨输入（可选）："
+                            >Track Input (Optional):</label>
+                            <div class="audio-input-group">
+                                <input type="file" id="track-upload" accept="audio/*">
+                                <button type="button" id="record-audio-button" class="btn btn-warning"
+                                    data-lang-en-record="Record Audio" data-lang-es-record="Grabar Audio" data-lang-vi-record="Ghi âm" data-lang-ja-record="音声を録音" data-lang-zhcn-record="录制音频"
+                                    data-lang-en-stop="Stop Recording" data-lang-es-stop="Detener Grabación" data-lang-vi-stop="Dừng ghi âm" data-lang-ja-stop="録音停止" data-lang-zhcn-stop="停止录制"
+                                >Record Audio</button>
+                                <span id="record-status" class="record-status-base">
+                                    <span id="recording-animation" class="recording-dots" style="display: none;"><span></span><span></span><span></span></span>
+                                    <span id="record-status-text"></span>
+                                </span>
+                            </div>
+                            <small
+                                data-lang-en="Upload an audio file or record your singing. Analysis enhances suggestions (requires browser support)." data-lang-es="Sube un archivo de audio o graba tu canto. El análisis mejora las sugerencias (requiere soporte del navegador)." data-lang-vi="Tải lên tệp âm thanh hoặc ghi âm giọng hát của bạn. Phân tích giúp cải thiện đề xuất (yêu cầu trình duyệt hỗ trợ)." data-lang-ja="オーディオファイルをアップロードするか、歌声を録音します。分析により提案が強化されます（ブラウザのサポートが必要です）。" data-lang-zhcn="上传音频文件或录制您的演唱。分析可增强建议（需要浏览器支持）。"
+                            >
+                                Upload an audio file or record your singing. Analysis enhances suggestions (requires browser support).
+                            </small>
+                        </div>
+                        <div class="form-group" id="transcript-group" style="display: none;">
+                            <label for="transcript-output"
+                                data-lang-en="Singing Transcript (from recording):" data-lang-es="Transcripción del Canto (de grabación):" data-lang-vi="Bản ghi lời hát (từ ghi âm):" data-lang-ja="歌唱トランスクリプト（録音より）：" data-lang-zhcn="演唱转录稿（来自录音）："
+                            >Singing Transcript (from recording):</label>
+                            <textarea id="transcript-output" rows="4" readonly
+                                data-lang-en-placeholder="Transcript will appear here..." data-lang-es-placeholder="La transcripción aparecerá aquí..." data-lang-vi-placeholder="Bản ghi sẽ xuất hiện ở đây..." data-lang-ja-placeholder="トランスクリプトがここに表示されます..." data-lang-zhcn-placeholder="转录稿将显示在此处..."
+                                placeholder="Transcript will appear here..."></textarea>
+                            <small
+                                data-lang-en="This text will be analyzed along with lyrics." data-lang-es="Este texto se analizará junto con la letra." data-lang-vi="Văn bản này sẽ được phân tích cùng với lời bài hát." data-lang-ja="このテキストは歌詞とともに分析されます。" data-lang-zhcn="此文本将与歌词一起分析。"
+                            >This text will be analyzed along with lyrics.</small>
+                        </div>
+
+                        <button type="button" id="generate-concept-button" class="btn btn-primary"
+                            data-lang-en="Generate Concept" data-lang-es="Generar Concepto" data-lang-vi="Tạo ý tưởng" data-lang-ja="コンセプトを生成" data-lang-zhcn="生成概念"
+                        >Generate Concept</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Error Message Area -->
+            <div id="error-message" class="error-message"
+                 data-lang-en="An error occurred. Please check your input or try again later." data-lang-es="Ocurrió un error. Por favor, revisa tu entrada o inténtalo de nuevo más tarde." data-lang-vi="Đã xảy ra lỗi. Vui lòng kiểm tra đầu vào của bạn hoặc thử lại sau." data-lang-ja="エラーが発生しました。入力を確認するか、後でもう一度お試しください。" data-lang-zhcn="发生错误。请检查您的输入或稍后再试。"
+                 data-error-key="errorUnknown"
+            ></div>
+
+            <!-- Results Area (Cards) -->
+            <div class="results-section" id="results-output-area">
+                <!-- Concept Card -->
+                 <div id="result-concept-card" class="result-card" style="grid-column: 1 / -1; display: none;">
+                     <h2>
+                         <span data-lang-en="Concept / Key Visual" data-lang-es="Concepto / Visual Clave" data-lang-vi="Ý tưởng / Hình ảnh chủ đạo" data-lang-ja="コンセプト / キービジュアル" data-lang-zhcn="概念 / 关键视觉"
+                         >Concept / Key Visual</span>
+                     </h2>
+                     <div class="card-content placeholder-notice" id="result-concept">
+                         <p class="placeholder-notice"
+                            data-placeholder-key="conceptPlaceholder"
+                            data-lang-en="Your generated concept will appear here..." data-lang-es="Tu concepto generado aparecerá aquí..." data-lang-vi="Ý tưởng được tạo của bạn sẽ xuất hiện ở đây..." data-lang-ja="生成されたコンセプトがここに表示されます..." data-lang-zhcn="您生成的概念将显示在此处..."
+                         >Your generated concept will appear here...</p>
+                     </div>
+                     <!-- Action buttons -->
+                     <div class="action-buttons">
+                         <button id="explore-more-button" class="btn btn-secondary" disabled
+                             data-lang-en="Explore More Details" data-lang-es="Explorar Más Detalles" data-lang-vi="Khám phá thêm chi tiết" data-lang-ja="詳細をさらに探索" data-lang-zhcn="探索更多细节"
+                         >Explore More Details</button>
+                         <button id="regenerate-button" class="btn btn-secondary" disabled
+                             data-lang-en="Re-Generate Concept" data-lang-es="Re-Generar Concepto" data-lang-vi="Tạo lại ý tưởng" data-lang-ja="コンセプトを再生成" data-lang-zhcn="重新生成概念"
+                         >Re-Generate Concept</button>
+                     </div>
+                 </div>
+
+                 <!-- Detailed Results Grid (Populated after 'Explore More', single column) -->
+                 <div class="results-grid" id="detailed-results-grid" style="display: none;">
+                     <div id="result-requirements-card" class="result-card" style="display: none;">
+                         <h2>
+                             <span data-lang-en="Requirements for MV" data-lang-es="Requisitos para el MV" data-lang-vi="Yêu cầu đối với MV" data-lang-ja="MVの要件" data-lang-zhcn="MV 要求"
+                             >Requirements for MV</span>
+                         </h2>
+                         <div class="card-content placeholder-notice" id="result-requirements">
+                            <ul class="placeholder-notice">
+                                <li class="placeholder-notice"
+                                    data-placeholder-key="requirementsPlaceholder"
+                                    data-lang-en="Requirements list will appear here..." data-lang-es="La lista de requisitos aparecerá aquí..." data-lang-vi="Danh sách yêu cầu sẽ xuất hiện ở đây..." data-lang-ja="要件リストがここに表示されます..." data-lang-zhcn="要求列表将显示在此处..."
+                                >Requirements list will appear here...</li>
+                            </ul>
+                         </div>
+                     </div>
+
+                     <!-- == BUDGET CARD STRUCTURE == -->
+                     <div id="result-budget-card" class="result-card" style="display: none;">
+                         <h2>
+                             <span data-lang-en="Estimated Budget" data-lang-es="Presupuesto Estimado" data-lang-vi="Ngân sách ước tính" data-lang-ja="推定予算" data-lang-zhcn="预估预算"
+                             >Estimated Budget</span>
+                         </h2>
+                         <div class="card-content placeholder-notice" id="result-budget">
+                             <!-- Container for the 3 budget columns -->
+                             <div class="budget-columns-container placeholder-notice">
+                                 <!-- Placeholder Text (will be replaced by JS if columns are generated) -->
+                                 <p data-placeholder-key="budgetPlaceholder" class="placeholder-notice"
+                                    data-lang-en="Budget details will appear here..." data-lang-es="Los detalles del presupuesto aparecerán aquí..." data-lang-vi="Chi tiết ngân sách sẽ xuất hiện ở đây..." data-lang-ja="予算の詳細がここに表示されます..." data-lang-zhcn="预算细节将显示在此处..."
+                                 >Budget details will appear here...</p>
+                                 <!-- Low, Mid, High Columns will be generated here by JS -->
+                             </div>
+                             <!-- Note about budget estimates -->
+                             <small style="display: block; margin-top: 1rem; font-size: 0.85em; text-align: center;"
+                                data-lang-en="Note: Budgets are conceptual estimates and vary widely based on specifics like location, crew size, equipment, talent, etc." data-lang-es="Nota: Los presupuestos son estimaciones conceptuales y varían ampliamente según detalles como ubicación, equipo, equipamiento, talento, etc." data-lang-vi="Lưu ý: Ngân sách là ước tính khái niệm và thay đổi rất nhiều dựa trên các chi tiết cụ thể như địa điểm, quy mô đoàn làm phim, thiết bị, tài năng, v.v." data-lang-ja="注：予算は概念的な見積もりであり、場所、スタッフの規模、機材、タレントなどの詳細によって大きく変動します。" data-lang-zhcn="注意：预算是概念性估算，并根据地点、团队规模、设备、人才等具体情况而有很大差异。"
+                                data-placeholder-key="budgetNotePlaceholder"
+                             >Note: Budgets are conceptual estimates and vary widely based on specifics like location, crew size, equipment, talent, etc.</small>
+                         </div>
+                     </div>
+                     <!-- == END BUDGET CARD STRUCTURE == -->
+
+                     <div id="result-visuals-card" class="result-card" style="display: none;">
+                         <h2>
+                             <span data-lang-en="Visual Demo (Key Images)" data-lang-es="Demo Visual (Imágenes Clave)" data-lang-vi="Minh họa Hình ảnh (Ảnh chính)" data-lang-ja="ビジュアルデモ（キーイメージ）" data-lang-zhcn="视觉演示（关键图像）"
+                             >Visual Demo (Key Images)</span>
+                         </h2>
+                         <div class="card-content placeholder-notice" id="result-visuals">
+                            <div class="image-placeholder-container placeholder-notice">
+                                <p data-placeholder-key="visualsPlaceholder" class="placeholder-notice"
+                                   data-lang-en="Key visual descriptions will appear here..." data-lang-es="Las descripciones visuales clave aparecerán aquí..." data-lang-vi="Mô tả hình ảnh chính sẽ xuất hiện ở đây..." data-lang-ja="主要なビジュアルの説明がここに表示されます..." data-lang-zhcn="关键视觉描述将显示在此处..."
+                                >Key visual descriptions will appear here...</p>
+                            </div>
+                             <small style="display: block; margin-top: 1rem; font-size: 0.85em;"
+                                data-lang-en="Illustrative images based on descriptions." data-lang-es="Imágenes ilustrativas basadas en descripciones." data-lang-vi="Hình ảnh minh họa dựa trên mô tả." data-lang-ja="説明に基づいた説明的な画像。" data-lang-zhcn="基于描述的说明性图片。"
+                                data-placeholder-key="visualsNotePlaceholder"
+                             >Illustrative images based on descriptions.</small>
+                         </div>
+                     </div>
+
+                     <div id="result-moodboard-card" class="result-card" style="display: none;">
+                         <h2>
+                             <span data-lang-en="Moodboard Influences" data-lang-es="Influencias del Moodboard" data-lang-vi="Ảnh hưởng Moodboard" data-lang-ja="ムードボードの影響" data-lang-zhcn="情绪板影响"
+                             >Moodboard Influences</span>
+                         </h2>
+                         <div class="card-content placeholder-notice" id="result-moodboard">
+                             <p data-placeholder-key="moodboardDescPlaceholder" id="moodboard-description" class="placeholder-notice"
+                                data-lang-en="Moodboard description will appear here..." data-lang-es="La descripción del moodboard aparecerá aquí..." data-lang-vi="Mô tả moodboard sẽ xuất hiện ở đây..." data-lang-ja="ムードボードの説明がここに表示されます..." data-lang-zhcn="情绪板描述将显示在此处..."
+                             >Moodboard description will appear here...</p>
+                             <div class="image-placeholder-container placeholder-notice" id="moodboard-images">
+                                <p data-placeholder-key="moodboardImgsPlaceholder" class="placeholder-notice"
+                                   data-lang-en="Moodboard influence images will appear here..." data-lang-es="Las imágenes de influencia del moodboard aparecerán aquí..." data-lang-vi="Hình ảnh ảnh hưởng moodboard sẽ xuất hiện ở đây..." data-lang-ja="ムードボードの影響画像がここに表示されます..." data-lang-zhcn="情绪板影响图片将显示在此处..."
+                                >Moodboard influence images will appear here...</p>
+                             </div>
+                              <small style="display: block; margin-top: 1rem; font-size: 0.85em;"
+                                data-lang-en="Visual styles and elements for inspiration." data-lang-es="Estilos visuales y elementos para inspiración." data-lang-vi="Phong cách và yếu tố hình ảnh để lấy cảm hứng." data-lang-ja="インスピレーションのための視覚的なスタイルと要素。" data-lang-zhcn="用于灵感的视觉风格和元素。"
+                                data-placeholder-key="moodboardNotePlaceholder"
+                              >Visual styles and elements for inspiration.</small>
+                         </div>
+                     </div>
+
+                     <div id="result-palette-card" class="result-card" style="display: none;">
+                         <h2>
+                             <span data-lang-en="Color Palette" data-lang-es="Paleta de Colores" data-lang-vi="Bảng màu" data-lang-ja="カラーパレット" data-lang-zhcn="调色板"
+                             >Color Palette</span>
+                         </h2>
+                         <div class="card-content placeholder-notice" id="result-palette">
+                             <div class="color-palette-display placeholder-notice">
+                                <p data-placeholder-key="palettePlaceholder" class="placeholder-notice"
+                                   data-lang-en="Color palette will appear here..." data-lang-es="La paleta de colores aparecerá aquí..." data-lang-vi="Bảng màu sẽ xuất hiện ở đây..." data-lang-ja="カラーパレットがここに表示されます..." data-lang-zhcn="调色板将显示在此处..."
+                                >Color palette will appear here...</p>
+                             </div>
+                         </div>
+                     </div>
+                 </div><!-- End #detailed-results-grid -->
+            </div> <!-- End #results-output-area -->
+
+            <!-- Back button for the feature page -->
+             <button class="btn btn-secondary btn-back" data-target="home" style="display: block; width: fit-content; margin: 3rem auto 0 auto;"
+                data-lang-en="Back to Home" data-lang-es="Volver al Inicio" data-lang-vi="Về Trang chủ" data-lang-ja="ホームに戻る" data-lang-zhcn="返回首页"
+             >Back to Home</button>
+
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2025 MVPot. All rights reserved.</p>
+            <!-- <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p> -->
+        </div>
+    </footer>
+
+
+    <!-- ========= START JAVASCRIPT ========= -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- DOM Element References ---
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pages = document.querySelectorAll('.page');
+        const exploreButton = document.getElementById('explore-button');
+        const backButtons = document.querySelectorAll('.btn-back');
+        const generateConceptButton = document.getElementById('generate-concept-button');
+        const resultsOutputArea = document.getElementById('results-output-area');
+        const conceptCard = document.getElementById('result-concept-card');
+        const detailedResultsGrid = document.getElementById('detailed-results-grid');
+        const exploreMoreButton = document.getElementById('explore-more-button');
+        const regenerateButton = document.getElementById('regenerate-button');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const errorMessageDiv = document.getElementById('error-message');
+        const recordAudioButton = document.getElementById('record-audio-button');
+        const recordStatus = document.getElementById('record-status');
+        const recordingAnimation = document.getElementById('recording-animation');
+        const recordStatusText = document.getElementById('record-status-text');
+        const lyricsInput = document.getElementById('lyrics-input');
+        const keywordsInput = document.getElementById('keywords-input');
+        const genreSelect = document.getElementById('genre-select');
+        const trackUploadInput = document.getElementById('track-upload');
+        const transcriptGroup = document.getElementById('transcript-group');
+        const transcriptOutput = document.getElementById('transcript-output');
+        const languageSelect = document.getElementById('language-select');
+        const allTranslatableElements = document.querySelectorAll('[data-lang-en], [data-lang-en-placeholder]');
+
+        // --- State Variables ---
+        let currentInputs = null; // Store form inputs for regeneration/exploration
+        let currentLang = 'en'; // Default language
+        let activePage = 'home'; // Track current page
+
+        // --- Audio Recording Variables ---
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+        let recordedAudioBlob = null;
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition;
+        let finalTranscript = '';
+        let isSpeechRecognitionSupported = !!SpeechRecognition;
+
+        // --- Mapping for Section Processing & Placeholders ---
+        const sections = { // Maps Header Title to Content Div ID
+            'Concept / Key Visual': 'result-concept',
+            'Requirements for MV': 'result-requirements',
+            'Estimated Budget': 'result-budget',
+            // Gemini prompt asks for 'Visual Demo (Key Image Descriptions)'
+            // Replicate function will process 'Visual Demo (Key Images)'
+            // Keep both possibilities here to handle potential AI response variation
+            'Visual Demo (Key Image Descriptions)': 'result-visuals',
+            'Visual Demo (Key Images)': 'result-visuals', // Added for Replicate section title
+            'Moodboard Influences': 'result-moodboard',
+            'Color Palette': 'result-palette'
+        };
+        const cardElements = { // Maps Header Title to Card Element
+            'Concept / Key Visual': conceptCard,
+            'Requirements for MV': document.getElementById('result-requirements-card'),
+            'Estimated Budget': document.getElementById('result-budget-card'),
+            'Visual Demo (Key Image Descriptions)': document.getElementById('result-visuals-card'), // Keep mapping consistent
+            'Visual Demo (Key Images)': document.getElementById('result-visuals-card'), // Map the new title too
+            'Moodboard Influences': document.getElementById('result-moodboard-card'),
+            'Color Palette': document.getElementById('result-palette-card')
+         };
+
+        // --- Page Navigation ---
+        function showPage(pageId) {
+            activePage = pageId;
+            pages.forEach(page => {
+                page.classList.toggle('active', page.id === `${pageId}-page`);
+            });
+            navLinks.forEach(link => {
+                 const linkPage = link.getAttribute('data-page');
+                 if (link.classList.contains('logo') || (link.parentElement && link.parentElement.tagName === 'LI')) {
+                     link.classList.toggle('active', linkPage === pageId);
+                 }
+            });
+            window.scrollTo(0, 0);
+             if (pageId !== 'feature') {
+                 resultsOutputArea.style.display = 'none';
+                 detailedResultsGrid.style.display = 'none';
+                 conceptCard.style.display = 'none';
+                 errorMessageDiv.style.display = 'none';
+                 clearResultsContent();
+             }
+            console.log(`Navigated to: ${pageId}`);
+        }
+
+        // --- Loading Overlay Control ---
+        function showLoading(messageKey = "generatingCreativeSparks", fallbackMessage = "Generating creative sparks...") {
+             if (!loadingOverlay) return;
+             const textElement = loadingOverlay.querySelector('p');
+             if (textElement) {
+                 const translatedMessage = getTranslatedText(textElement, messageKey, false, fallbackMessage);
+                 textElement.textContent = translatedMessage;
+                 textElement.dataset.lastKey = messageKey; // Store key for re-translation
+             }
+             loadingOverlay.classList.add('show');
+             // Disable buttons
+             if(generateConceptButton) generateConceptButton.disabled = true;
+             if(exploreMoreButton) exploreMoreButton.disabled = true;
+             if(regenerateButton) regenerateButton.disabled = true;
+             if(recordAudioButton) recordAudioButton.disabled = true;
+        }
+        function hideLoading() {
+            if (!loadingOverlay) return;
+            loadingOverlay.classList.remove('show');
+             // Re-enable buttons (consider states)
+             if(generateConceptButton) generateConceptButton.disabled = false;
+             if(exploreMoreButton) exploreMoreButton.disabled = !currentInputs;
+             if(regenerateButton) regenerateButton.disabled = !currentInputs;
+             if(recordAudioButton) {
+                  recordAudioButton.disabled = !(navigator.mediaDevices?.getUserMedia && isSpeechRecognitionSupported) || isRecording;
+             }
+        }
+
+        // --- Microphone Recording & Speech Recognition Logic ---
+         if (recordAudioButton) {
+            recordAudioButton.addEventListener('click', handleRecordButtonClick);
+            if (!navigator.mediaDevices?.getUserMedia) {
+                updateRecordStatus('Audio recording not supported.', 'error', true, 'statusAudioNotSupported');
+                recordAudioButton.disabled = true;
+            } else if (!isSpeechRecognitionSupported) {
+                updateRecordStatus('Speech recognition not supported.', 'error', true, 'statusSpeechRecNotSupported');
+                recordAudioButton.disabled = true;
+            }
+        }
+
+        async function handleRecordButtonClick() {
+             if (!navigator.mediaDevices?.getUserMedia) { updateRecordStatus('Recording not supported by browser.', 'error', true, 'statusAudioNotSupported'); return; }
+             if (!isSpeechRecognitionSupported) { updateRecordStatus('Speech recognition not supported.', 'error', true, 'statusSpeechRecNotSupported'); return; }
+
+            if (!isRecording) { // Start Recording
+                try {
+                    recordedAudioBlob = null; trackUploadInput.value = ''; transcriptOutput.value = '';
+                    finalTranscript = ''; transcriptGroup.style.display = 'none'; clearRecordStatus();
+                    updateRecordStatus('Requesting mic access...', '', false, 'statusRequestingMic');
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    updateRecordStatus('', 'recording', false); // UI updated below
+
+                    // MediaRecorder
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.ondataavailable = event => { if (event.data.size > 0) audioChunks.push(event.data); };
+                    mediaRecorder.onstop = () => {
+                        recordedAudioBlob = (audioChunks.length > 0) ? new Blob(audioChunks, { type: 'audio/webm;codecs=opus' }) : null;
+                        audioChunks = []; stream.getTracks().forEach(track => track.stop());
+                        updateRecordingUI(false);
+                        if (!recognition || !recognition.recognizing) { updateFinalRecordStatus(); }
+                    };
+                     mediaRecorder.onerror = (event) => {
+                        console.error("MediaRecorder error:", event.error);
+                        const errorMsg = getTranslatedText(null, 'statusRecordingError', false, `Recording error: ${event.error.name}`).replace('${errorName}', event.error.name);
+                        updateRecordStatus(errorMsg, 'error', true);
+                        if (recognition?.abort) { try { recognition.abort(); } catch(e){} }
+                        stream.getTracks().forEach(track => track.stop()); updateRecordingUI(false);
+                     };
+
+                    // Speech Recognition
+                    recognition = new SpeechRecognition();
+                    recognition.continuous = true; recognition.interimResults = true;
+                    const bcp47Map = { 'zh-CN': 'zh-CN', 'vi': 'vi-VN', 'ja': 'ja-JP', 'es': 'es-ES' };
+                    recognition.lang = bcp47Map[currentLang] || (currentLang.includes('-') ? currentLang : `${currentLang}-${currentLang.toUpperCase()}`);
+                    console.log("SpeechRecognition language set to:", recognition.lang);
+
+                    recognition.onresult = (event) => {
+                        let interimTranscript = ''; finalTranscript = '';
+                        for (let i = event.resultIndex; i < event.results.length; ++i) {
+                            if (event.results[i].isFinal) { finalTranscript += event.results[i][0].transcript + ' '; }
+                            else { interimTranscript += event.results[i][0].transcript; }
+                        }
+                        const currentFullTranscript = (finalTranscript + interimTranscript).trim();
+                        transcriptOutput.value = currentFullTranscript;
+                        if (currentFullTranscript) { transcriptGroup.style.display = 'block'; }
+                         updateRecordStatus(getTranslatedText(null, 'statusTranscribing', false, 'Transcribing...'), 'transcribing', false, 'statusTranscribing');
+                    };
+                    recognition.onerror = (event) => {
+                        console.error("Speech Recognition Error:", event.error, event.message);
+                        let errorMsgKey = 'transcriptionErrorGeneric', errorParam = event.error;
+                         if (event.error === 'no-speech') { errorMsgKey = 'transcriptionErrorNoSpeech'; errorParam = '';}
+                         else if (event.error === 'audio-capture') { errorMsgKey = 'transcriptionErrorMicProblem'; errorParam = ''; }
+                         else if (event.error === 'not-allowed') { errorMsgKey = 'transcriptionErrorPermission'; errorParam = '';}
+                         else if (event.error === 'network') { errorMsgKey = 'transcriptionErrorNetwork'; errorParam = '';}
+                         const translatedError = getTranslatedText(null, errorMsgKey, false, `Transcription error: ${errorParam}`);
+                         if (!recordStatus?.classList.contains('error')) { updateRecordStatus(translatedError, 'error', true, errorMsgKey); }
+                         if (mediaRecorder?.state === "recording" && event.error !== 'no-speech') { try { mediaRecorder.stop(); } catch(e){} }
+                    };
+                    recognition.onstart = () => { console.log("Speech recognition started."); updateRecordStatus(getTranslatedText(null, 'statusTranscribing', false, 'Transcribing...'), 'transcribing', false, 'statusTranscribing'); };
+                    recognition.onend = () => {
+                        console.log("Speech recognition ended."); finalTranscript = finalTranscript.trim();
+                        transcriptOutput.value = finalTranscript;
+                         if (!finalTranscript && transcriptGroup.style.display === 'block') { transcriptGroup.style.display = 'none'; }
+                         if (!isRecording) { updateFinalRecordStatus(); }
+                    };
+
+                    // Start
+                    audioChunks = []; mediaRecorder.start(); recognition.start(); updateRecordingUI(true);
+
+                } catch (err) {
+                    console.error("Error accessing microphone:", err);
+                     let errorMsgKey = 'micErrorGeneric';
+                     if (err.name === 'NotAllowedError') { errorMsgKey = 'micErrorPermission'; }
+                     else if (err.name === 'NotFoundError') { errorMsgKey = 'micErrorNotFound'; }
+                     else if (err.name === 'NotReadableError') { errorMsgKey = 'micErrorHardware'; }
+                     updateRecordStatus(getTranslatedText(null, errorMsgKey, false, 'Microphone access error.'), 'error', true, errorMsgKey);
+                    updateRecordingUI(false);
+                }
+            } else { // Stop Recording
+                 if (mediaRecorder?.state === "recording") {
+                    updateRecordStatus(getTranslatedText(null, 'statusStopping', false, 'Stopping...'), '', false, 'statusStopping');
+                    try { mediaRecorder.stop(); } catch(e){}
+                }
+                if (recognition?.stop) {
+                     try { recognition.stop(); }
+                     catch (e) { if (!isRecording) { updateFinalRecordStatus(); } }
+                } else if (!isRecording) { updateFinalRecordStatus(); }
+            }
+        }
+
+         function updateFinalRecordStatus() {
+             setTimeout(() => {
+                  if (recordStatus?.classList.contains('error')) return; // Don't overwrite error
+                  let finalStatusMsgKey = 'stoppedStatus', finalStatusClass = '', isPersistent = false;
+                  if (recordedAudioBlob && finalTranscript) { finalStatusMsgKey = 'recordTranscriptComplete'; finalStatusClass = 'complete'; isPersistent = true; }
+                  else if (recordedAudioBlob && !finalTranscript) { finalStatusMsgKey = 'recordCompleteNoTranscript'; finalStatusClass = 'complete'; isPersistent = true; }
+                  else if (!recordedAudioBlob && finalTranscript) { finalStatusMsgKey = 'transcriptCompleteNoRecord'; finalStatusClass = 'complete'; isPersistent = true; }
+                  updateRecordStatus(getTranslatedText(null, finalStatusMsgKey, false, 'Stopped.'), finalStatusClass, isPersistent, finalStatusMsgKey);
+             }, 100);
+         }
+
+        function updateRecordingUI(recording) {
+            if (!recordAudioButton) return; isRecording = recording;
+            const recordKey = 'record', stopKey = 'stop';
+            const buttonText = recording ? getTranslatedText(recordAudioButton, stopKey, false, 'Stop Recording') : getTranslatedText(recordAudioButton, recordKey, false, 'Record Audio');
+            recordAudioButton.textContent = buttonText; recordAudioButton.disabled = false;
+            if (recording) {
+                recordAudioButton.classList.remove('btn-warning'); recordAudioButton.classList.add('btn-danger');
+                if(recordingAnimation) recordingAnimation.style.display = 'inline-block';
+                 updateRecordStatus(getTranslatedText(null, 'statusRecording', false, 'Recording...'), 'recording', false, 'statusRecording');
+            } else {
+                recordAudioButton.classList.remove('btn-danger'); recordAudioButton.classList.add('btn-warning');
+                if(recordingAnimation) recordingAnimation.style.display = 'none';
+                recordAudioButton.disabled = !(navigator.mediaDevices?.getUserMedia && isSpeechRecognitionSupported);
+            }
+         }
+
+        function updateRecordStatus(message, statusClass = '', persistent = false, translationKey = '') {
+            if (!recordStatus || !recordStatusText || !recordingAnimation) return;
+             if (updateRecordStatus.timeoutId) { clearTimeout(updateRecordStatus.timeoutId); updateRecordStatus.timeoutId = null; }
+             const displayMessage = translationKey ? getTranslatedText(null, translationKey, false, message) : message;
+            recordStatusText.textContent = displayMessage;
+            recordStatus.className = 'record-status-base'; // Reset
+            recordStatus.dataset.statusKey = translationKey; recordStatus.dataset.statusFallback = message; // Store for re-translation
+            if (statusClass) recordStatus.classList.add(statusClass);
+            recordingAnimation.style.display = (statusClass === 'recording' || statusClass === 'transcribing') ? 'inline-block' : 'none';
+            if (!persistent && statusClass !== 'error' && displayMessage) {
+                updateRecordStatus.timeoutId = setTimeout(() => {
+                     if (recordStatusText.textContent === displayMessage && recordStatus.dataset.statusKey === translationKey) { clearRecordStatus(); }
+                }, 4000);
+            }
+         }
+         updateRecordStatus.timeoutId = null;
+
+         function clearRecordStatus() {
+            if (recordStatusText) recordStatusText.textContent = '';
+            if (recordStatus) { recordStatus.className = 'record-status-base'; delete recordStatus.dataset.statusKey; delete recordStatus.dataset.statusFallback; }
+            if (recordingAnimation) recordingAnimation.style.display = 'none';
+            if (updateRecordStatus.timeoutId) { clearTimeout(updateRecordStatus.timeoutId); updateRecordStatus.timeoutId = null; }
+         }
+
+        if(trackUploadInput) {
+             trackUploadInput.addEventListener('change', () => {
+                 if (trackUploadInput.files.length > 0) {
+                     if (isRecording) {
+                         if (mediaRecorder?.state === "recording") try { mediaRecorder.stop(); } catch(e){}
+                         if (recognition?.abort) try { recognition.abort(); } catch(e){}
+                         updateRecordingUI(false);
+                     }
+                     recordedAudioBlob = null; transcriptOutput.value = ''; finalTranscript = '';
+                     transcriptGroup.style.display = 'none';
+                     updateRecordStatus(getTranslatedText(null, 'statusFileSelected', false, 'File selected.'), 'complete', true, 'statusFileSelected');
+                     console.log("File selected, cleared recording state.");
+                 }
+             });
+        }
+
+        // --- Gemini API Call Helper ---
+        async function callGeminiAPI(promptText, loadingMessageKey = "generatingCreativeSparks", loadingFallback = "Generating...") {
+            // --- !!! EXTREME SECURITY WARNING: API KEY HARDCODED IN FRONTEND !!! ---
+            // This key is exposed to anyone viewing the page source code.
+            // This is **NOT** safe for production environments.
+            // For any real application, you MUST use a backend server or cloud function
+            // (like the one we created for Replicate) to proxy the API calls
+            // and keep your key secure.
+            // Consider creating an '/api/generate-concept' endpoint in server.js.
+            const GEMINI_API_KEY = "AIzaSyB5c-hp-QeKBpBTz8qwANe4j5Kc4dZ_bWM"; // <-- VERY INSECURE - MOVE TO BACKEND PROXY
+            // --- !!! END SECURITY WARNING !!! ---
+
+            if (!GEMINI_API_KEY || GEMINI_API_KEY.startsWith("YOUR_") || GEMINI_API_KEY.length < 30) {
+                 displayError(getTranslatedText(null, 'errorApiKeyInvalid', false, "API Key is missing or invalid. Configure it securely (backend recommended)."), 'errorApiKeyInvalid');
+                 return null;
+            }
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+            showLoading(loadingMessageKey, loadingFallback);
+
+            const requestBody = {
+                contents: [{ parts: [{ text: promptText }] }],
+                generationConfig: { temperature: 0.75, maxOutputTokens: 4096 },
+                safetySettings: [ /* Standard safety settings */
+                   { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+                   { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+                   { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+                   { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+                ]
+            };
+
+            try {
+                console.log("Sending API request to Gemini...");
+                // NOTE: This direct browser call might *also* fail due to CORS depending
+                // on Google's current policy for the Gemini API key usage.
+                // A backend proxy is the robust solution here too.
+                const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
+                const responseData = await response.json();
+                console.log("Raw API Response (Gemini):", responseData);
+
+                if (!response.ok) {
+                     const errorDetail = responseData?.error?.message || `HTTP Error: ${response.status}`;
+                     const httpErrorMsg = getTranslatedText(null, 'errorApiHttp', false, `API request failed: ${errorDetail}`).replace('${errorDetail}', errorDetail);
+                     // Check for CORS error specifically
+                     if (response.status === 0) { // Often indicates a CORS block
+                        throw new Error(getTranslatedText(null, 'errorCorsOrNetwork', false, 'Network or CORS error contacting Gemini API. Check console & consider backend proxy.'));
+                     }
+                     throw new Error(httpErrorMsg);
+                }
+                 const candidate = responseData?.candidates?.[0];
+                 if (!candidate || responseData?.promptFeedback?.blockReason || candidate.finishReason === "SAFETY") {
+                     const reason = candidate?.finishReason || responseData?.promptFeedback?.blockReason || "Unknown Safety Block";
+                     const blockMessage = getTranslatedText(null, 'errorApiBlocked', false, `Content blocked due to safety filters (Reason: ${reason}). Please revise your input.`)
+                                           .replace('${reason}', reason);
+                     throw new Error(blockMessage);
+                 }
+                 if (responseData?.error) {
+                     const apiErrorMsg = getTranslatedText(null, 'errorApiGeneral', false, `API returned an error: ${responseData.error.message}`).replace('${errorMessage}', responseData.error.message);
+                     throw new Error(apiErrorMsg);
+                 }
+
+                 const finishReason = candidate.finishReason;
+                 if (finishReason && !["STOP", "MAX_TOKENS"].includes(finishReason)) {
+                     console.warn(`Gemini generation finished abnormally. Reason: ${finishReason}`);
+                 }
+                 if (finishReason === "MAX_TOKENS") { console.warn("Gemini generation stopped due to maximum token limit."); }
+
+                 if (candidate?.content?.parts?.[0]?.text) {
+                     return candidate.content.parts[0].text.trim();
+                 } else {
+                     throw new Error(getTranslatedText(null, 'errorApiEmptyResponse', false, "Received an unexpected or empty text response from the AI."));
+                 }
+
+            } catch (error) {
+                console.error("Error during Gemini fetch or processing:", error);
+                // Determine Error Key from Message
+                 let errorKey = 'errorUnknown';
+                 const msg = String(error.message).toLowerCase();
+                 if (msg.includes("api key") || msg.includes("invalid")) errorKey = 'errorApiKeyInvalid';
+                 else if (msg.includes("http error")) errorKey = 'errorApiHttp';
+                 else if (msg.includes("blocked") || msg.includes("safety filter")) errorKey = 'errorApiBlocked';
+                 else if (msg.includes("api returned an error")) errorKey = 'errorApiGeneral';
+                 else if (msg.includes("no response candidate")) errorKey = 'errorApiNoCandidate';
+                 else if (msg.includes("empty text response")) errorKey = 'errorApiEmptyResponse';
+                 else if (msg.includes('failed to fetch') || msg.includes('networkerror') || msg.includes('cors')) errorKey = 'errorCorsOrNetwork';
+                 displayError(error.message, errorKey);
+                 return null;
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // --- Generate Initial Concept ---
+        async function handleGenerateConcept() {
+            const lyrics = lyricsInput.value.trim();
+            const keywords = keywordsInput.value.trim();
+            const selectedGenre = genreSelect.value;
+            const singingTranscript = transcriptOutput.value.trim();
+
+             // Validation
+             let validationError = false, errorMsg = '', errorKey = '', focusEl = null;
+             if (!lyrics) { errorMsg = getTranslatedText(lyricsInput, 'placeholder', true) || "Provide lyrics."; errorKey = 'validationLyricsMissing'; focusEl = lyricsInput; validationError = true; }
+             else if (!keywords) { errorMsg = getTranslatedText(keywordsInput, 'placeholder', true) || "Provide keywords."; errorKey = 'validationKeywordsMissing'; focusEl = keywordsInput; validationError = true; }
+             else if (!selectedGenre) { errorMsg = getTranslatedText(genreSelect.options[0]) || "Select genre."; errorKey = 'validationGenreMissing'; focusEl = genreSelect; validationError = true; }
+             if(validationError) { displayError(errorMsg, errorKey); focusEl?.focus(); return; }
+
+            currentInputs = { lyrics, keywords, selectedGenre, singingTranscript };
+            clearResultsAndErrors();
+
+            // Prompt for ONLY Concept
+             const prompt = `
+You are an AI assistant specialized in generating creative concepts for music videos.
+Analyze the following song details:
+**Lyrics:**\n\`\`\`\n${lyrics}\n\`\`\`${singingTranscript ? `\n**Singing Transcript (Optional Context):**\n\`\`\`\n${singingTranscript}\n\`\`\`\n` : ''}
+**Keywords/Theme:** ${keywords}\n**Music Genre:** ${selectedGenre}
+Generate **ONLY** the "Concept / Key Visual" section for a music video based on these details. Structure your response *exactly* like this, starting directly with the header and providing content below it in well-written English:
+## Concept / Key Visual
+(Provide a concise, compelling core concept description here. Mention 1-2 key visual motifs or scenes.)`;
+
+            const loadingMsgKey = "generatingConcept";
+            const loadingFallback = "Generating Concept...";
+            // !!! Consider changing this to call a backend proxy /api/generate-concept !!!
+            const generatedText = await callGeminiAPI(prompt, loadingMsgKey, loadingFallback);
+
+            if (generatedText) {
+                resultsOutputArea.style.display = 'block';
+                conceptCard.style.display = 'flex';
+                detailedResultsGrid.style.display = 'none';
+                const conceptContentDiv = document.getElementById('result-concept');
+                 if (conceptContentDiv) { conceptContentDiv.innerHTML = ''; conceptContentDiv.classList.remove('placeholder-notice'); }
+                parseAndDisplayResults(generatedText); // Populates concept card
+                conceptCard.style.transitionDelay = '0s'; conceptCard.classList.add('visible'); // Animate
+                 if(exploreMoreButton) exploreMoreButton.disabled = false;
+                 if(regenerateButton) regenerateButton.disabled = false;
+                 setTimeout(() => { resultsOutputArea.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+            }
+        }
+
+        // --- Explore More Details ---
+        async function handleExploreMore() {
+            if (!currentInputs) { displayError(getTranslatedText(null, 'errorExploreNoConcept', false, "Generate concept first."), 'errorExploreNoConcept'); return; }
+            if(exploreMoreButton) exploreMoreButton.disabled = true;
+            if(regenerateButton) regenerateButton.disabled = true;
+
+            // --- <<< UPDATED Prompt for Detailed Results (including budget format and image section name) >>> ---
+            const { lyrics, keywords, selectedGenre, singingTranscript } = currentInputs;
+            const prompt = `
+You are an AI assistant specialized in generating creative concepts for music videos.
+Based on the original song details:
+**Lyrics:**\n\`\`\`\n${lyrics}\n\`\`\`${singingTranscript ? `\n**Singing Transcript (Optional Context):**\n\`\`\`\n${singingTranscript}\n\`\`\`\n` : ''}
+**Keywords/Theme:** ${keywords}\n**Music Genre:** ${selectedGenre}
+Provide the **remaining detailed sections** (excluding 'Concept / Key Visual'). Structure *exactly* like this in English:
+
+## Requirements for MV
+(* or - list item: Detail about location, casting, props, wardrobe, cinematography, VFX, editing style, etc.)
+
+## Estimated Budget
+(**Low Budget:** ~$Range (Optional). Description of approach.
+- Example Item - $Cost (Optional, list a few key cost drivers if applicable)
+
+**Mid Budget:** ~$Range (Optional). Description of approach, potentially scaling up elements from Low.
+- Example Item - $Cost
+
+**High Budget:** ~$Range (Optional). Description of approach, allowing for higher production value.
+- Example Item - $Cost
+)
+
+## Visual Demo (Key Images)
+(1. Vivid description of a key scene or visual moment suitable for image generation.
+2. Another vivid description for image generation.
+3. A third vivid description for image generation.)
+
+## Moodboard Influences
+(A short sentence describing the overall mood and visual style.
+* Specific visual element or reference suitable for image generation (e.g., Film noir lighting, rainy cityscape).
+* Another specific element for image generation (e.g., Wes Anderson symmetrical composition, pastel diner).
+* Style reference for image generation (e.g., Surrealist painting style, dreamlike forest).
+* Color influence (e.g., Muted pastels).
+* Textural element (e.g., Grainy film stock).
+)
+
+## Color Palette
+(Strictly format: Color Name (#XXXXXX), Another Color (#XXXXXX), ...)
+
+Adhere strictly to the format: Use the exact headers (##), use bullet points (* or -) for Requirements and Moodboard lists, use numbering (1., 2., 3.) for Visual Demo, use the bold format **Level Budget:** for budget tiers, and the exact comma-separated Name (#XXXXXX) format for colors. Provide detailed, relevant content for each section based on the song inputs. Use plausible USD ($) ranges for budget tiers (e.g., ~$1k-5k, ~$10k-30k, ~$50k+). Ensure Visual Demo and Moodboard list items are descriptive image prompts.`;
+
+            const loadingMsgKey = "fetchingDetails";
+            const loadingFallback = "Fetching More Details...";
+             // !!! Consider changing this to call a backend proxy /api/generate-concept !!!
+            const generatedText = await callGeminiAPI(prompt, loadingMsgKey, loadingFallback);
+
+            if (generatedText) {
+                 clearDetailedResultsContentOnly(); // Clear placeholders
+                 parseAndDisplayResults(generatedText); // Populate detail cards
+                 detailedResultsGrid.style.display = 'grid'; // Show the grid
+
+                 // Animate cards in
+                 const detailCards = detailedResultsGrid.querySelectorAll('.result-card');
+                 detailCards.forEach((card, index) => {
+                     const contentDiv = card.querySelector('.card-content');
+                     const hasRealContent = contentDiv && !contentDiv.classList.contains('placeholder-notice') && contentDiv.innerHTML.trim() !== '' && !contentDiv.querySelector('.placeholder-notice');
+                     // Only apply animation delay if the card is meant to be shown and has real content
+                     if (card.style.display === 'flex' && hasRealContent) {
+                         card.style.transitionDelay = `${index * 0.1}s`;
+                         card.classList.add('visible');
+                     } else if (card.style.display === 'flex') { // Show immediately if only placeholder/error
+                         card.style.opacity = 1;
+                         card.style.transform = 'translateY(0)';
+                         card.classList.remove('visible'); // Ensure visible class isn't stuck if no animation
+                     }
+                 });
+                 // Scroll to new cards
+                  setTimeout(() => {
+                    const firstDetailCard = detailedResultsGrid.querySelector('.result-card[style*="display: flex"]');
+                    (firstDetailCard || detailedResultsGrid).scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }, 150);
+                 if (regenerateButton) regenerateButton.disabled = false; // Keep explore disabled, enable regenerate
+            } else {
+                 // Buttons re-enabled by hideLoading if API failed
+                 if (exploreMoreButton) exploreMoreButton.disabled = false; // Re-enable explore on failure
+                 if (regenerateButton) regenerateButton.disabled = currentInputs ? false : true;
+            }
+        }
+
+        // --- Re-Generate Concept ---
+        function handleRegenerateConcept() {
+            clearResultsAndErrors();
+            handleGenerateConcept(); // Restart the process
+        }
+
+        // --- Parsing and Displaying Results ---
+        function parseAndDisplayResults(text) {
+            console.log("Parsing AI response...");
+            const lines = text.split('\n');
+            let currentSectionKey = null; let contentBuffer = '';
+            let foundAnySection = false; const processedSections = new Set();
+
+            // Hide all detail cards initially (except concept if it's already shown)
+             Object.values(cardElements).forEach(card => { if (card !== conceptCard) card.style.display = 'none'; });
+
+            lines.forEach(line => {
+                let matchedHeader = false;
+                for (const title in sections) {
+                    // Make regex more robust to handle slight variations in spacing or markdown emphasis
+                    // Escape regex special chars, handle optional bolding/italics around title
+                    const escapedTitle = title.trim().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                    const headerRegex = new RegExp(`^\\s*##\\s*\\*?\\*?${escapedTitle}\\*?\\*?\\s*$`, 'i');
+                    if (headerRegex.test(line.trim())) {
+                        if (currentSectionKey && contentBuffer.trim()) {
+                            const targetElementId = sections[currentSectionKey]; const targetCard = cardElements[currentSectionKey];
+                            if (targetElementId && targetCard) {
+                                try { processSectionContent(targetElementId, currentSectionKey, contentBuffer.trim()); processedSections.add(currentSectionKey); foundAnySection = true; }
+                                catch (processError) { handleProcessingError(targetElementId, targetCard, currentSectionKey, processError); processedSections.add(currentSectionKey); }
+                            }
+                        }
+                        currentSectionKey = title; contentBuffer = ''; matchedHeader = true; console.log(`--- Found Header: ${currentSectionKey} ---`); break;
+                    }
+                }
+                if (!matchedHeader && currentSectionKey) { contentBuffer += line + '\n'; }
+            });
+
+            // Process last section
+            if (currentSectionKey && contentBuffer.trim()) {
+                 const targetElementId = sections[currentSectionKey]; const targetCard = cardElements[currentSectionKey];
+                 if (targetElementId && targetCard) {
+                     try { processSectionContent(targetElementId, currentSectionKey, contentBuffer.trim()); processedSections.add(currentSectionKey); foundAnySection = true; }
+                     catch (processError) { handleProcessingError(targetElementId, targetCard, currentSectionKey, processError); processedSections.add(currentSectionKey); }
+                 }
+            }
+
+             // Check for missing sections if details were requested
+             const detailsRequested = detailedResultsGrid.style.display === 'grid' || // If grid is already shown
+                                       (exploreMoreButton && exploreMoreButton.disabled && !regenerateButton?.disabled); // Or if explore was just clicked
+
+            if (detailsRequested) {
+                 Object.keys(sections).forEach(sectionTitle => {
+                    // Skip concept check, also skip checking alternate visual title if the primary one was processed
+                    if (sectionTitle === 'Concept / Key Visual') return;
+                    if (sectionTitle === 'Visual Demo (Key Image Descriptions)' && processedSections.has('Visual Demo (Key Images)')) return;
+                    if (sectionTitle === 'Visual Demo (Key Images)' && processedSections.has('Visual Demo (Key Image Descriptions)')) return;
+
+                    if (!processedSections.has(sectionTitle)) {
+                         const targetElementId = sections[sectionTitle]; const targetCard = cardElements[sectionTitle];
+                         const contentDiv = document.getElementById(targetElementId);
+                         if (targetCard && contentDiv) {
+                             console.warn(`Section "${sectionTitle}" not found in response. Displaying placeholder.`);
+                             setPlaceholderForMissingSection(contentDiv, sectionTitle);
+                             targetCard.style.display = 'flex'; // Show card with placeholder
+                         }
+                     }
+                 });
+            }
+
+            if (!foundAnySection && text.trim()) {
+                 // Avoid showing parse error if only concept was requested and received successfully
+                 const onlyConceptRequested = exploreMoreButton && !exploreMoreButton.disabled;
+                 const conceptWasProcessed = processedSections.has('Concept / Key Visual');
+
+                 if (!(onlyConceptRequested && conceptWasProcessed)) {
+                    displayError(getTranslatedText(null, 'errorParsingFailed', false, "Could not parse expected sections. Check AI response format. Raw output logged."), 'errorParsingFailed');
+                    console.warn("Raw AI Response Text (Parsing Failed):\n", text);
+                 } else {
+                    console.log("Concept processed, other sections not requested yet or not found in initial response.");
+                 }
+            } else if (foundAnySection) {
+                 console.log("Parsing complete."); errorMessageDiv.style.display = 'none';
+            } else {
+                 console.log("No sections found or text empty.");
+                 displayError(getTranslatedText(null, 'errorApiEmptyResponse', false, "Received empty response."), 'errorApiEmptyResponse');
+                 resultsOutputArea.style.display = 'none';
+            }
+        }
+
+        // Helper for handling errors during section processing
+        function handleProcessingError(targetElementId, targetCard, sectionKey, error) {
+             console.error(`Error processing section "${sectionKey}":`, error);
+              const contentDiv = document.getElementById(targetElementId);
+             if (contentDiv) {
+                  contentDiv.innerHTML = `<p class="placeholder-notice error">${getTranslatedText(null, 'errorDisplayingSection', false, 'Error displaying section.')}</p>`;
+                  contentDiv.classList.add('placeholder-notice');
+                  if (targetCard) targetCard.style.display = 'flex';
+             }
+        }
+
+        // --- Process Individual Section Content ---
+        function processSectionContent(elementId, sectionTitle, content) {
+            const contentDiv = document.getElementById(elementId);
+            if (!contentDiv) { console.error(`Content div not found: ${elementId}`); return; }
+             contentDiv.innerHTML = ''; contentDiv.classList.remove('placeholder-notice');
+             const parentCard = contentDiv.closest('.result-card');
+             if (!parentCard) { console.error(`Parent card not found for ${elementId}`); return; }
+             let sectionHasContent = false;
+
+            try {
+                console.log(`Processing Section: ${sectionTitle} into #${elementId}`);
+                // Handle both possible visual demo section titles
+                if (sectionTitle === 'Visual Demo (Key Image Descriptions)' || sectionTitle === 'Visual Demo (Key Images)') {
+                     const container = document.createElement('div'); container.className = 'image-placeholder-container'; contentDiv.appendChild(container);
+                     // Regex tries to capture numbered list items more reliably
+                     const descs = content.split(/^\s*[1-9][0-9]*[\.\)\-]\s+/gm).filter(Boolean).map(d => d.trim().replace(/\n$/, ''));
+                     if (descs.length > 0) {
+                        descs.slice(0, 3).forEach((d, i) => { if(d) { createImagePlaceholder(container, d, `v-${i}`); sectionHasContent = true; } }); // Call BACKEND version
+                    }
+                     if (!sectionHasContent) { container.innerHTML = `<p class="placeholder-notice">${getTranslatedText(null, 'noVisualsFound', false, 'No visuals found.')}</p>`; container.classList.add('placeholder-notice'); }
+                     // Add note below container
+                     const note = document.createElement('small'); note.style.cssText = "display: block; margin-top: 1rem; font-size: 0.85em;";
+                     note.dataset.langEn = "Illustrative images based on descriptions."; note.dataset.placeholderKey="visualsNotePlaceholder"; note.textContent = getTranslatedText(note, '', false, note.dataset.langEn); contentDiv.appendChild(note);
+
+                } else if (sectionTitle === 'Moodboard Influences') {
+                     const descEl = document.createElement('p'); descEl.id = 'moodboard-description'; contentDiv.appendChild(descEl);
+                     const imgContainer = document.createElement('div'); imgContainer.className = 'image-placeholder-container'; imgContainer.id = 'moodboard-images'; contentDiv.appendChild(imgContainer);
+                     const lines = content.trim().split('\n'); let mainDesc = '', items = []; let readingDesc = true;
+                     for (const line of lines) { const trimmed = line.trim(); if (trimmed.match(/^[\*\-]\s+/)) { readingDesc = false; items.push(trimmed.replace(/^[\*\-]\s+/, '').trim()); } else if (readingDesc && trimmed) { mainDesc += line + '\n'; } else if (!readingDesc && trimmed && items.length > 0) { items[items.length - 1] += '\n' + trimmed; } }
+                     mainDesc = mainDesc.trim(); items = items.filter(Boolean);
+                     if (mainDesc) { descEl.innerHTML = mainDesc.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>'); descEl.style.display = 'block'; descEl.classList.remove('placeholder-notice'); sectionHasContent = true; }
+                     else { descEl.innerHTML = getTranslatedText(null, 'moodboardDescPlaceholder', false, 'Desc...'); descEl.style.display = 'block'; descEl.classList.add('placeholder-notice'); descEl.dataset.placeholderKey="moodboardDescPlaceholder"; }
+                     if (items.length > 0) { imgContainer.innerHTML = ''; imgContainer.classList.remove('placeholder-notice'); items.slice(0, 5).forEach((d, i) => { if(d) { createImagePlaceholder(imgContainer, d, `m-${i}`); sectionHasContent = true; } }); } // Call BACKEND version
+                     else { imgContainer.innerHTML = `<p class="placeholder-notice" data-placeholder-key="moodboardImgsPlaceholder">${getTranslatedText(null, 'noMoodboardItemsFound', false, 'No items...')}</p>`; imgContainer.classList.add('placeholder-notice'); }
+
+                     if (sectionHasContent) {
+                         const note = document.createElement('small'); note.style.cssText = "display: block; margin-top: 1rem; font-size: 0.85em;";
+                         note.dataset.langEn = "Visual styles for inspiration."; note.dataset.placeholderKey="moodboardNotePlaceholder"; note.textContent = getTranslatedText(note, '', false, note.dataset.langEn); contentDiv.appendChild(note);
+                     } else {
+                        // Only show placeholders if BOTH description and items are missing
+                        if (!mainDesc && items.length === 0) {
+                            contentDiv.innerHTML = `<p class="placeholder-notice" data-placeholder-key="moodboardDescPlaceholder">${getTranslatedText(null, 'moodboardDescPlaceholder', false, 'Description missing.')}</p><div class="image-placeholder-container placeholder-notice"><p data-placeholder-key="moodboardImgsPlaceholder">${getTranslatedText(null, 'moodboardImgsPlaceholder', false, 'Images missing.')}</p></div>`; contentDiv.classList.add('placeholder-notice');
+                        } else {
+                             // If one part exists, keep it and add the note
+                             const note = document.createElement('small'); note.style.cssText = "display: block; margin-top: 1rem; font-size: 0.85em;";
+                             note.dataset.langEn = "Visual styles for inspiration."; note.dataset.placeholderKey="moodboardNotePlaceholder"; note.textContent = getTranslatedText(note, '', false, note.dataset.langEn); contentDiv.appendChild(note);
+                        }
+                     }
+
+                // --- <<< START: Budget Section Processing (Using robust Regex) >>> ---
+                } else if (sectionTitle === 'Estimated Budget') {
+                     let container = contentDiv.querySelector('.budget-columns-container');
+                     if (!container) {
+                         container = document.createElement('div'); container.className = 'budget-columns-container'; contentDiv.appendChild(container);
+                     } else { container.innerHTML = ''; } // Clear previous content if reusing
+                     container.classList.remove('placeholder-notice'); // Assume content unless proven otherwise
+
+                     // Regex to find **Level Budget:** and capture content until the next level or end of string
+                     const budgetRegex = /\*\*(Low\s*Budget|Mid\s*Budget|High\s*Budget)\*\*\s*:?\s*([\s\S]*?)(?=\n?\s*\*\*(?:Low|Mid|High)\s*Budget\*\*|$)/gi;
+                     const budgetLevels = {}; let match; let parsingSuccess = false;
+
+                     while ((match = budgetRegex.exec(content)) !== null) {
+                         parsingSuccess = true;
+                         const levelTitle = match[1].replace(/\s+/g, ' ').trim(); // Normalize spacing
+                         const levelKey = levelTitle.split(' ')[0]; // "Low", "Mid", "High"
+                         let rawContent = match[2].trim();
+                         let range = ''; let description = '';
+
+                         // Try to extract range like ~$Xk-Yk or ~$Zk+ or $W
+                         const rangePatterns = [
+                            /[~\$€£]?\s*[\d,.]+\s*[kKmM]?\b\s*[-–—]\s*[~\$€£]?\s*[\d,.]+\s*[kKmM]?\b(?:\s*USD|EUR|GBP)?/i, // Range X-Y
+                            /[~\$€£]?\s*[\d,.]+\s*[kKmM]?\b\s*\+(?:\s*USD|EUR|GBP)?/i, // Minimum Z+
+                            /[~\$€£]?\s*[\d,.]+\s*[kKmM]?\b(?:\s*USD|EUR|GBP)?/i // Single value W
+                         ];
+                         // Match the pattern ONLY at the beginning of the rawContent, possibly wrapped in ()
+                         for (const pattern of rangePatterns) {
+                              const rangeMatch = rawContent.match(new RegExp(`^\\s*\\(?(${pattern.source})\\)?\\s*`, 'i'));
+                              if (rangeMatch) {
+                                  range = rangeMatch[1].trim(); // Capture the range part
+                                  description = rawContent.substring(rangeMatch[0].length).trim(); // The rest is description
+                                  break;
+                              }
+                         }
+                         if (!range) { description = rawContent; } // If no range matched, assume all is description
+
+                         budgetLevels[levelKey] = { title: levelTitle, range: range, description: description };
+                         console.log(`Parsed Budget Level: ${levelKey}, Range: ${range || 'N/A'}, Desc Start: ${description.substring(0,50)}...`);
+                     }
+
+                     const order = ["Low", "Mid", "High"]; let anyColumnHasContent = false;
+
+                     order.forEach(levelKey => {
+                         const colDiv = document.createElement('div'); colDiv.className = 'budget-column';
+                         const titleH3 = document.createElement('h3'); const descP = document.createElement('p');
+
+                         if (budgetLevels[levelKey]) {
+                             const data = budgetLevels[levelKey];
+                             titleH3.textContent = data.title + (data.range ? ` (${data.range})` : ''); // Add range to title
+
+                             let processedDesc = data.description;
+                             // Regex for items like "- Item Name - $Cost" or "* Item - Cost range"
+                             const itemCostRegex = /^\s*[-*]\s*(.+?)\s*[-–—:]\s*([\$\€\£]?\s*[\d,.]+\s*[kKmM]?\b(?:\s*[-–—]\s*[\$\€\£]?\s*[\d,.]+\s*[kKmM]?\b)?(?:\s*USD|\s*EUR|\s*GBP)?)\s*$/gm;
+                             let itemBoxesHTML = '';
+                             // Replace list items with boxes and remove them from the main description
+                             processedDesc = processedDesc.replace(itemCostRegex, (matchStr, item, cost) => {
+                                 itemBoxesHTML += `<div class="budget-item-box">${item.trim()}: <strong>${cost.trim()}</strong></div>`;
+                                 return ''; // Remove the line from the description
+                             }).trim();
+
+                             // Basic formatting for the remaining description text
+                             processedDesc = processedDesc.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                             processedDesc = processedDesc.replace(/\n/g, '<br>'); // Keep line breaks
+                             descP.innerHTML = processedDesc + itemBoxesHTML; // Append item boxes after desc
+
+                             if(descP.innerHTML.trim() === ''){
+                                descP.innerHTML = `(${getTranslatedText(null, 'budgetDetailsMissing', false, 'Details missing')})`;
+                                descP.classList.add('placeholder-notice');
+                             } else {
+                                anyColumnHasContent = true; // Mark if we have actual content
+                             }
+
+                         } else { // Level not found by Regex
+                             titleH3.textContent = getTranslatedText(null, `budget${levelKey}Title`, false, `${levelKey} Budget`);
+                             descP.textContent = `(${getTranslatedText(null, 'budgetDetailsMissing', false, `Details missing.`)})`;
+                             descP.classList.add('placeholder-notice');
+                             colDiv.classList.add('placeholder-notice'); // Style the column as placeholder
+                         }
+                         colDiv.appendChild(titleH3); colDiv.appendChild(descP); container.appendChild(colDiv);
+                     });
+
+                      // Fallback: If Regex found nothing but there *was* text content from AI
+                      if (!parsingSuccess && content.trim()) {
+                         container.innerHTML = `<pre>${content}</pre>`; // Show raw text in pre tag
+                         container.classList.add('raw-budget-output'); // Add class for styling pre
+                         container.classList.add('placeholder-notice'); // Style container holding pre
+                         console.warn("Budget parsing failed, displaying raw content.");
+                      } else if (!anyColumnHasContent && !parsingSuccess) { // No sections found AND content was empty/irrelevant
+                         container.innerHTML = `<p class="placeholder-notice">${getTranslatedText(null, 'noBudgetContentFound', false, 'No budget details provided.')}</p>`;
+                         container.classList.add('placeholder-notice');
+                      } else {
+                          sectionHasContent = true; // Mark section as having content if parsing was successful or columns were generated
+                      }
+
+                      // Ensure the budget note is present
+                      let note = contentDiv.querySelector('small');
+                      if (!note) {
+                          note = document.createElement('small');
+                          note.dataset.langEn = "Note: Budgets are conceptual estimates..."; note.dataset.placeholderKey="budgetNotePlaceholder";
+                          contentDiv.appendChild(note);
+                      }
+                      note.style.cssText = "display: block; margin-top: 1rem; font-size: 0.85em; text-align: center;";
+                      note.textContent = getTranslatedText(note, '', false, note.dataset.langEn);
+                // --- <<< END: Budget Section Processing >>> ---
+
+                } else if (sectionTitle === 'Requirements for MV') {
+                    const listEl = document.createElement('ul'); contentDiv.appendChild(listEl);
+                    const items = content.trim().split(/^\s*[\*\-]\s+/gm).filter(Boolean).map(item => item.trim().replace(/\n$/, ''));
+                    if (items.length > 0) { items.forEach(item => { const li = document.createElement('li'); li.innerHTML = item.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>'); listEl.appendChild(li); }); sectionHasContent = true; }
+                    else { listEl.innerHTML = `<li class="placeholder-notice" data-placeholder-key="requirementsPlaceholder">${getTranslatedText(null, 'noRequirementsFound', false, 'No requirements listed.')}.</li>`; listEl.classList.add('placeholder-notice'); }
+
+                } else if (sectionTitle === 'Color Palette') {
+                     const container = document.createElement('div'); container.className = 'color-palette-display'; contentDiv.appendChild(container);
+                     sectionHasContent = createColorSwatches(container, content.trim());
+                     if (!sectionHasContent) { container.innerHTML = `<p class="placeholder-notice" data-placeholder-key="palettePlaceholder">${getTranslatedText(null, 'noColorsFound', false, 'Could not parse colors.')}</p>`; container.classList.add('placeholder-notice'); }
+
+                } else { // Default (e.g., Concept)
+                     const pEl = document.createElement('p'); pEl.style.whiteSpace = 'pre-wrap';
+                     const processedContent = content.trim().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+                     pEl.innerHTML = processedContent; contentDiv.appendChild(pEl);
+                     if (processedContent) sectionHasContent = true;
+                }
+
+                 if (!sectionHasContent && contentDiv.innerHTML.trim() === '') {
+                    // Add a generic placeholder if processing resulted in nothing
+                    contentDiv.innerHTML = `<p class="placeholder-notice">${getTranslatedText(null, 'placeholderGeneric', false, 'Content not available.')}</p>`;
+                    contentDiv.classList.add('placeholder-notice');
+                 }
+                 parentCard.style.display = 'flex'; // Show card after processing
+
+            } catch (error) {
+                handleProcessingError(elementId, parentCard, sectionTitle, error);
+            }
+        }
+
+         // --- Helper to set placeholders in cards for sections MISSING from AI response ---
+         function setPlaceholderForMissingSection(contentDiv, sectionTitle) {
+             if (!contentDiv) return;
+             contentDiv.innerHTML = ''; // Clear existing content
+             contentDiv.classList.add('placeholder-notice'); // Mark as placeholder container
+             let placeholderKey = 'placeholderGeneric', fallbackText = 'Content missing.', placeholderHTML = '';
+
+             switch (sectionTitle) {
+                 case 'Requirements for MV':
+                     placeholderKey = 'requirementsPlaceholder'; fallbackText = 'Requirements list...';
+                     placeholderHTML = `<ul class="placeholder-notice"><li class="placeholder-notice" data-placeholder-key="${placeholderKey}">${getTranslatedText(null, placeholderKey, false, fallbackText)}</li></ul>`;
+                     break;
+                 case 'Estimated Budget':
+                     placeholderKey = 'budgetPlaceholder'; fallbackText = 'Budget details...';
+                     const noteText = getTranslatedText(null, 'budgetNotePlaceholder', false, 'Note: Budgets are conceptual estimates...');
+                     placeholderHTML = `<div class="budget-columns-container">`;
+                     ["Low", "Mid", "High"].forEach(levelKey => {
+                        placeholderHTML += `<div class="budget-column placeholder-notice">
+                                                <h3>${getTranslatedText(null, `budget${levelKey}Title`, false, `${levelKey} Budget`)}</h3>
+                                                <p class="placeholder-notice" data-placeholder-key="budgetDetailsMissing">(${getTranslatedText(null, 'budgetDetailsMissing', false, `Details missing.`)})</p>
+                                            </div>`;
+                     });
+                     placeholderHTML += `</div><small data-placeholder-key="budgetNotePlaceholder" style="display: block; margin-top: 1rem; font-size: 0.85em; text-align: center;">${noteText}</small>`;
+                     break;
+                 case 'Visual Demo (Key Image Descriptions)': // Fallthrough
+                 case 'Visual Demo (Key Images)':
+                     placeholderKey = 'visualsPlaceholder'; fallbackText = 'Visual descriptions...'; const visualsNote = getTranslatedText(null, 'visualsNotePlaceholder', false,'Illustrative images...');
+                     placeholderHTML = `<div class="image-placeholder-container placeholder-notice"><p data-placeholder-key="${placeholderKey}">${getTranslatedText(null, placeholderKey, false, fallbackText)}</p></div><small data-placeholder-key="visualsNotePlaceholder">${visualsNote}</small>`;
+                     break;
+                 case 'Moodboard Influences':
+                     const moodDesc = getTranslatedText(null, 'moodboardDescPlaceholder', false, 'Moodboard description...'); const moodImgs = getTranslatedText(null, 'moodboardImgsPlaceholder', false, 'Moodboard images...'); const moodNote = getTranslatedText(null, 'moodboardNotePlaceholder', false,'Visual styles...');
+                     placeholderHTML = `<p data-placeholder-key="moodboardDescPlaceholder" id="moodboard-description" class="placeholder-notice">${moodDesc}</p><div class="image-placeholder-container placeholder-notice" id="moodboard-images"><p data-placeholder-key="moodboardImgsPlaceholder">${moodImgs}</p></div><small data-placeholder-key="moodboardNotePlaceholder">${moodNote}</small>`;
+                     break;
+                 case 'Color Palette':
+                     placeholderKey = 'palettePlaceholder'; fallbackText = 'Color palette...';
+                     placeholderHTML = `<div class="color-palette-display placeholder-notice"><p data-placeholder-key="${placeholderKey}">${getTranslatedText(null, placeholderKey, false, fallbackText)}</p></div>`;
+                     break;
+                 case 'Concept / Key Visual':
+                      placeholderKey = 'conceptPlaceholder'; fallbackText = 'Concept will appear here...';
+                      placeholderHTML = `<p data-placeholder-key="${placeholderKey}" class="placeholder-notice">${getTranslatedText(null, placeholderKey, false, fallbackText)}</p>`;
+                      break;
+                 default:
+                      placeholderHTML = `<p class="placeholder-notice" data-placeholder-key="${placeholderKey}">${getTranslatedText(null, placeholderKey, false, fallbackText)}</p>`;
+             }
+             contentDiv.innerHTML = placeholderHTML;
+         }
+
+
+        // --- Image Generation Function (Using Backend Proxy) ---
+        async function createImagePlaceholder(container, description, seedSuffix) {
+             const figure = document.createElement('figure'); figure.className = 'image-placeholder';
+             const img = document.createElement('img'); img.alt = `Loading image for: ${description.substring(0,50)}...`; img.src = ''; img.loading = 'lazy';
+             let phHeight = (container?.id === 'moodboard-images') ? 130 : 160;
+             img.style.cssText = `height: ${phHeight}px; width: 100%; object-fit: cover; background-color: #444; border-bottom: 1px solid var(--border-color);`;
+             const figcaption = document.createElement('figcaption');
+             figcaption.innerHTML = description.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+             figure.appendChild(img); figure.appendChild(figcaption); container.appendChild(figure);
+
+             // --- Backend Proxy API Call Logic ---
+             const prompt = description.replace(/<[^>]*>/g, '').replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+             if (!prompt) {
+                 console.warn("Empty prompt after cleaning description.");
+                 setFallbackImage(img, figcaption, description, seedSuffix, 'empty-prompt', phHeight);
+                 return;
+             }
+
+             // --- Call your backend endpoint ---
+             const BACKEND_API_URL = '/api/generate-image'; // Relative URL to your server endpoint
+
+             try {
+                 console.log(`Requesting image via backend proxy: "${prompt.substring(0, 50)}..."`);
+                 // Add slight delay if needed, though less critical with backend proxy
+                 await new Promise(resolve => setTimeout(resolve, 50));
+
+                 const response = await fetch(BACKEND_API_URL, {
+                     method: 'POST',
+                     headers: {
+                         // No Authorization header needed here! Backend handles it.
+                         'Content-Type': 'application/json'
+                     },
+                     body: JSON.stringify({ description: prompt }) // Send description in body
+                 });
+
+                 const responseData = await response.json();
+                 console.log("Backend Proxy Response Data:", responseData);
+
+                 if (!response.ok) {
+                     // Error came from *your* backend or its interaction with Replicate
+                     const errorDetail = responseData?.error || `Backend Error: ${response.status}`;
+                     console.error("Backend proxy error:", errorDetail);
+                     // Display the error message from your backend
+                     displayError(`${getTranslatedText(null, 'errorBackendProxy', false, 'Image Gen Error:')} ${errorDetail}`, 'errorBackendProxy');
+                     setFallbackImage(img, figcaption, description, seedSuffix, `backend-err-${response.status}`, phHeight);
+                     return;
+                 }
+
+                 // Check if the backend indicated success and returned a URL
+                 if (responseData.imageUrl && typeof responseData.imageUrl === 'string' && responseData.imageUrl.startsWith('http')) {
+                     const imageUrl = responseData.imageUrl;
+                     img.onload = () => { img.style.backgroundColor = 'transparent'; }
+                     img.onerror = () => {
+                          console.error("Failed to load image from Backend/Replicate URL:", imageUrl);
+                          setFallbackImage(img, figcaption, description, seedSuffix, 'backend-img-load-err', phHeight);
+                     }
+                     img.src = imageUrl;
+                     img.alt = prompt; // Use the prompt as alt text
+
+                     // Add Backend generation note (optional, you might not want to show this)
+                     //const sourceSpan = document.createElement('span');
+                     //sourceSpan.className = 'generation-source';
+                     //sourceSpan.textContent = getTranslatedText(null, 'generatedViaBackend', false, 'Gen. via Server'); // Changed note
+                     //figcaption.appendChild(sourceSpan);
+
+                 } else {
+                     // Backend succeeded but didn't return a valid URL (shouldn't happen with good backend logic)
+                     console.warn("Backend proxy did not return a valid image URL.", responseData);
+                     setFallbackImage(img, figcaption, description, seedSuffix, 'backend-invalid-url', phHeight);
+                 }
+
+             } catch (error) {
+                 console.error("Error fetching from Backend Proxy API:", error);
+                 // This is likely a network error talking to *your* backend
+                 let reason = 'backend-fetch-error';
+                 let userMessage = getTranslatedText(null, 'errorBackendFetch', false, 'Network error contacting our server for image generation.');
+                 if (error instanceof TypeError) { // Basic check for network-related errors
+                     reason = 'backend-network';
+                 }
+                 displayError(userMessage, reason);
+                 setFallbackImage(img, figcaption, description, seedSuffix, reason, phHeight);
+             }
+        }
+
+
+        function setFallbackImage(imgEl, figcaptionEl, desc, seed, reason, height) {
+             console.warn(`Setting fallback image. Reason: ${reason}`);
+             const seedEnc = encodeURIComponent(desc.substring(0, 15) + seed + '-' + reason);
+             const picSumH = Math.max(150, Math.round(height * 1.5)); // Request slightly larger picsum
+             const picSumW = Math.round(picSumH * 1.6); // Maintain aspect ratio
+             imgEl.onload = () => { imgEl.style.backgroundColor = 'transparent'; }
+             imgEl.onerror = () => { imgEl.style.backgroundColor = '#555'; imgEl.alt = `Fallback failed (Reason: ${reason})` }
+             imgEl.src = `https://picsum.photos/seed/${seedEnc}/${picSumW}/${picSumH}.webp`; // Use webp
+             imgEl.alt = `Placeholder: ${desc.substring(0, 50)}... (Reason: ${reason})`;
+
+             // Remove any existing source/fallback spans first
+             const existingSource = figcaptionEl.querySelector('.generation-source');
+             if(existingSource) existingSource.remove();
+             const existingFallback = figcaptionEl.querySelector('.fallback-notice');
+             if(existingFallback) existingFallback.remove();
+
+             // Add the new fallback notice
+             const notice = document.createElement('span'); notice.className = 'fallback-notice';
+             notice.textContent = `(${getTranslatedText(null, 'placeholderReason', false, 'Placeholder')}: ${reason})`;
+             figcaptionEl.appendChild(notice);
+        }
+
+        // --- Color Swatch Creation ---
+        function createColorSwatches(container, text) {
+             if (!container) return false; container.innerHTML = ''; container.classList.remove('placeholder-notice');
+             const colorRegex = /([\w\s\-\/()]+?)\s*\(?\s*(#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3})\s*\)?/gi;
+             let match; let foundColors = false; let swatchIndex = 0;
+             const potentialColors = text.split(/[,;\n]+/);
+             potentialColors.forEach(part => {
+                 colorRegex.lastIndex = 0;
+                 while ((match = colorRegex.exec(part)) !== null) {
+                     let name = match[1].trim().replace(/[():]/g, '').replace(/^-+|-+$/g, '').trim();
+                     let hex = match[2].trim().toUpperCase();
+                     if (!name || name.length < 2) continue;
+                     if (hex.length === 4) hex = '#' + hex[1].repeat(2) + hex[2].repeat(2) + hex[3].repeat(2);
+                     if (!/^#[0-9A-F]{6}$/.test(hex)) { console.warn(`Invalid hex: ${match[2]}`); continue; }
+                     foundColors = true;
+                     const swatch = document.createElement('div'); swatch.className = 'color-swatch';
+                     try {
+                         swatch.style.backgroundColor = hex;
+                         swatch.style.color = isColorDarkGuess(hex) ? 'var(--text-primary)' : 'var(--bg-dark)';
+                     } catch (e) { continue; }
+                     const nameSpan = document.createElement('span'); nameSpan.textContent = name;
+                     const hexSpan = document.createElement('span'); hexSpan.className = 'hex-code'; hexSpan.textContent = hex;
+                     swatch.appendChild(nameSpan); swatch.appendChild(hexSpan); container.appendChild(swatch);
+                     requestAnimationFrame(() => { setTimeout(() => { swatch.classList.add('visible'); }, 50 + swatchIndex * 70); });
+                     swatchIndex++;
+                 }
+             });
+             return foundColors;
+        }
+
+        // --- Color Lightness Guess ---
+        function isColorDarkGuess(hexColor) {
+            try {
+                if (!hexColor?.startsWith('#')) return false; let hex = hexColor.substring(1);
+                if (hex.length === 3) hex = hex[0].repeat(2) + hex[1].repeat(2) + hex[2].repeat(2);
+                if (hex.length !== 6) return false;
+                const r = parseInt(hex.substring(0, 2), 16), g = parseInt(hex.substring(2, 4), 16), b = parseInt(hex.substring(4, 6), 16);
+                return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 < 0.5;
+            } catch (e) { return false; }
+        }
+
+        // --- Utility Functions ---
+        function clearResultsContent() {
+             const contentAreas = resultsOutputArea.querySelectorAll('.card-content');
+             if (!contentAreas.length) return;
+             contentAreas.forEach(area => {
+                 const sectionId = area.id;
+                 const sectionTitle = Object.keys(sections).find(key => sections[key] === sectionId);
+                 if (sectionTitle) { setPlaceholderForMissingSection(area, sectionTitle); }
+                 else { // Fallback for unknown areas
+                     area.innerHTML = `<p class="placeholder-notice">${getTranslatedText(null, 'placeholderGeneric', false, 'Cleared.')}</p>`;
+                     area.classList.add('placeholder-notice');
+                 }
+             });
+             resultsOutputArea.querySelectorAll('.result-card.visible, .color-swatch.visible').forEach(el => el.classList.remove('visible'));
+             console.log("Cleared results content and added placeholders.");
+         }
+         function clearDetailedResultsContentOnly() {
+             if (!detailedResultsGrid) return;
+             detailedResultsGrid.querySelectorAll('.result-card').forEach(card => {
+                 const contentArea = card.querySelector('.card-content'); if (!contentArea) return;
+                 const sectionId = contentArea.id;
+                 const sectionTitle = Object.keys(sections).find(key => sections[key] === sectionId);
+                  if (sectionTitle) { setPlaceholderForMissingSection(contentArea, sectionTitle); }
+                  else { contentArea.innerHTML = `<p class="placeholder-notice">${getTranslatedText(null, 'placeholderGeneric', false, 'Cleared.')}</p>`; contentArea.classList.add('placeholder-notice'); }
+                  card.style.display = 'none'; card.classList.remove('visible');
+             });
+             console.log("Cleared detailed results content.");
+         }
+        function clearResultsAndErrors() {
+             resultsOutputArea.style.display = 'none'; conceptCard.style.display = 'none';
+             conceptCard.classList.remove('visible'); detailedResultsGrid.style.display = 'none';
+             errorMessageDiv.style.display = 'none'; errorMessageDiv.textContent = '';
+             errorMessageDiv.removeAttribute('data-error-key');
+             clearResultsContent();
+             if(exploreMoreButton) exploreMoreButton.disabled = true;
+             if(regenerateButton) regenerateButton.disabled = true;
+             console.log("Cleared results area and errors.");
+        }
+        function displayError(message, errorKey = 'errorUnknown') {
+             message = String(message || getTranslatedText(null, errorKey, false, 'Unknown error.'));
+             errorMessageDiv.textContent = message; errorMessageDiv.dataset.errorKey = errorKey;
+             errorMessageDiv.style.display = 'block'; hideLoading();
+             console.error("Displayed user error:", message, `(Key: ${errorKey})`);
+             // Avoid scrolling if it's just a note about fallback images
+             if (!errorKey.startsWith('repl-') && !errorKey.startsWith('no-repl-key') && !errorKey.startsWith('backend-')) {
+                 errorMessageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+             }
+        }
+
+        // --- Language Switching ---
+        function formatDatasetKey(langCode, suffix = '') {
+             let keyBase = (langCode === 'zh-CN') ? 'zhcn' : langCode.toLowerCase().split('-')[0];
+             const capitalizedBase = keyBase.charAt(0).toUpperCase() + keyBase.slice(1);
+             let key = 'lang' + capitalizedBase;
+             if (suffix) {
+                 let camelSuffix = suffix.replace(/[-_](.)/g, (_, c) => c.toUpperCase());
+                 camelSuffix = camelSuffix.charAt(0).toUpperCase() + camelSuffix.slice(1);
+                 key += camelSuffix;
+             }
+             return key.charAt(0).toLowerCase() + key.slice(1);
+         }
+         function getTranslatedText(element, suffixOrKey = '', isPlaceholderAttr = false, fallbackText = '') {
+            const translations = { // Predefined translations for specific keys
+                // Image Generation Status/Errors (Backend Focused)
+                generatedViaBackend: { en: "Gen. via Server", es: "Gen. vía Servidor", vi: "Tạo bởi Máy chủ", ja: "サーバー経由で生成", zhcn: "通过服务器生成" },
+                placeholderReason: { en: "Placeholder", es: "Marcador", vi: "Giữ chỗ", ja: "プレースホルダ", zhcn: "占位符" },
+                errorBackendProxy: { en: "Image Gen Error:", es: "Error Gen Imagen:", vi: "Lỗi Tạo ảnh:", ja: "画像生成エラー：", zhcn: "图像生成错误：" },
+                errorBackendFetch: { en: "Network error contacting our server for image generation.", es: "Error de red contactando nuestro servidor para generar imagen.", vi: "Lỗi mạng khi liên hệ máy chủ để tạo ảnh.", ja: "画像生成のためサーバーに接続中にネットワークエラー。", zhcn: "联系我们的图像生成服务器时网络错误。" },
+                // Gemini Errors (Keep existing ones, add CORS if needed)
+                errorReplicateApi: { en: "Replicate API Error:", es: "Error API Replicate:", vi: "Lỗi API Replicate:", ja: "Replicate APIエラー：", zhcn: "Replicate API 错误：" },
+                errorReplicateTimeout: { en: "Replicate image generation timed out.", es: "Generación de imagen Replicate agotó tiempo.", vi: "Tạo ảnh Replicate quá thời gian.", ja: "Replicate画像生成がタイムアウトしました。", zhcn: "Replicate 图像生成超时。" },
+                errorReplicateFetch: { en: "Network error during Replicate request.", es: "Error de red durante solicitud Replicate.", vi: "Lỗi mạng khi yêu cầu Replicate.", ja: "Replicateリクエスト中のネットワークエラー。", zhcn: "Replicate 请求期间网络错误。" },
+                errorCorsOrNetwork: { en: "Network/CORS error calling API. Check console/proxy.", es: "Error Red/CORS llamando API. Revisa consola/proxy.", vi: "Lỗi Mạng/CORS khi gọi API. Kiểm tra console/proxy.", ja: "API呼び出し中のネットワーク/CORSエラー。コンソール/プロキシ確認。", zhcn: "调用 API 时网络/CORS错误。检查控制台/代理。" },
+                // ... other existing translations ...
+            };
+
+            // Check predefined translations first
+            if (translations[suffixOrKey]) {
+                return translations[suffixOrKey][currentLang] || translations[suffixOrKey]['en'] || fallbackText;
+            }
+
+            // Try getting translation for specific key/suffix from data attributes
+            let specificKey = '';
+            if(suffixOrKey && element && element.dataset[`${formatDatasetKey(currentLang)}${suffixOrKey.charAt(0).toUpperCase() + suffixOrKey.slice(1)}`]){
+                 specificKey = `${formatDatasetKey(currentLang)}${suffixOrKey.charAt(0).toUpperCase() + suffixOrKey.slice(1)}`;
+            } else if(suffixOrKey && element && element.dataset[`${formatDatasetKey('en')}${suffixOrKey.charAt(0).toUpperCase() + suffixOrKey.slice(1)}`]) {
+                 specificKey = `${formatDatasetKey('en')}${suffixOrKey.charAt(0).toUpperCase() + suffixOrKey.slice(1)}`;
+            } else if (suffixOrKey) {
+                 specificKey = element?.dataset[formatDatasetKey(currentLang, suffixOrKey)] ? formatDatasetKey(currentLang, suffixOrKey) : formatDatasetKey('en', suffixOrKey);
+            }
+
+            // Try general data-lang-[lang] attribute
+            let generalKey = formatDatasetKey(currentLang);
+            let englishKey = formatDatasetKey('en');
+
+            let translation = element?.dataset[specificKey] ||
+                              element?.dataset[generalKey] ||
+                              element?.dataset[englishKey] ||
+                              fallbackText;
+
+            // Final fallback check for specific element types
+            if ((translation === fallbackText || translation === undefined || translation === '') && element) {
+                if (isPlaceholderAttr && element.hasAttribute('placeholder')) {
+                    translation = element.getAttribute('placeholder');
+                } else if (!isPlaceholderAttr && ['BUTTON', 'P', 'SMALL', 'LABEL', 'H1', 'H2', 'H3', 'LI', 'A', 'OPTION', 'TITLE', 'SPAN'].includes(element.tagName) && !element.children.length) {
+                    translation = element.textContent;
+                }
+            }
+
+            return String(translation ?? fallbackText).trim();
+         }
+
+        function updateLanguage(langCode) {
+            currentLang = langCode; console.log(`Switching language to: ${langCode}`);
+            document.documentElement.lang = langCode;
+            allTranslatableElements.forEach(el => {
+                const isPlaceholderTarget = (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') && el.hasAttribute('data-lang-en-placeholder');
+                let primarySuffix = isPlaceholderTarget ? 'placeholder' : '';
+                const fallbackKey = formatDatasetKey('en', primarySuffix);
+                const fallbackValue = el.dataset[fallbackKey] || (isPlaceholderTarget ? el.getAttribute('placeholder') : el.textContent) || '';
+                let translation = getTranslatedText(el, primarySuffix, isPlaceholderTarget, fallbackValue);
+
+                if (isPlaceholderTarget) { el.placeholder = translation; }
+                else if (el.tagName === 'TITLE') { document.title = translation; }
+                else {
+                    // Update simple text content elements carefully
+                     const simpleTags = ['BUTTON', 'P', 'SMALL', 'LABEL', 'H1', 'H2', 'H3', 'LI', 'A', 'OPTION', 'SPAN'];
+                     if (simpleTags.includes(el.tagName)) {
+                         let onlyTextOrTranslatableSpans = Array.from(el.childNodes).every(node =>
+                             node.nodeType === Node.TEXT_NODE ||
+                             (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'SPAN' && node.hasAttribute('data-lang-en')) ||
+                             (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'SPAN' && !node.hasAttribute('data-lang-en')) // Allow plain spans (like icons)
+                         );
+                         // Avoid updating generated content inside cards, status text, or error messages here
+                         if(onlyTextOrTranslatableSpans && !el.closest('.card-content') && el.id !== 'record-status-text' && el.id !== 'error-message') {
+                            el.textContent = translation;
+                         }
+                     }
+                }
+            });
+
+            // Update dynamic/status elements using their stored keys
+             if(recordAudioButton) updateRecordingUI(isRecording);
+             if(recordStatus?.dataset?.statusKey) {
+                  let statusKey = recordStatus.dataset.statusKey, fallback = recordStatus.dataset.statusFallback || '';
+                  let statusClass = Array.from(recordStatus.classList).find(c => ['complete', 'error', 'recording', 'transcribing'].includes(c)) || '';
+                  let isPersistent = statusClass === 'complete' || statusClass === 'error';
+                  updateRecordStatus(getTranslatedText(null, statusKey, false, fallback), statusClass, isPersistent, statusKey);
+             } else if (!isRecording) { clearRecordStatus(); }
+             if (loadingOverlay.classList.contains('show')) {
+                 const loadingP = loadingOverlay.querySelector('p');
+                 if(loadingP && loadingP.dataset.lastKey) {
+                    loadingP.textContent = getTranslatedText(loadingP, loadingP.dataset.lastKey, false, 'Loading...');
+                 }
+             }
+             if (errorMessageDiv.style.display === 'block' && errorMessageDiv.dataset.errorKey) {
+                 errorMessageDiv.textContent = getTranslatedText(null, errorMessageDiv.dataset.errorKey, false, errorMessageDiv.textContent);
+                 // Append original backend message if relevant
+                 const backendErrorMatch = errorMessageDiv.textContent.match(/:\s*(.*)$/);
+                 if(errorKey === 'errorBackendProxy' && backendErrorMatch && backendErrorMatch[1]) {
+                    errorMessageDiv.textContent += `: ${backendErrorMatch[1]}`;
+                 }
+             }
+             if (isSpeechRecognitionSupported) { // Update speech rec language
+                 const bcp47Map = { 'zh-CN': 'zh-CN', 'vi': 'vi-VN', 'ja': 'ja-JP', 'es': 'es-ES' };
+                 const newRecLang = bcp47Map[langCode] || (langCode.includes('-') ? langCode : `${langCode}-${langCode.toUpperCase()}`);
+                 if (recognition && recognition.lang !== newRecLang) {
+                      if (isRecording) { console.log("Stopping recording to change speech language..."); handleRecordButtonClick(); }
+                      if(recognition) recognition.lang = newRecLang; console.log("Updated speech recognition language:", newRecLang);
+                 }
+            }
+
+            // Re-apply placeholders and notes in results using current language
+             if (resultsOutputArea.style.display === 'block') {
+                 resultsOutputArea.querySelectorAll('.card-content.placeholder-notice').forEach(area => {
+                     const sectionId = area.id; const sectionTitle = Object.keys(sections).find(key => sections[key] === sectionId);
+                     if(sectionTitle) setPlaceholderForMissingSection(area, sectionTitle);
+                 });
+                 resultsOutputArea.querySelectorAll('[data-placeholder-key]').forEach(ph => {
+                    const isTruePlaceholder = ph.classList.contains('placeholder-notice') || ph.closest('.placeholder-notice');
+                     if (isTruePlaceholder) {
+                         ph.textContent = getTranslatedText(null, ph.dataset.placeholderKey, false, ph.textContent);
+                     }
+                     if(ph.tagName === 'SMALL' && ph.dataset.placeholderKey && ph.dataset.placeholderKey.endsWith('NotePlaceholder')) {
+                         ph.textContent = getTranslatedText(null, ph.dataset.placeholderKey, false, ph.textContent);
+                     }
+                 });
+                 const budgetCard = document.getElementById('result-budget-card');
+                 if (budgetCard && budgetCard.style.display === 'flex') {
+                     budgetCard.querySelectorAll('.budget-column.placeholder-notice h3').forEach(h3 => {
+                         const levelMatch = h3.textContent.match(/^(Low|Mid|High)/i);
+                         if (levelMatch) {
+                             const levelKey = levelMatch[1];
+                             h3.textContent = getTranslatedText(null, `budget${levelKey}Title`, false, `${levelKey} Budget`);
+                         }
+                     });
+                     budgetCard.querySelectorAll('.budget-column.placeholder-notice p[data-placeholder-key="budgetDetailsMissing"]').forEach(p => {
+                         p.textContent = `(${getTranslatedText(null, 'budgetDetailsMissing', false, `Details missing.`)})`;
+                     });
+                 }
+                 // Retranslate image generation source notes & fallbacks
+                 resultsOutputArea.querySelectorAll('.image-placeholder figcaption .generation-source').forEach(span => {
+                    span.textContent = getTranslatedText(null, 'generatedViaBackend', false, 'Gen. via Server');
+                 });
+                 resultsOutputArea.querySelectorAll('.image-placeholder figcaption .fallback-notice').forEach(span => {
+                    const reasonMatch = span.textContent.match(/\(([^:]+):\s*(.*)\)/);
+                    if (reasonMatch) {
+                         const reasonText = reasonMatch[2] || 'unknown';
+                         span.textContent = `(${getTranslatedText(null, 'placeholderReason', false, 'Placeholder')}: ${reasonText})`;
+                    }
+                 });
+             }
+             console.log("Language update complete:", langCode);
+        }
+        function saveLanguagePreference(langCode) { try { localStorage.setItem('mvGeneratorLang', langCode); } catch (e) { console.warn("Could not save language preference:", e)} }
+        function loadLanguagePreference() {
+            try { const saved = localStorage.getItem('mvGeneratorLang'); if (saved && Array.from(languageSelect.options).some(o => o.value === saved)) { languageSelect.value = saved; return saved; } } catch (e) {}
+            return languageSelect ? languageSelect.value : 'en';
+        }
+
+        // --- Event Listeners Setup ---
+        navLinks.forEach(link => { link.addEventListener('click', (e) => { const page = link.getAttribute('data-page'); if (page) { e.preventDefault(); showPage(page); } }); });
+        if (exploreButton) { exploreButton.addEventListener('click', () => showPage('feature')); }
+        backButtons.forEach(button => { button.addEventListener('click', (e) => { e.preventDefault(); showPage('home'); }); });
+        if (generateConceptButton) { generateConceptButton.addEventListener('click', handleGenerateConcept); }
+        if (exploreMoreButton) { exploreMoreButton.addEventListener('click', handleExploreMore); }
+        if (regenerateButton) { regenerateButton.addEventListener('click', handleRegenerateConcept); }
+        if (languageSelect) { languageSelect.addEventListener('change', (e) => { updateLanguage(e.target.value); saveLanguagePreference(e.target.value); }); }
+
+        // --- Initial Setup ---
+        const initialLang = loadLanguagePreference(); updateLanguage(initialLang);
+        showPage('home'); clearResultsAndErrors();
+        console.log("MV Generator Initialized. Lang:", currentLang, "Speech Support:", isSpeechRecognitionSupported);
+        // Initial check for audio support display
+        if(recordAudioButton && recordAudioButton.disabled && (!navigator.mediaDevices?.getUserMedia || !isSpeechRecognitionSupported)) {
+           const errorKey = !navigator.mediaDevices?.getUserMedia ? 'statusAudioNotSupported' : 'statusSpeechRecNotSupported';
+           const errorMsg = getTranslatedText(null, errorKey, false, 'Audio/Speech input not supported.');
+           updateRecordStatus(errorMsg, 'error', true, errorKey);
+        }
+
+    }); // End DOMContentLoaded
+    </script>
+    <!-- ========= END JAVASCRIPT ========= -->
+
+</body>
+</html>
