@@ -133,7 +133,9 @@ app.get(/^(?!\/api).*/, (req, res) => {
 });
 
 // --- Start the Server ---
-app.listen(port, () => {
+//Danh commented, old app.listen(port, () => {
+//This makes your app compatible with Render’s platform, which routes web traffic into your container through that dynamic port. Ref: https://render.com/docs/web-services#port-binding
+app.listen(port, '0.0.0.0', () => {
     console.log(`\n🚀 Server listening at http://localhost:${port}`);
     if (!process.env.REPLICATE_API_TOKEN) {
         console.warn('⚠️ WARNING: REPLICATE_API_TOKEN environment variable is not set!');
