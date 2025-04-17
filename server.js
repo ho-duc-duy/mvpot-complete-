@@ -65,7 +65,10 @@ app.post('/api/generate-image', async (req, res) => {
 
         if (!replicateResponse.ok && replicateResponse.headers.get('content-type')?.includes('application/json') !== true) {
              console.error(`❌ Replicate API HTTP Error: ${replicateResponse.status} ${replicateResponse.statusText}`);
-             return res.status(502).json({ error: `Image service connection failed with status: ${replicateResponse.status}` });
+            const rawText = await replicateResponse.text();
+            console.log("Raw response body (text):", rawText);
+ 
+            return res.status(502).json({ error: `Image service connection failed with status: ${replicateResponse.status}` });
         }
 
         const responseData = await replicateResponse.json();
