@@ -58,7 +58,9 @@ app.post('/api/generate-image', async (req, res) => {
             headers: {
                 'Authorization': `Token ${replicateApiToken}`,
                 'Content-Type': 'application/json',
-                'Prefer': 'wait'
+                'Prefer': 'wait',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+                'Accept': 'application/json'
             },
             body: JSON.stringify(requestBody)
         });
