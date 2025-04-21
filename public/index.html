@@ -192,6 +192,16 @@
              outline: none; border-color: var(--accent-primary); box-shadow: 0 0 0 3px rgba(106, 142, 231, 0.2);
         }
         .form-group textarea { resize: vertical; min-height: 140px; }
+         /* Style for generate random lyric button */
+         #generate-random-lyric-button {
+            margin-top: 0.8rem;
+            margin-left: auto; /* Push to the right */
+            display: block; /* Make it block to allow margin auto */
+            width: fit-content; /* Size to content */
+            padding: 0.5rem 1rem; /* Smaller padding */
+            font-size: 0.9rem; /* Slightly smaller font */
+            font-weight: 500; /* Normal weight */
+        }
         .form-group select {
             appearance: none; -webkit-appearance: none; -moz-appearance: none;
             background-image: url('data:image/svg+xml;utf8,<svg fill="%23a9a9b3" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
@@ -242,6 +252,10 @@
         .result-card h2 {
             font-size: 1.5rem; font-weight: 600; color: var(--accent-primary); margin-bottom: 1.2rem;
             padding-bottom: 0.6rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0;
+        }
+         .result-card h2 > span[data-lang-en] { /* Target only the translatable span inside h2 */
+            /* Styles specific to the text span if needed, like preventing wrapping */
+            flex-grow: 1;
         }
         .card-content { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7; flex-grow: 1; overflow: hidden; }
         .card-content p { margin-bottom: 1rem; }
@@ -465,6 +479,111 @@
          /* Ensure budget note is always visible, even with placeholders */
          #result-budget > small { display: block; text-align: center; margin-top: 1rem; font-size: 0.85em; opacity: 0.8; }
 
+
+        /* --- NEW: How to Use Button & Modal --- */
+        #how-to-use-button {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 1001;
+            padding: 0.7rem 1.2rem; /* Slightly smaller */
+            font-size: 0.9rem;
+            border-radius: 50px; /* More rounded */
+            background: var(--accent-gradient);
+            box-shadow: var(--box-shadow-glow);
+        }
+
+        #guide-modal {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(26, 26, 29, 0.85); /* Consistent overlay */
+            backdrop-filter: blur(5px);
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+            z-index: 1002; /* Above floating button */
+            padding: 2rem;
+            animation: modalFadeIn 0.4s ease-out forwards;
+        }
+        #guide-modal.show { display: flex; }
+
+        @keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .guide-content {
+            background-color: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--box-shadow-soft);
+            max-width: 800px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            color: var(--text-secondary);
+            animation: modalScaleUp 0.4s 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            transform: scale(0.9); opacity: 0;
+        }
+        @keyframes modalScaleUp { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .guide-content h2 {
+            color: var(--accent-primary);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+        }
+        .guide-content h3 {
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            margin-top: 2rem;
+            margin-bottom: 0.8rem;
+        }
+        .guide-content p, .guide-content li {
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 0.8rem;
+        }
+        .guide-content strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        .guide-content ul {
+             list-style: disc;
+             padding-left: 2rem;
+             margin-top: 0.5rem;
+        }
+         .guide-content ul ul { /* Nested lists */
+            margin-top: 0.3rem;
+            margin-bottom: 0.5rem;
+         }
+        .guide-content code {
+             background-color: var(--bg-dark);
+             padding: 0.2em 0.5em;
+             border-radius: 4px;
+             font-family: monospace;
+             font-size: 0.9em;
+             color: var(--accent-secondary);
+        }
+        #guide-close-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 2rem;
+            line-height: 1;
+            cursor: pointer;
+            transition: color 0.3s ease, transform 0.2s ease;
+            padding: 5px;
+        }
+        #guide-close-button:hover {
+            color: var(--text-primary);
+            transform: scale(1.1);
+        }
+
+
         /* --- Responsive Adjustments --- */
         @media (max-width: 992px) {
             .container { max-width: 90%; }
@@ -472,6 +591,7 @@
             .main-nav ul li a { font-size: 0.95rem; padding: 0.4rem 0.6rem; }
             #settings-box label { display: none; }
             .form-container { padding: 2rem; }
+            .guide-content { padding: 2rem; }
         }
 
         @media (max-width: 768px) {
@@ -493,6 +613,12 @@
             #result-visuals .image-placeholder-container { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
             #result-moodboard .image-placeholder-container { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
             #about-page .content-container { padding: 1.5rem; }
+            #how-to-use-button { bottom: 15px; right: 15px; padding: 0.6rem 1rem; font-size: 0.8rem; }
+            #guide-modal { padding: 1rem; }
+            .guide-content { padding: 1.5rem; max-height: 90vh; }
+            .guide-content h2 { font-size: 1.6rem; }
+            .guide-content h3 { font-size: 1.2rem; }
+            .guide-content p, .guide-content li { font-size: 0.95rem; }
         }
 
         @media (max-width: 480px) {
@@ -505,6 +631,7 @@
             .form-container { padding: 1.5rem; }
             .form-container h1 { font-size: 1.8rem; margin-bottom: 1.5rem; }
             .form-group { margin-bottom: 1.5rem; }
+            #generate-random-lyric-button { font-size: 0.8rem; padding: 0.4rem 0.8rem; }
             .audio-input-group { flex-direction: column; align-items: stretch; gap: 0.8rem; }
             input[type="file"]::file-selector-button { width: 100%; text-align: center; margin-right: 0; }
             .audio-input-group .btn { width: 100%; margin: 0;}
@@ -518,6 +645,8 @@
             #result-moodboard .image-placeholder img { height: 110px; }
             .color-palette-display { gap: 0.8rem; }
             .color-swatch { min-width: 80px; height: 70px; font-size: 0.8rem; }
+             #guide-content { padding: 1.2rem; }
+            #guide-close-button { top: 10px; right: 10px; font-size: 1.8rem; }
         }
 
     </style>
@@ -548,6 +677,7 @@
                 data-lang-vi="Logo"
                 data-lang-ja="ロゴ"
                 data-lang-zhcn="标志"
+                data-logo-text="true" <!-- Identifier for translation -->
              >Logo</span> <!-- Fallback Text -->
         </a>
         <ul>
@@ -571,7 +701,7 @@
                 <option value="es">Español</option>
                 <option value="vi">Tiếng Việt</option>
                 <option value="ja">日本語</option>
-                <option value="zh-CN">中文</option>
+                <option value="zh-CN">中文</option> <!-- Changed value to zh-CN -->
             </select>
         </div>
     </nav>
@@ -632,6 +762,10 @@
                             <textarea id="lyrics-input" rows="7" required
                                 data-lang-en-placeholder="Paste your complete song lyrics here..." data-lang-es-placeholder="Pega la letra completa de tu canción aquí..." data-lang-vi-placeholder="Dán toàn bộ lời bài hát của bạn vào đây..." data-lang-ja-placeholder="ここに完全な歌詞を貼り付けてください..." data-lang-zhcn-placeholder="在此处粘贴完整的歌词..."
                                 placeholder="Paste your complete song lyrics here..." ></textarea>
+                             <!-- NEW Random Lyric Button -->
+                             <button type="button" id="generate-random-lyric-button" class="btn btn-secondary"
+                                data-lang-en="Generate Random Lyric" data-lang-es="Generar Letra Aleatoria" data-lang-vi="Tạo lời ngẫu nhiên" data-lang-ja="ランダムな歌詞を生成" data-lang-zhcn="生成随机歌词"
+                            >Generate Random Lyric</button>
                         </div>
                         <div class="form-group">
                             <label for="keywords-input"
@@ -707,7 +841,7 @@
             <div id="error-message" class="error-message"
                  data-lang-en="An error occurred. Please check your input or try again later." data-lang-es="Ocurrió un error. Por favor, revisa tu entrada o inténtalo de nuevo más tarde." data-lang-vi="Đã xảy ra lỗi. Vui lòng kiểm tra đầu vào của bạn hoặc thử lại sau." data-lang-ja="エラーが発生しました。入力を確認するか、後でもう一度お試しください。" data-lang-zhcn="发生错误。请检查您的输入或稍后再试。"
                  data-error-key="errorUnknown"
-            ></div>
+            >An error occurred. Please check your input or try again later.</div>
 
             <!-- Results Area (Cards) -->
             <div class="results-section" id="results-output-area">
@@ -845,6 +979,55 @@
         </div>
     </footer>
 
+    <!-- NEW: How to Use Button -->
+    <button id="how-to-use-button" class="btn"
+        data-lang-en="How to use"
+        data-lang-es="Cómo usar"
+        data-lang-vi="Cách sử dụng"
+        data-lang-ja="使い方"
+        data-lang-zhcn="如何使用"
+    >How to use</button>
+
+    <!-- NEW: Guide Modal -->
+    <div id="guide-modal">
+        <div class="guide-content">
+            <button id="guide-close-button">&times;</button>
+            <h2 data-guide-title="true">How to Use MV Concept Generator</h2>
+
+            <h3 data-guide-nav="true">Navigation</h3>
+            <p data-guide-nav-desc="true">Use the links at the top (<code>Home</code>, <code>About</code>, <code>Generate</code>) to switch between the main sections of the website.</p>
+
+            <h3 data-guide-lang="true">Language Selection</h3>
+            <p data-guide-lang-desc="true">Use the dropdown menu in the top-right corner to change the website's display language.</p>
+
+            <h3 data-guide-generate="true">Generate Page Features</h3>
+            <ul>
+                <li data-guide-lyrics="true"><strong>Music Lyrics:</strong> Paste your full song lyrics into this text box. This is the primary input for the AI analysis.</li>
+                <li data-guide-random-lyrics="true"><strong>Generate Random Lyric:</strong> Click this button if you don't have lyrics ready or want inspiration. It will generate random song lyrics (with structure like Intro, Verse, Chorus) and put them into the lyrics box for you.</li>
+                <li data-guide-keywords="true"><strong>Keywords / Theme:</strong> Enter words or short phrases describing the mood, style, or key ideas of your song (e.g., <code>upbeat</code>, <code>city at night</code>, <code>love story</code>, <code>finding hope</code>). This helps guide the AI.</li>
+                <li data-guide-genre="true"><strong>Music Genre:</strong> Select the genre that best fits your music from the dropdown list.</li>
+                <li data-guide-track="true"><strong>Track Input (Optional):</strong> You can either upload an audio file (<code>.mp3</code>, <code>.wav</code>, etc.) or click <code>Record Audio</code> to record your singing directly in the browser (requires microphone permission). The AI can analyze the audio/transcript for better suggestions, but this is optional.</li>
+                <li data-guide-generate-btn="true"><strong>Generate Concept:</strong> Once you have entered your lyrics (or generated random ones), keywords, and genre, click this button. The AI will process your input and generate an initial Music Video Concept.</li>
+            </ul>
+
+            <h3 data-guide-results="true">Understanding the Results</h3>
+            <p data-guide-results-desc="true">After clicking "Generate Concept", results will appear below:</p>
+            <ul>
+                <li data-guide-concept="true"><strong>Concept / Key Visual:</strong> The main idea for your music video.</li>
+                <li data-guide-explore="true"><strong>Explore More Details:</strong> Click this button to have the AI generate the following detailed sections based on the initial concept:</li>
+                <ul>
+                    <li data-guide-reqs="true"><strong>Requirements:</strong> A list of potential needs (locations, props, actors, etc.).</li>
+                    <li data-guide-budget="true"><strong>Estimated Budget:</strong> Rough budget ideas for Low, Mid, and High production levels.</li>
+                    <li data-guide-visuals="true"><strong>Visual Demo:</strong> Descriptions of key scenes, often with generated images for inspiration.</li>
+                    <li data-guide-moodboard="true"><strong>Moodboard Influences:</strong> Style references and visual elements, also often with generated images.</li>
+                    <li data-guide-palette="true"><strong>Color Palette:</strong> Suggested colors that match the concept's mood.</li>
+                </ul>
+                 <li data-guide-regenerate="true"><strong>Re-Generate Concept:</strong> If you're not satisfied with the initial concept, click this to try again with the same inputs.</li>
+            </ul>
+             <p data-guide-ai-note="true"><strong>Note:</strong> All suggestions are generated by AI and serve as creative starting points. Budget estimations are very rough, and image generation provides conceptual illustrations.</p>
+        </div>
+    </div>
+
 
     <!-- ========= START JAVASCRIPT ========= -->
     <script>
@@ -855,6 +1038,7 @@
         const exploreButton = document.getElementById('explore-button');
         const backButtons = document.querySelectorAll('.btn-back');
         const generateConceptButton = document.getElementById('generate-concept-button');
+        const generateRandomLyricButton = document.getElementById('generate-random-lyric-button'); // New Button
         const resultsOutputArea = document.getElementById('results-output-area');
         const conceptCard = document.getElementById('result-concept-card');
         const detailedResultsGrid = document.getElementById('detailed-results-grid');
@@ -873,7 +1057,12 @@
         const transcriptGroup = document.getElementById('transcript-group');
         const transcriptOutput = document.getElementById('transcript-output');
         const languageSelect = document.getElementById('language-select');
-        const allTranslatableElements = document.querySelectorAll('[data-lang-en], [data-lang-en-placeholder]');
+        const allTranslatableElements = document.querySelectorAll('[data-lang-en], [data-lang-en-placeholder], [data-lang-en-record], [data-lang-en-stop], [data-guide-title]'); // Include guide elements selector if needed
+        // New Guide Modal Elements
+        const howToUseButton = document.getElementById('how-to-use-button');
+        const guideModal = document.getElementById('guide-modal');
+        const guideCloseButton = document.getElementById('guide-close-button');
+        const guideContent = guideModal ? guideModal.querySelector('.guide-content') : null;
 
         // --- State Variables ---
         let currentInputs = null; // Store form inputs for regeneration/exploration
@@ -948,6 +1137,7 @@
              loadingOverlay.classList.add('show');
              // Disable buttons
              if(generateConceptButton) generateConceptButton.disabled = true;
+             if(generateRandomLyricButton) generateRandomLyricButton.disabled = true; // Disable new button too
              if(exploreMoreButton) exploreMoreButton.disabled = true;
              if(regenerateButton) regenerateButton.disabled = true;
              if(recordAudioButton) recordAudioButton.disabled = true;
@@ -957,6 +1147,7 @@
             loadingOverlay.classList.remove('show');
              // Re-enable buttons (consider states)
              if(generateConceptButton) generateConceptButton.disabled = false;
+             if(generateRandomLyricButton) generateRandomLyricButton.disabled = false; // Enable new button too
              if(exploreMoreButton) exploreMoreButton.disabled = !currentInputs;
              if(regenerateButton) regenerateButton.disabled = !currentInputs;
              if(recordAudioButton) {
@@ -1080,7 +1271,11 @@
         function updateRecordingUI(recording) {
             if (!recordAudioButton) return; isRecording = recording;
             const recordKey = 'record', stopKey = 'stop';
-            const buttonText = recording ? getTranslatedText(recordAudioButton, stopKey, false, 'Stop Recording') : getTranslatedText(recordAudioButton, recordKey, false, 'Record Audio');
+            // Get translated text based on recording state using data attributes
+            const buttonText = recording
+                 ? (recordAudioButton.dataset[formatDatasetKey(currentLang, stopKey)] || recordAudioButton.dataset[formatDatasetKey('en', stopKey)] || 'Stop Recording')
+                 : (recordAudioButton.dataset[formatDatasetKey(currentLang, recordKey)] || recordAudioButton.dataset[formatDatasetKey('en', recordKey)] || 'Record Audio');
+
             recordAudioButton.textContent = buttonText; recordAudioButton.disabled = false;
             if (recording) {
                 recordAudioButton.classList.remove('btn-warning'); recordAudioButton.classList.add('btn-danger');
@@ -1096,14 +1291,17 @@
         function updateRecordStatus(message, statusClass = '', persistent = false, translationKey = '') {
             if (!recordStatus || !recordStatusText || !recordingAnimation) return;
              if (updateRecordStatus.timeoutId) { clearTimeout(updateRecordStatus.timeoutId); updateRecordStatus.timeoutId = null; }
+             // Get the potentially translated message based on the key first
              const displayMessage = translationKey ? getTranslatedText(null, translationKey, false, message) : message;
             recordStatusText.textContent = displayMessage;
             recordStatus.className = 'record-status-base'; // Reset
-            recordStatus.dataset.statusKey = translationKey; recordStatus.dataset.statusFallback = message; // Store for re-translation
+            recordStatus.dataset.statusKey = translationKey; // Store key for re-translation
+            recordStatus.dataset.statusFallback = message; // Store original fallback for safety
             if (statusClass) recordStatus.classList.add(statusClass);
             recordingAnimation.style.display = (statusClass === 'recording' || statusClass === 'transcribing') ? 'inline-block' : 'none';
             if (!persistent && statusClass !== 'error' && displayMessage) {
                 updateRecordStatus.timeoutId = setTimeout(() => {
+                     // Only clear if the message/key hasn't changed (prevents clearing a new status)
                      if (recordStatusText.textContent === displayMessage && recordStatus.dataset.statusKey === translationKey) { clearRecordStatus(); }
                 }, 4000);
             }
@@ -1135,14 +1333,9 @@
 
         // --- Gemini API Call Helper ---
         async function callGeminiAPI(promptText, loadingMessageKey = "generatingCreativeSparks", loadingFallback = "Generating...") {
-            // --- !!! EXTREME SECURITY WARNING: API KEY HARDCODED IN FRONTEND !!! ---
-            // This key is exposed to anyone viewing the page source code.
-            // This is **NOT** safe for production environments.
-            // For any real application, you MUST use a backend server or cloud function
-            // (like the one we created for Replicate) to proxy the API calls
-            // and keep your key secure.
-            // Consider creating an '/api/generate-concept' endpoint in server.js.
-            const GEMINI_API_KEY = "AIzaSyB5c-hp-QeKBpBTz8qwANe4j5Kc4dZ_bWM"; // <-- VERY INSECURE - MOVE TO BACKEND PROXY
+            // --- !!! SECURITY WARNING: API KEY HARDCODED IN FRONTEND !!! ---
+            // This key is exposed. For production, use a backend proxy.
+            const GEMINI_API_KEY = "AIzaSyB5c-hp-QeKBpBTz8qwANe4j5Kc4dZ_bWM"; // <-- VERY INSECURE
             // --- !!! END SECURITY WARNING !!! ---
 
             if (!GEMINI_API_KEY || GEMINI_API_KEY.startsWith("YOUR_") || GEMINI_API_KEY.length < 30) {
@@ -1165,9 +1358,6 @@
 
             try {
                 console.log("Sending API request to Gemini...");
-                // NOTE: This direct browser call might *also* fail due to CORS depending
-                // on Google's current policy for the Gemini API key usage.
-                // A backend proxy is the robust solution here too.
                 const response = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestBody) });
                 const responseData = await response.json();
                 console.log("Raw API Response (Gemini):", responseData);
@@ -1175,7 +1365,6 @@
                 if (!response.ok) {
                      const errorDetail = responseData?.error?.message || `HTTP Error: ${response.status}`;
                      const httpErrorMsg = getTranslatedText(null, 'errorApiHttp', false, `API request failed: ${errorDetail}`).replace('${errorDetail}', errorDetail);
-                     // Check for CORS error specifically
                      if (response.status === 0) { // Often indicates a CORS block
                         throw new Error(getTranslatedText(null, 'errorCorsOrNetwork', false, 'Network or CORS error contacting Gemini API. Check console & consider backend proxy.'));
                      }
@@ -1221,6 +1410,57 @@
                  return null;
             } finally {
                 hideLoading();
+            }
+        }
+
+         // --- NEW: Generate Random Lyrics ---
+         async function handleGenerateRandomLyrics() {
+            clearResultsAndErrors(); // Clear any previous results/errors
+
+            const prompt = `
+Generate a random short song lyric suitable for pop, RnB, or folk music.
+The lyrics should have a clear structure with labels like [Intro], [Verse 1], [Chorus], [Verse 2], [Chorus], [Bridge], [Outro].
+Include at least 10 sentences in total across all sections.
+Each sentence should be on its own line.
+Output *only* the lyrics with the structure labels, nothing else. Example:
+[Intro]
+Sunlight on the pavement
+Another day begins
+
+[Verse 1]
+Walking down this empty street
+Thinking 'bout the place we meet
+Empty coffee cup in hand
+Trying hard to understand
+
+[Chorus]
+Where did we go wrong?
+Was our love not strong?
+Echoes of our favorite song
+Fade out before too long
+
+[Outro]
+Just echoes now...
+Fading out...
+`;
+            const loadingMsgKey = "generatingLyrics";
+            const loadingFallback = "Generating Random Lyrics...";
+            const generatedText = await callGeminiAPI(prompt, loadingMsgKey, loadingFallback);
+
+            if (generatedText && lyricsInput) {
+                // Basic cleanup - remove potential leading/trailing markdown/code blocks
+                let cleanedLyrics = generatedText.replace(/^```(text|lyric)?\s*/i, '').replace(/```\s*$/i, '');
+                lyricsInput.value = cleanedLyrics.trim();
+                lyricsInput.focus(); // Focus on the input box
+                lyricsInput.scrollTop = 0; // Scroll to top
+                 // Optionally, you could try to pre-fill keywords based on lyrics, but let's keep it simple
+                 // keywordsInput.value = "Generated lyrics theme";
+                 // genreSelect.value = "Pop"; // Or guess genre?
+
+                 // Display a temporary success message (optional)
+                 updateRecordStatus(getTranslatedText(null, 'randomLyricsGenerated', false, 'Random lyrics generated!'), 'complete', false, 'randomLyricsGenerated'); // Use record status temporarily
+            } else if (!generatedText) {
+                 // Error was already displayed by callGeminiAPI
             }
         }
 
@@ -1440,8 +1680,11 @@ Adhere strictly to the format: Use the exact headers (##), use bullet points (* 
                  console.log("Parsing complete."); errorMessageDiv.style.display = 'none';
             } else {
                  console.log("No sections found or text empty.");
-                 displayError(getTranslatedText(null, 'errorApiEmptyResponse', false, "Received empty response."), 'errorApiEmptyResponse');
-                 resultsOutputArea.style.display = 'none';
+                 // Avoid error if only generating lyrics (not expecting sections)
+                 if (loadingOverlay.querySelector('p')?.dataset?.lastKey !== 'generatingLyrics') {
+                    displayError(getTranslatedText(null, 'errorApiEmptyResponse', false, "Received empty response."), 'errorApiEmptyResponse');
+                    resultsOutputArea.style.display = 'none';
+                 }
             }
         }
 
@@ -1622,9 +1865,9 @@ Adhere strictly to the format: Use the exact headers (##), use bullet points (* 
                      if (!sectionHasContent) { container.innerHTML = `<p class="placeholder-notice" data-placeholder-key="palettePlaceholder">${getTranslatedText(null, 'noColorsFound', false, 'Could not parse colors.')}</p>`; container.classList.add('placeholder-notice'); }
 
                 } else { // Default (e.g., Concept)
-                     const pEl = document.createElement('p'); pEl.style.whiteSpace = 'pre-wrap';
+                     // Use innerHTML to render potential <strong> tags from the AI
                      const processedContent = content.trim().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-                     pEl.innerHTML = processedContent; contentDiv.appendChild(pEl);
+                     contentDiv.innerHTML = processedContent; // Directly set HTML
                      if (processedContent) sectionHasContent = true;
                 }
 
@@ -1655,13 +1898,14 @@ Adhere strictly to the format: Use the exact headers (##), use bullet points (* 
                  case 'Estimated Budget':
                      placeholderKey = 'budgetPlaceholder'; fallbackText = 'Budget details...';
                      const noteText = getTranslatedText(null, 'budgetNotePlaceholder', false, 'Note: Budgets are conceptual estimates...');
-                     placeholderHTML = `<div class="budget-columns-container">`;
-                     ["Low", "Mid", "High"].forEach(levelKey => {
-                        placeholderHTML += `<div class="budget-column placeholder-notice">
-                                                <h3>${getTranslatedText(null, `budget${levelKey}Title`, false, `${levelKey} Budget`)}</h3>
-                                                <p class="placeholder-notice" data-placeholder-key="budgetDetailsMissing">(${getTranslatedText(null, 'budgetDetailsMissing', false, `Details missing.`)})</p>
-                                            </div>`;
-                     });
+                     placeholderHTML = `<div class="budget-columns-container placeholder-notice">`; // Add placeholder class here too
+                      placeholderHTML += `<p data-placeholder-key="${placeholderKey}" class="placeholder-notice">${getTranslatedText(null, placeholderKey, false, fallbackText)}</p>`;
+                     // ["Low", "Mid", "High"].forEach(levelKey => { // Keep columns structure for layout consistency maybe? Or just single text? Let's try single text for simplicity on error.
+                     //    placeholderHTML += `<div class="budget-column placeholder-notice">
+                     //                            <h3>${getTranslatedText(null, `budget${levelKey}Title`, false, `${levelKey} Budget`)}</h3>
+                     //                            <p class="placeholder-notice" data-placeholder-key="budgetDetailsMissing">(${getTranslatedText(null, 'budgetDetailsMissing', false, `Details missing.`)})</p>
+                     //                        </div>`;
+                     // });
                      placeholderHTML += `</div><small data-placeholder-key="budgetNotePlaceholder" style="display: block; margin-top: 1rem; font-size: 0.85em; text-align: center;">${noteText}</small>`;
                      break;
                  case 'Visual Demo (Key Image Descriptions)': // Fallthrough
@@ -1746,12 +1990,6 @@ Adhere strictly to the format: Use the exact headers (##), use bullet points (* 
                      }
                      img.src = imageUrl;
                      img.alt = prompt; // Use the prompt as alt text
-
-                     // Add Backend generation note (optional, you might not want to show this)
-                     //const sourceSpan = document.createElement('span');
-                     //sourceSpan.className = 'generation-source';
-                     //sourceSpan.textContent = getTranslatedText(null, 'generatedViaBackend', false, 'Gen. via Server'); // Changed note
-                     //figcaption.appendChild(sourceSpan);
 
                  } else {
                      // Backend succeeded but didn't return a valid URL (shouldn't happen with good backend logic)
@@ -1875,18 +2113,20 @@ Adhere strictly to the format: Use the exact headers (##), use bullet points (* 
              console.log("Cleared results area and errors.");
         }
         function displayError(message, errorKey = 'errorUnknown') {
-             message = String(message || getTranslatedText(null, errorKey, false, 'Unknown error.'));
+             const fallbackMessage = getTranslatedText(null, 'errorUnknown', false, 'An unknown error occurred.');
+             message = String(message || fallbackMessage);
              errorMessageDiv.textContent = message; errorMessageDiv.dataset.errorKey = errorKey;
              errorMessageDiv.style.display = 'block'; hideLoading();
              console.error("Displayed user error:", message, `(Key: ${errorKey})`);
-             // Avoid scrolling if it's just a note about fallback images
-             if (!errorKey.startsWith('repl-') && !errorKey.startsWith('no-repl-key') && !errorKey.startsWith('backend-')) {
+             // Avoid scrolling for certain non-critical errors
+             if (!errorKey.startsWith('repl-') && !errorKey.startsWith('no-repl-key') && !errorKey.startsWith('backend-') && errorKey !== 'randomLyricsGenerated') {
                  errorMessageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
              }
         }
 
         // --- Language Switching ---
         function formatDatasetKey(langCode, suffix = '') {
+            // Handles zh-CN specifically
              let keyBase = (langCode === 'zh-CN') ? 'zhcn' : langCode.toLowerCase().split('-')[0];
              const capitalizedBase = keyBase.charAt(0).toUpperCase() + keyBase.slice(1);
              let key = 'lang' + capitalizedBase;
@@ -1895,96 +2135,243 @@ Adhere strictly to the format: Use the exact headers (##), use bullet points (* 
                  camelSuffix = camelSuffix.charAt(0).toUpperCase() + camelSuffix.slice(1);
                  key += camelSuffix;
              }
-             return key.charAt(0).toLowerCase() + key.slice(1);
+             return key.charAt(0).toLowerCase() + key.slice(1); // e.g., langEn, langEs, langZhcn, langEnPlaceholder
          }
+
          function getTranslatedText(element, suffixOrKey = '', isPlaceholderAttr = false, fallbackText = '') {
-            const translations = { // Predefined translations for specific keys
-                // Image Generation Status/Errors (Backend Focused)
-                generatedViaBackend: { en: "Gen. via Server", es: "Gen. vía Servidor", vi: "Tạo bởi Máy chủ", ja: "サーバー経由で生成", zhcn: "通过服务器生成" },
-                placeholderReason: { en: "Placeholder", es: "Marcador", vi: "Giữ chỗ", ja: "プレースホルダ", zhcn: "占位符" },
-                errorBackendProxy: { en: "Image Gen Error:", es: "Error Gen Imagen:", vi: "Lỗi Tạo ảnh:", ja: "画像生成エラー：", zhcn: "图像生成错误：" },
-                errorBackendFetch: { en: "Network error contacting our server for image generation.", es: "Error de red contactando nuestro servidor para generar imagen.", vi: "Lỗi mạng khi liên hệ máy chủ để tạo ảnh.", ja: "画像生成のためサーバーに接続中にネットワークエラー。", zhcn: "联系我们的图像生成服务器时网络错误。" },
-                // Gemini Errors (Keep existing ones, add CORS if needed)
-                errorReplicateApi: { en: "Replicate API Error:", es: "Error API Replicate:", vi: "Lỗi API Replicate:", ja: "Replicate APIエラー：", zhcn: "Replicate API 错误：" },
-                errorReplicateTimeout: { en: "Replicate image generation timed out.", es: "Generación de imagen Replicate agotó tiempo.", vi: "Tạo ảnh Replicate quá thời gian.", ja: "Replicate画像生成がタイムアウトしました。", zhcn: "Replicate 图像生成超时。" },
-                errorReplicateFetch: { en: "Network error during Replicate request.", es: "Error de red durante solicitud Replicate.", vi: "Lỗi mạng khi yêu cầu Replicate.", ja: "Replicateリクエスト中のネットワークエラー。", zhcn: "Replicate 请求期间网络错误。" },
+            const translations = { // Predefined translations for specific keys (especially status/errors/guide)
+                // Dynamic Status/Errors
+                generatingCreativeSparks: { en: "Generating creative sparks...", es: "Generando chispas creativas...", vi: "Đang tạo ra những tia sáng sáng tạo...", ja: "創造的な火花を生成中...", zhcn: "正在生成创意火花..." },
+                generatingConcept: { en: "Generating Concept...", es: "Generando Concepto...", vi: "Đang tạo ý tưởng...", ja: "コンセプトを生成中...", zhcn: "正在生成概念..." },
+                fetchingDetails: { en: "Fetching More Details...", es: "Obteniendo Más Detalles...", vi: "Đang lấy thêm chi tiết...", ja: "詳細を取得中...", zhcn: "正在获取更多细节..." },
+                generatingLyrics: { en: "Generating Random Lyrics...", es: "Generando Letra Aleatoria...", vi: "Đang tạo lời ngẫu nhiên...", ja: "ランダムな歌詞を生成中...", zhcn: "正在生成随机歌词..." },
+                statusRequestingMic: { en: "Requesting mic access...", es: "Solicitando acceso al micro...", vi: "Đang yêu cầu quyền truy cập mic...", ja: "マイクアクセスを要求中...", zhcn: "请求麦克风访问权限..." },
+                statusRecording: { en: "Recording...", es: "Grabando...", vi: "Đang ghi âm...", ja: "録音中...", zhcn: "录音中..." },
+                statusTranscribing: { en: "Transcribing...", es: "Transcribiendo...", vi: "Đang chuyển đổi...", ja: "文字起こし中...", zhcn: "转录中..." },
+                statusStopping: { en: "Stopping...", es: "Deteniendo...", vi: "Đang dừng...", ja: "停止中...", zhcn: "停止中..." },
+                stoppedStatus: { en: "Stopped.", es: "Detenido.", vi: "Đã dừng.", ja: "停止しました。", zhcn: "已停止。" },
+                recordTranscriptComplete: { en: "Recording & transcript complete.", es: "Grabación y transcripción completas.", vi: "Ghi âm & bản ghi hoàn tất.", ja: "録音＆文字起こし完了。", zhcn: "录音和转录完成。" },
+                recordCompleteNoTranscript: { en: "Recording complete (no transcript).", es: "Grabación completa (sin transcripción).", vi: "Ghi âm hoàn tất (không có bản ghi).", ja: "録音完了（文字起こしなし）。", zhcn: "录音完成（无转录稿）。" },
+                transcriptCompleteNoRecord: { en: "Transcript complete (no recording saved).", es: "Transcripción completa (grabación no guardada).", vi: "Bản ghi hoàn tất (ghi âm chưa lưu).", ja: "文字起こし完了（録音は保存されず）。", zhcn: "转录完成（未保存录音）。" },
+                statusFileSelected: { en: "File selected.", es: "Archivo seleccionado.", vi: "Đã chọn tệp.", ja: "ファイルが選択されました。", zhcn: "文件已选择。" },
+                randomLyricsGenerated: { en: "Random lyrics generated!", es: "¡Letra aleatoria generada!", vi: "Đã tạo lời ngẫu nhiên!", ja: "ランダムな歌詞が生成されました！", zhcn: "已生成随机歌词！" },
+                statusAudioNotSupported: { en: "Audio recording not supported.", es: "Grabación de audio no soportada.", vi: "Không hỗ trợ ghi âm.", ja: "音声録音はサポートされていません。", zhcn: "不支持音频录制。" },
+                statusSpeechRecNotSupported: { en: "Speech recognition not supported.", es: "Reconocimiento de voz no soportado.", vi: "Không hỗ trợ nhận dạng giọng nói.", ja: "音声認識はサポートされていません。", zhcn: "不支持语音识别。" },
+                micErrorGeneric: { en: "Microphone access error.", es: "Error de acceso al micrófono.", vi: "Lỗi truy cập micrô.", ja: "マイクアクセスエラー。", zhcn: "麦克风访问错误。" },
+                micErrorPermission: { en: "Microphone permission denied.", es: "Permiso de micrófono denegado.", vi: "Đã từ chối quyền truy cập micrô.", ja: "マイクの許可が拒否されました。", zhcn: "麦克风权限被拒绝。" },
+                micErrorNotFound: { en: "No microphone found.", es: "No se encontró micrófono.", vi: "Không tìm thấy micrô.", ja: "マイクが見つかりません。", zhcn: "未找到麦克风。" },
+                micErrorHardware: { en: "Microphone hardware error.", es: "Error de hardware del micrófono.", vi: "Lỗi phần cứng micrô.", ja: "マイクハードウェアエラー。", zhcn: "麦克风硬件错误。" },
+                statusRecordingError: { en: "Recording error: ${errorName}", es: "Error de grabación: ${errorName}", vi: "Lỗi ghi âm: ${errorName}", ja: "録音エラー：${errorName}", zhcn: "录音错误：${errorName}" },
+                transcriptionErrorGeneric: { en: "Transcription error.", es: "Error de transcripción.", vi: "Lỗi chuyển đổi.", ja: "文字起こしエラー。", zhcn: "转录错误。" },
+                transcriptionErrorNoSpeech: { en: "No speech detected.", es: "No se detectó voz.", vi: "Không phát hiện giọng nói.", ja: "音声が検出されませんでした。", zhcn: "未检测到语音。" },
+                transcriptionErrorMicProblem: { en: "Mic problem during transcription.", es: "Problema de micro durante transcripción.", vi: "Sự cố micrô khi chuyển đổi.", ja: "文字起こし中にマイクの問題が発生しました。", zhcn: "转录过程中麦克风出现问题。" },
+                transcriptionErrorPermission: { en: "Transcription permission denied.", es: "Permiso de transcripción denegado.", vi: "Đã từ chối quyền chuyển đổi.", ja: "文字起こしの許可が拒否されました。", zhcn: "转录权限被拒绝。" },
+                transcriptionErrorNetwork: { en: "Network error during transcription.", es: "Error de red durante transcripción.", vi: "Lỗi mạng khi chuyển đổi.", ja: "文字起こし中にネットワークエラーが発生しました。", zhcn: "转录期间网络错误。" },
+                errorUnknown: { en: "An unknown error occurred.", es: "Ocurrió un error desconocido.", vi: "Đã xảy ra lỗi không xác định.", ja: "不明なエラーが発生しました。", zhcn: "发生未知错误。" },
+                errorApiKeyInvalid: { en: "API Key is missing or invalid.", es: "La clave API falta o es inválida.", vi: "Khóa API bị thiếu hoặc không hợp lệ.", ja: "APIキーが見つからないか、無効です。", zhcn: "API 密钥丢失或无效。" },
+                errorApiHttp: { en: "API request failed: ${errorDetail}", es: "Falló la solicitud API: ${errorDetail}", vi: "Yêu cầu API thất bại: ${errorDetail}", ja: "APIリクエストが失敗しました：${errorDetail}", zhcn: "API 请求失败：${errorDetail}" },
+                errorApiBlocked: { en: "Content blocked by safety filters (Reason: ${reason}).", es: "Contenido bloqueado por filtros de seguridad (Razón: ${reason}).", vi: "Nội dung bị chặn bởi bộ lọc an toàn (Lý do: ${reason}).", ja: "セーフティフィルターによりコンテンツがブロックされました（理由：${reason}）。", zhcn: "内容被安全过滤器阻止（原因：${reason}）。" },
+                errorApiGeneral: { en: "API returned an error: ${errorMessage}", es: "La API devolvió un error: ${errorMessage}", vi: "API trả về lỗi: ${errorMessage}", ja: "APIがエラーを返しました：${errorMessage}", zhcn: "API 返回错误：${errorMessage}" },
+                errorApiNoCandidate: { en: "No valid response candidate from AI.", es: "Ningún candidato de respuesta válido de la IA.", vi: "Không có phản hồi hợp lệ từ AI.", ja: "AIからの有効な応答候補がありません。", zhcn: "AI 无有效响应候选项。" },
+                errorApiEmptyResponse: { en: "Received an unexpected or empty text response from AI.", es: "Se recibió una respuesta de texto inesperada o vacía de la IA.", vi: "Đã nhận phản hồi văn bản không mong muốn hoặc trống từ AI.", ja: "AIから予期しない、または空のテキスト応答を受け取りました。", zhcn: "从 AI 收到意外或空的文本响应。" },
                 errorCorsOrNetwork: { en: "Network/CORS error calling API. Check console/proxy.", es: "Error Red/CORS llamando API. Revisa consola/proxy.", vi: "Lỗi Mạng/CORS khi gọi API. Kiểm tra console/proxy.", ja: "API呼び出し中のネットワーク/CORSエラー。コンソール/プロキシ確認。", zhcn: "调用 API 时网络/CORS错误。检查控制台/代理。" },
-                // ... other existing translations ...
+                errorExploreNoConcept: { en: "Generate a concept first before exploring details.", es: "Genera un concepto primero antes de explorar detalles.", vi: "Hãy tạo ý tưởng trước khi khám phá chi tiết.", ja: "詳細を探索する前にコンセプトを生成してください。", zhcn: "在探索细节之前先生成概念。" },
+                errorParsingFailed: { en: "Could not parse expected sections. Check AI response format.", es: "No se pudieron analizar las secciones esperadas. Revisa formato de respuesta IA.", vi: "Không thể phân tích các phần mong đợi. Kiểm tra định dạng phản hồi AI.", ja: "期待されるセクションを解析できませんでした。AI応答形式を確認してください。", zhcn: "无法解析预期的部分。检查 AI 响应格式。" },
+                errorDisplayingSection: { en: "Error displaying this section.", es: "Error al mostrar esta sección.", vi: "Lỗi hiển thị phần này.", ja: "このセクションの表示中にエラーが発生しました。", zhcn: "显示此部分时出错。" },
+                errorBackendProxy: { en: "Image Generation Error:", es: "Error Generación Imagen:", vi: "Lỗi Tạo ảnh:", ja: "画像生成エラー：", zhcn: "图像生成错误：" },
+                errorBackendFetch: { en: "Network error contacting server for image generation.", es: "Error de red contactando servidor para generar imagen.", vi: "Lỗi mạng khi liên hệ máy chủ tạo ảnh.", ja: "画像生成サーバー接続エラー。", zhcn: "联系图像生成服务器时网络错误。" },
+                // Validation
+                validationLyricsMissing: { en: "Please provide song lyrics.", es: "Por favor, proporciona la letra de la canción.", vi: "Vui lòng cung cấp lời bài hát.", ja: "歌詞を入力してください。", zhcn: "请输入歌词。" },
+                validationKeywordsMissing: { en: "Please provide keywords or a theme.", es: "Por favor, proporciona palabras clave o un tema.", vi: "Vui lòng cung cấp từ khóa hoặc chủ đề.", ja: "キーワードまたはテーマを入力してください。", zhcn: "请输入关键词或主题。" },
+                validationGenreMissing: { en: "Please select a music genre.", es: "Por favor, selecciona un género musical.", vi: "Vui lòng chọn thể loại nhạc.", ja: "音楽ジャンルを選択してください。", zhcn: "请选择音乐流派。" },
+                 // Result Placeholders/Notes
+                 conceptPlaceholder: { en: "Your generated concept will appear here...", es: "Tu concepto generado aparecerá aquí...", vi: "Ý tưởng được tạo của bạn sẽ xuất hiện ở đây...", ja: "生成されたコンセプトがここに表示されます...", zhcn: "您生成的概念将显示在此处..." },
+                 requirementsPlaceholder: { en: "Requirements list will appear here...", es: "La lista de requisitos aparecerá aquí...", vi: "Danh sách yêu cầu sẽ xuất hiện ở đây...", ja: "要件リストがここに表示されます...", zhcn: "要求列表将显示在此处..." },
+                 budgetPlaceholder: { en: "Budget details will appear here...", es: "Los detalles del presupuesto aparecerán aquí...", vi: "Chi tiết ngân sách sẽ xuất hiện ở đây...", ja: "予算の詳細がここに表示されます...", zhcn: "预算细节将显示在此处..." },
+                 budgetNotePlaceholder: { en: "Note: Budgets are conceptual estimates...", es: "Nota: Los presupuestos son estimaciones conceptuales...", vi: "Lưu ý: Ngân sách là ước tính khái niệm...", ja: "注：予算は概念的な見積もりであり...", zhcn: "注意：预算是概念性估算..." },
+                 visualsPlaceholder: { en: "Key visual descriptions will appear here...", es: "Las descripciones visuales clave aparecerán aquí...", vi: "Mô tả hình ảnh chính sẽ xuất hiện ở đây...", ja: "主要なビジュアルの説明がここに表示されます...", zhcn: "关键视觉描述将显示在此处..." },
+                 visualsNotePlaceholder: { en: "Illustrative images based on descriptions.", es: "Imágenes ilustrativas basadas en descripciones.", vi: "Hình ảnh minh họa dựa trên mô tả.", ja: "説明に基づいた説明的な画像。", zhcn: "基于描述的说明性图片。" },
+                 moodboardDescPlaceholder: { en: "Moodboard description will appear here...", es: "La descripción del moodboard aparecerá aquí...", vi: "Mô tả moodboard sẽ xuất hiện ở đây...", ja: "ムードボードの説明がここに表示されます...", zhcn: "情绪板描述将显示在此处..." },
+                 moodboardImgsPlaceholder: { en: "Moodboard influence images will appear here...", es: "Las imágenes de influencia del moodboard aparecerán aquí...", vi: "Hình ảnh ảnh hưởng moodboard sẽ xuất hiện ở đây...", ja: "ムードボードの影響画像がここに表示されます...", zhcn: "情绪板影响图片将显示在此处..." },
+                 moodboardNotePlaceholder: { en: "Visual styles and elements for inspiration.", es: "Estilos visuales y elementos para inspiración.", vi: "Phong cách và yếu tố hình ảnh để lấy cảm hứng.", ja: "インスピレーションのための視覚的なスタイルと要素。", zhcn: "用于灵感的视觉风格和元素。" },
+                 palettePlaceholder: { en: "Color palette will appear here...", es: "La paleta de colores aparecerá aquí...", vi: "Bảng màu sẽ xuất hiện ở đây...", ja: "カラーパレットがここに表示されます...", zhcn: "调色板将显示在此处..." },
+                 placeholderGeneric: { en: "Content not available.", es: "Contenido no disponible.", vi: "Nội dung không có sẵn.", ja: "コンテンツはありません。", zhcn: "内容不可用。" },
+                 noVisualsFound: { en: "No visuals found.", es: "No se encontraron visuales.", vi: "Không tìm thấy hình ảnh.", ja: "ビジュアルが見つかりません。", zhcn: "未找到视觉效果。" },
+                 noMoodboardItemsFound: { en: "No moodboard items found.", es: "No se encontraron elementos de moodboard.", vi: "Không tìm thấy mục moodboard.", ja: "ムードボードの項目が見つかりません。", zhcn: "未找到情绪板项目。" },
+                 noRequirementsFound: { en: "No requirements listed.", es: "No se listaron requisitos.", vi: "Không có yêu cầu nào được liệt kê.", ja: "要件はリストされていません。", zhcn: "未列出要求。" },
+                 noBudgetContentFound: { en: "No budget details provided.", es: "No se proporcionaron detalles de presupuesto.", vi: "Không có chi tiết ngân sách được cung cấp.", ja: "予算の詳細は提供されていません。", zhcn: "未提供预算详细信息。" },
+                 budgetDetailsMissing: { en: "Details missing.", es: "Detalles faltantes.", vi: "Thiếu chi tiết.", ja: "詳細がありません。", zhcn: "缺少细节。" },
+                 noColorsFound: { en: "Could not parse colors.", es: "No se pudieron analizar los colores.", vi: "Không thể phân tích màu sắc.", ja: "色を解析できませんでした。", zhcn: "无法解析颜色。" },
+                 generatedViaBackend: { en: "Gen. via Server", es: "Gen. vía Servidor", vi: "Tạo bởi Máy chủ", ja: "サーバー経由で生成", zhcn: "通过服务器生成" },
+                 placeholderReason: { en: "Placeholder", es: "Marcador", vi: "Giữ chỗ", ja: "プレースホルダ", zhcn: "占位符" },
+                 budgetLowTitle: { en: "Low Budget", es: "Presupuesto Bajo", vi: "Ngân sách thấp", ja: "低予算", zhcn: "低预算" },
+                 budgetMidTitle: { en: "Mid Budget", es: "Presupuesto Medio", vi: "Ngân sách trung bình", ja: "中予算", zhcn: "中等预算" },
+                 budgetHighTitle: { en: "High Budget", es: "Presupuesto Alto", vi: "Ngân sách cao", ja: "高予算", zhcn: "高预算" },
+                 // Guide Text Keys (Map to data-guide-* attributes)
+                 guideTitle: { en: "How to Use MV Concept Generator", es: "Cómo Usar el Generador de Conceptos MV", vi: "Cách Sử dụng Trình tạo Ý tưởng MV", ja: "MVコンセプトジェネレーターの使い方", zhcn: "如何使用 MV 概念生成器" },
+                 guideNav: { en: "Navigation", es: "Navegación", vi: "Điều hướng", ja: "ナビゲーション", zhcn: "导航" },
+                 guideNavDesc: { en: "Use the links at the top (Home, About, Generate) to switch sections.", es: "Usa los enlaces superiores (Inicio, Acerca de, Generar) para cambiar de sección.", vi: "Sử dụng các liên kết ở trên cùng (Trang chủ, Giới thiệu, Tạo) để chuyển đổi các phần.", ja: "上部のリンク（ホーム、概要、生成）でセクションを切り替えます。", zhcn: "使用顶部链接（首页、关于、生成）切换部分。" },
+                 guideLang: { en: "Language Selection", es: "Selección de Idioma", vi: "Chọn ngôn ngữ", ja: "言語選択", zhcn: "语言选择" },
+                 guideLangDesc: { en: "Use the dropdown in the top-right to change the display language.", es: "Usa el menú desplegable superior derecho para cambiar el idioma.", vi: "Sử dụng menu thả xuống ở góc trên bên phải để thay đổi ngôn ngữ hiển thị.", ja: "右上のドロップダウンで表示言語を変更します。", zhcn: "使用右上角的下拉菜单更改显示语言。" },
+                 guideGenerate: { en: "Generate Page Features", es: "Funciones de la Página de Generación", vi: "Tính năng Trang Tạo", ja: "生成ページの機能", zhcn: "生成页面功能" },
+                 guideLyrics: { en: "Music Lyrics: Paste your full song lyrics here. Main AI input.", es: "Letra Musical: Pega tu letra completa aquí. Entrada principal para IA.", vi: "Lời bài hát: Dán toàn bộ lời bài hát của bạn vào đây. Đầu vào chính cho AI.", ja: "歌詞：ここに完全な歌詞を貼り付けます。AIの主要入力。", zhcn: "歌词：在此粘贴完整歌词。AI 主要输入。" },
+                 guideRandomLyrics: { en: "Generate Random Lyric: Click if you need inspiration or lack lyrics. Fills the box.", es: "Generar Letra Aleatoria: Haz clic si necesitas inspiración o no tienes letra. Rellena el cuadro.", vi: "Tạo lời ngẫu nhiên: Nhấp nếu bạn cần cảm hứng hoặc thiếu lời. Tự động điền vào ô.", ja: "ランダム歌詞生成：インスピレーションが必要な場合や歌詞がない場合にクリック。ボックスに入力されます。", zhcn: "生成随机歌词：如需灵感或无歌词，请单击。将填充文本框。" },
+                 guideKeywords: { en: "Keywords/Theme: Enter words describing mood, style, ideas (e.g., upbeat, city night).", es: "Palabras Clave/Tema: Ingresa palabras sobre ánimo, estilo, ideas (ej. alegre, noche ciudad).", vi: "Từ khóa/Chủ đề: Nhập từ mô tả tâm trạng, phong cách, ý tưởng (vd: lạc quan, đêm thành phố).", ja: "キーワード/テーマ：ムード、スタイル、アイデアを説明する言葉（例：アップビート、夜の街）。", zhcn: "关键词/主题：输入描述情绪、风格、想法的词语（例如，欢快、城市之夜）。" },
+                 guideGenre: { en: "Music Genre: Select the genre that best fits.", es: "Género Musical: Selecciona el que mejor encaje.", vi: "Thể loại âm nhạc: Chọn thể loại phù hợp nhất.", ja: "音楽ジャンル：最も合うジャンルを選択。", zhcn: "音乐流派：选择最适合的流派。" },
+                 guideTrack: { en: "Track Input (Optional): Upload audio or record singing for enhanced suggestions.", es: "Entrada de Pista (Opcional): Sube audio o graba canto para mejores sugerencias.", vi: "Nhập bản nhạc (Tùy chọn): Tải lên âm thanh hoặc ghi âm giọng hát để có đề xuất tốt hơn.", ja: "トラック入力（任意）：オーディオをアップロードするか歌を録音して提案を強化。", zhcn: "音轨输入（可选）：上传音频或录制演唱以获得更好建议。" },
+                 guideGenerateBtn: { en: "Generate Concept: Click this after filling inputs to get the initial concept.", es: "Generar Concepto: Haz clic tras rellenar entradas para obtener el concepto inicial.", vi: "Tạo ý tưởng: Nhấp vào đây sau khi điền thông tin đầu vào để nhận ý tưởng ban đầu.", ja: "コンセプト生成：入力後、これをクリックして初期コンセプトを取得。", zhcn: "生成概念：填写输入后单击此按钮获取初始概念。" },
+                 guideResults: { en: "Understanding the Results", es: "Entendiendo los Resultados", vi: "Hiểu kết quả", ja: "結果の理解", zhcn: "理解结果" },
+                 guideResultsDesc: { en: "After generating, results appear below:", es: "Tras generar, los resultados aparecen abajo:", vi: "Sau khi tạo, kết quả xuất hiện bên dưới:", ja: "生成後、結果は以下に表示されます：", zhcn: "生成后，结果显示在下方：" },
+                 guideConcept: { en: "Concept / Key Visual: The main idea for your MV.", es: "Concepto / Visual Clave: La idea principal para tu MV.", vi: "Ý tưởng / Hình ảnh chủ đạo: Ý tưởng chính cho MV của bạn.", ja: "コンセプト / キービジュアル：MVの主なアイデア。", zhcn: "概念 / 关键视觉：您 MV 的主要想法。" },
+                 guideExplore: { en: "Explore More Details: Click for detailed sections:", es: "Explorar Más Detalles: Haz clic para secciones detalladas:", vi: "Khám phá thêm chi tiết: Nhấp để xem các phần chi tiết:", ja: "詳細を探索：クリックして詳細セクションを表示：", zhcn: "探索更多细节：单击查看详细部分：" },
+                 guideReqs: { en: "Requirements: List of potential needs (locations, props).", es: "Requisitos: Lista de necesidades potenciales (ubicaciones, props).", vi: "Yêu cầu: Danh sách nhu cầu tiềm năng (địa điểm, đạo cụ).", ja: "要件：潜在的なニーズのリスト（場所、小道具）。", zhcn: "要求：潜在需求列表（地点、道具）。" },
+                 guideBudget: { en: "Estimated Budget: Rough ideas for Low, Mid, High production.", es: "Presupuesto Estimado: Ideas aproximadas para producción Baja, Media, Alta.", vi: "Ngân sách ước tính: Ý tưởng sơ bộ cho sản xuất Thấp, Trung bình, Cao.", ja: "推定予算：低、中、高プロダクションのおおよそのアイデア。", zhcn: "预估预算：低、中、高制作水平的粗略想法。" },
+                 guideVisuals: { en: "Visual Demo: Key scene descriptions, often with images.", es: "Demo Visual: Descripciones de escenas clave, a menudo con imágenes.", vi: "Minh họa Hình ảnh: Mô tả cảnh chính, thường kèm hình ảnh.", ja: "ビジュアルデモ：主要シーンの説明、しばしば画像付き。", zhcn: "视觉演示：关键场景描述，通常附带图像。" },
+                 guideMoodboard: { en: "Moodboard Influences: Style references, often with images.", es: "Influencias Moodboard: Referencias de estilo, a menudo con imágenes.", vi: "Ảnh hưởng Moodboard: Tham khảo phong cách, thường kèm hình ảnh.", ja: "ムードボード影響：スタイル参照、しばしば画像付き。", zhcn: "情绪板影响：风格参考，通常附带图像。" },
+                 guidePalette: { en: "Color Palette: Suggested colors matching the mood.", es: "Paleta de Colores: Colores sugeridos que coinciden con el ánimo.", vi: "Bảng màu: Màu sắc gợi ý phù hợp với tâm trạng.", ja: "カラーパレット：ムードに合った提案色。", zhcn: "调色板：与情绪匹配的建议颜色。" },
+                 guideRegenerate: { en: "Re-Generate Concept: Try again with the same inputs.", es: "Re-Generar Concepto: Intenta de nuevo con las mismas entradas.", vi: "Tạo lại ý tưởng: Thử lại với cùng đầu vào.", ja: "コンセプト再生成：同じ入力で再試行。", zhcn: "重新生成概念：使用相同输入重试。" },
+                 guideAiNote: { en: "Note: AI suggestions are starting points. Budgets are rough estimates.", es: "Nota: Sugerencias IA son puntos de partida. Presupuestos son estimados.", vi: "Lưu ý: Đề xuất AI là điểm khởi đầu. Ngân sách là ước tính sơ bộ.", ja: "注：AIの提案は出発点です。予算は概算です。", zhcn: "注意：AI 建议是起点。预算为粗略估算。" },
             };
 
-            // Check predefined translations first
-            if (translations[suffixOrKey]) {
-                return translations[suffixOrKey][currentLang] || translations[suffixOrKey]['en'] || fallbackText;
+            // Check predefined translations first (covers dynamic messages, errors, guide keys)
+            if (translations[suffixOrKey] && translations[suffixOrKey][currentLang]) {
+                return translations[suffixOrKey][currentLang];
+            }
+            // Fallback to English for predefined keys if current language is missing
+            if (translations[suffixOrKey] && translations[suffixOrKey]['en']) {
+                 return translations[suffixOrKey]['en'];
             }
 
-            // Try getting translation for specific key/suffix from data attributes
-            let specificKey = '';
-            if(suffixOrKey && element && element.dataset[`${formatDatasetKey(currentLang)}${suffixOrKey.charAt(0).toUpperCase() + suffixOrKey.slice(1)}`]){
-                 specificKey = `${formatDatasetKey(currentLang)}${suffixOrKey.charAt(0).toUpperCase() + suffixOrKey.slice(1)}`;
-            } else if(suffixOrKey && element && element.dataset[`${formatDatasetKey('en')}${suffixOrKey.charAt(0).toUpperCase() + suffixOrKey.slice(1)}`]) {
-                 specificKey = `${formatDatasetKey('en')}${suffixOrKey.charAt(0).toUpperCase() + suffixOrKey.slice(1)}`;
-            } else if (suffixOrKey) {
-                 specificKey = element?.dataset[formatDatasetKey(currentLang, suffixOrKey)] ? formatDatasetKey(currentLang, suffixOrKey) : formatDatasetKey('en', suffixOrKey);
-            }
+            // If it's not a predefined key, try getting translation from element data attributes
+            if (element) {
+                let targetKey = '';
+                // Special handling for record button states
+                if ((suffixOrKey === 'record' || suffixOrKey === 'stop') && element.id === 'record-audio-button') {
+                     targetKey = formatDatasetKey(currentLang, suffixOrKey);
+                     const enKey = formatDatasetKey('en', suffixOrKey);
+                     return element.dataset[targetKey] || element.dataset[enKey] || fallbackText || suffixOrKey; // Return suffix if no translation
+                }
+                 // Handle general placeholders vs text content
+                 const attrKey = isPlaceholderAttr ? 'placeholder' : '';
+                 targetKey = formatDatasetKey(currentLang, attrKey);
+                 const enKey = formatDatasetKey('en', attrKey);
 
-            // Try general data-lang-[lang] attribute
-            let generalKey = formatDatasetKey(currentLang);
-            let englishKey = formatDatasetKey('en');
-
-            let translation = element?.dataset[specificKey] ||
-                              element?.dataset[generalKey] ||
-                              element?.dataset[englishKey] ||
-                              fallbackText;
-
-            // Final fallback check for specific element types
-            if ((translation === fallbackText || translation === undefined || translation === '') && element) {
-                if (isPlaceholderAttr && element.hasAttribute('placeholder')) {
-                    translation = element.getAttribute('placeholder');
-                } else if (!isPlaceholderAttr && ['BUTTON', 'P', 'SMALL', 'LABEL', 'H1', 'H2', 'H3', 'LI', 'A', 'OPTION', 'TITLE', 'SPAN'].includes(element.tagName) && !element.children.length) {
-                    translation = element.textContent;
+                // Prioritize current lang, then English, then original attribute/content, then fallback
+                if (element.dataset[targetKey] !== undefined) return element.dataset[targetKey];
+                if (element.dataset[enKey] !== undefined) return element.dataset[enKey];
+                if (isPlaceholderAttr && element.getAttribute('placeholder')) return element.getAttribute('placeholder');
+                if (!isPlaceholderAttr && element.textContent) {
+                    // Special case for logo span - only use textContent if it's not just 'Logo'
+                    if (element.dataset.logoText === 'true' && element.textContent.trim().toLowerCase() === 'logo' && fallbackText) {
+                        return fallbackText; // Use fallback if original is just 'Logo'
+                    }
+                    // For other simple elements, use textContent as a last resort before the final fallback
+                    if (['BUTTON', 'P', 'SMALL', 'LABEL', 'H1', 'H2', 'H3', 'LI', 'A', 'OPTION', 'TITLE', 'SPAN'].includes(element.tagName) && !element.children.length) {
+                         return element.textContent.trim();
+                    }
                 }
             }
 
-            return String(translation ?? fallbackText).trim();
+            // Absolute fallback
+            return fallbackText;
          }
 
         function updateLanguage(langCode) {
             currentLang = langCode; console.log(`Switching language to: ${langCode}`);
             document.documentElement.lang = langCode;
-            allTranslatableElements.forEach(el => {
-                const isPlaceholderTarget = (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') && el.hasAttribute('data-lang-en-placeholder');
-                let primarySuffix = isPlaceholderTarget ? 'placeholder' : '';
-                const fallbackKey = formatDatasetKey('en', primarySuffix);
-                const fallbackValue = el.dataset[fallbackKey] || (isPlaceholderTarget ? el.getAttribute('placeholder') : el.textContent) || '';
-                let translation = getTranslatedText(el, primarySuffix, isPlaceholderTarget, fallbackValue);
 
-                if (isPlaceholderTarget) { el.placeholder = translation; }
+            // Update all elements with data-lang attributes
+            document.querySelectorAll('[data-lang-en], [data-lang-en-placeholder], [data-lang-en-record], [data-lang-en-stop]').forEach(el => {
+                const isPlaceholder = el.hasAttribute('data-lang-en-placeholder');
+                const isRecordBtn = el.hasAttribute('data-lang-en-record'); // Check if it's the record button
+                let suffix = '';
+                if (isPlaceholder) suffix = 'placeholder';
+                // Determine fallback differently for record button vs others
+                let fallback = '';
+                if (isRecordBtn) {
+                    // Fallback logic handled within updateRecordingUI now
+                } else {
+                    fallback = el.dataset[formatDatasetKey('en', suffix)] ||
+                           (isPlaceholder ? el.getAttribute('placeholder') : el.textContent) || '';
+                }
+
+                // Use getTranslatedText carefully, especially for fallback value
+                let translation = getTranslatedText(el, suffix, isPlaceholder, fallback);
+
+                // Apply translation
+                if (isPlaceholder) { el.placeholder = translation; }
                 else if (el.tagName === 'TITLE') { document.title = translation; }
-                else {
-                    // Update simple text content elements carefully
-                     const simpleTags = ['BUTTON', 'P', 'SMALL', 'LABEL', 'H1', 'H2', 'H3', 'LI', 'A', 'OPTION', 'SPAN'];
-                     if (simpleTags.includes(el.tagName)) {
-                         let onlyTextOrTranslatableSpans = Array.from(el.childNodes).every(node =>
+                else if (el.tagName === 'OPTION' && el.disabled) { el.textContent = translation; } // Handle disabled select option
+                else if (!isRecordBtn && // Avoid overwriting record button text here (handled by updateRecordingUI)
+                         !el.closest('.card-content') && // Avoid static text update inside dynamic results
+                         !el.closest('#guide-modal') && // Avoid updating guide text here (handled separately)
+                         el.id !== 'record-status-text' && // Avoid updating status text directly
+                         el.id !== 'error-message') {     // Avoid updating error message directly
+                     // Update simple text content elements like nav links, buttons (except record), labels, simple spans
+                    if (['A', 'BUTTON', 'LABEL', 'H1', 'P', 'SMALL', 'SPAN'].includes(el.tagName)) {
+                        // Check if it only contains text or other translatable spans
+                        let onlyTextOrTranslatableSpans = Array.from(el.childNodes).every(node =>
                              node.nodeType === Node.TEXT_NODE ||
                              (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'SPAN' && node.hasAttribute('data-lang-en')) ||
-                             (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'SPAN' && !node.hasAttribute('data-lang-en')) // Allow plain spans (like icons)
+                             (node.nodeType === Node.ELEMENT_NODE && !node.hasChildNodes() && !node.hasAttributes()) // Allow empty, simple spans
                          );
-                         // Avoid updating generated content inside cards, status text, or error messages here
-                         if(onlyTextOrTranslatableSpans && !el.closest('.card-content') && el.id !== 'record-status-text' && el.id !== 'error-message') {
+                        if (onlyTextOrTranslatableSpans || el.dataset.logoText === 'true') {
                             el.textContent = translation;
-                         }
-                     }
+                        }
+                    }
                 }
             });
 
+             // Update How-to-Use Guide Text using predefined keys
+             if (guideContent) {
+                 guideContent.querySelectorAll('[data-guide-title], [data-guide-nav], [data-guide-nav-desc], [data-guide-lang], [data-guide-lang-desc], [data-guide-generate], [data-guide-lyrics], [data-guide-random-lyrics], [data-guide-keywords], [data-guide-genre], [data-guide-track], [data-guide-generate-btn], [data-guide-results], [data-guide-results-desc], [data-guide-concept], [data-guide-explore], [data-guide-reqs], [data-guide-budget], [data-guide-visuals], [data-guide-moodboard], [data-guide-palette], [data-guide-regenerate], [data-guide-ai-note]').forEach(el => {
+                     const key = Object.keys(el.dataset).find(k => k.startsWith('guide'));
+                     if (key) {
+                         // Convert data-guide-nav-desc to guideNavDesc
+                         const translationKey = key.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+                         // Use innerHTML for elements that might contain <code> or <strong>
+                         if (['P', 'LI'].includes(el.tagName)) {
+                              // Basic formatting preservation (replace with more robust later if needed)
+                             let englishText = getTranslatedText(null, translationKey, false, ''); // Get English for structure
+                             let translatedText = getTranslatedText(null, translationKey, false, englishText); // Get target lang
+
+                             // Try to apply formatting tags from English version to translated version
+                             const formattingTags = ['<code>', '</strong>', '<strong>']; // Tags to preserve
+                             let tempHtml = englishText;
+                             let placeholders = [];
+                             formattingTags.forEach((tag, index) => {
+                                const regex = new RegExp(tag.replace(/([><\/])/g, '\\$1'), 'gi');
+                                tempHtml = tempHtml.replace(regex, `@@TAG${index}@@`);
+                             });
+                              // Apply placeholders to translated text if structure matches somewhat
+                             formattingTags.forEach((tag, index) => {
+                                translatedText = translatedText.replace(`@@TAG${index}@@`, tag); // Simple replace, might not be perfect
+                             });
+
+                             el.innerHTML = translatedText; // Use innerHTML to render tags
+
+                         } else {
+                             el.textContent = getTranslatedText(null, translationKey, false, el.textContent); // Use predefined keys for simple text
+                         }
+                     }
+                 });
+             }
+             // Update floating button text
+             if (howToUseButton) {
+                 howToUseButton.textContent = getTranslatedText(howToUseButton, '', false, 'How to use');
+             }
+
+
             // Update dynamic/status elements using their stored keys
-             if(recordAudioButton) updateRecordingUI(isRecording);
+             if(recordAudioButton) updateRecordingUI(isRecording); // Refreshes record button text
              if(recordStatus?.dataset?.statusKey) {
-                  let statusKey = recordStatus.dataset.statusKey, fallback = recordStatus.dataset.statusFallback || '';
+                  let statusKey = recordStatus.dataset.statusKey;
+                  let fallback = recordStatus.dataset.statusFallback || '';
                   let statusClass = Array.from(recordStatus.classList).find(c => ['complete', 'error', 'recording', 'transcribing'].includes(c)) || '';
                   let isPersistent = statusClass === 'complete' || statusClass === 'error';
                   updateRecordStatus(getTranslatedText(null, statusKey, false, fallback), statusClass, isPersistent, statusKey);
-             } else if (!isRecording) { clearRecordStatus(); }
+             } else if (!isRecording) { clearRecordStatus(); } // Clear if no status key and not recording
+
              if (loadingOverlay.classList.contains('show')) {
                  const loadingP = loadingOverlay.querySelector('p');
                  if(loadingP && loadingP.dataset.lastKey) {
@@ -1992,12 +2379,18 @@ Adhere strictly to the format: Use the exact headers (##), use bullet points (* 
                  }
              }
              if (errorMessageDiv.style.display === 'block' && errorMessageDiv.dataset.errorKey) {
-                 errorMessageDiv.textContent = getTranslatedText(null, errorMessageDiv.dataset.errorKey, false, errorMessageDiv.textContent);
-                 // Append original backend message if relevant
-                 const backendErrorMatch = errorMessageDiv.textContent.match(/:\s*(.*)$/);
-                 if(errorKey === 'errorBackendProxy' && backendErrorMatch && backendErrorMatch[1]) {
-                    errorMessageDiv.textContent += `: ${backendErrorMatch[1]}`;
+                 const errorKey = errorMessageDiv.dataset.errorKey;
+                 let baseMessage = getTranslatedText(null, errorKey, false, ''); // Get base translation
+
+                 // Re-append error details if they exist and aren't already in the base message
+                 const currentText = errorMessageDiv.textContent;
+                 const detailMatch = currentText.match(/:\s*(.*)$/); // Try to find detail after colon
+                 if (baseMessage && detailMatch && detailMatch[1] && !baseMessage.includes(detailMatch[1])) {
+                      baseMessage += `: ${detailMatch[1]}`;
+                 } else if (!baseMessage) { // If no base translation, use the current full text
+                      baseMessage = currentText;
                  }
+                 errorMessageDiv.textContent = baseMessage;
              }
              if (isSpeechRecognitionSupported) { // Update speech rec language
                  const bcp47Map = { 'zh-CN': 'zh-CN', 'vi': 'vi-VN', 'ja': 'ja-JP', 'es': 'es-ES' };
@@ -2008,27 +2401,30 @@ Adhere strictly to the format: Use the exact headers (##), use bullet points (* 
                  }
             }
 
-            // Re-apply placeholders and notes in results using current language
+            // Re-apply placeholders and notes in results using current language (if results are visible)
              if (resultsOutputArea.style.display === 'block') {
-                 resultsOutputArea.querySelectorAll('.card-content.placeholder-notice').forEach(area => {
-                     const sectionId = area.id; const sectionTitle = Object.keys(sections).find(key => sections[key] === sectionId);
-                     if(sectionTitle) setPlaceholderForMissingSection(area, sectionTitle);
+                  // Update result card headers
+                  resultsOutputArea.querySelectorAll('.result-card h2 > span[data-lang-en]').forEach(span => {
+                      span.textContent = getTranslatedText(span, '', false, span.textContent);
+                  });
+                  // Update placeholders within cards
+                 resultsOutputArea.querySelectorAll('.placeholder-notice[data-placeholder-key]').forEach(ph => {
+                    ph.textContent = getTranslatedText(null, ph.dataset.placeholderKey, false, ph.textContent);
                  });
-                 resultsOutputArea.querySelectorAll('[data-placeholder-key]').forEach(ph => {
-                    const isTruePlaceholder = ph.classList.contains('placeholder-notice') || ph.closest('.placeholder-notice');
-                     if (isTruePlaceholder) {
-                         ph.textContent = getTranslatedText(null, ph.dataset.placeholderKey, false, ph.textContent);
-                     }
-                     if(ph.tagName === 'SMALL' && ph.dataset.placeholderKey && ph.dataset.placeholderKey.endsWith('NotePlaceholder')) {
-                         ph.textContent = getTranslatedText(null, ph.dataset.placeholderKey, false, ph.textContent);
-                     }
-                 });
+                  resultsOutputArea.querySelectorAll('.card-content > small[data-placeholder-key]').forEach(note => {
+                     note.textContent = getTranslatedText(null, note.dataset.placeholderKey, false, note.textContent);
+                  });
+                 // Retranslate budget column titles if they are placeholders
                  const budgetCard = document.getElementById('result-budget-card');
                  if (budgetCard && budgetCard.style.display === 'flex') {
                      budgetCard.querySelectorAll('.budget-column.placeholder-notice h3').forEach(h3 => {
-                         const levelMatch = h3.textContent.match(/^(Low|Mid|High)/i);
-                         if (levelMatch) {
-                             const levelKey = levelMatch[1];
+                         const levelMatch = h3.textContent.match(/^(Low|Mid|High)/i) || Object.keys(h3.dataset).find(k => k.startsWith('budget'));
+                         let levelKey = '';
+                         if(levelMatch && typeof levelMatch === 'string') levelKey = levelMatch.replace('budget','').replace('Title','');
+                         else if(levelMatch) levelKey = levelMatch[1];
+
+                         if (levelKey) {
+                             levelKey = levelKey.charAt(0).toUpperCase() + levelKey.slice(1).toLowerCase(); // Normalize Low, Mid, High
                              h3.textContent = getTranslatedText(null, `budget${levelKey}Title`, false, `${levelKey} Budget`);
                          }
                      });
@@ -2061,9 +2457,15 @@ Adhere strictly to the format: Use the exact headers (##), use bullet points (* 
         if (exploreButton) { exploreButton.addEventListener('click', () => showPage('feature')); }
         backButtons.forEach(button => { button.addEventListener('click', (e) => { e.preventDefault(); showPage('home'); }); });
         if (generateConceptButton) { generateConceptButton.addEventListener('click', handleGenerateConcept); }
+        if (generateRandomLyricButton) { generateRandomLyricButton.addEventListener('click', handleGenerateRandomLyrics); } // Listener for new button
         if (exploreMoreButton) { exploreMoreButton.addEventListener('click', handleExploreMore); }
         if (regenerateButton) { regenerateButton.addEventListener('click', handleRegenerateConcept); }
         if (languageSelect) { languageSelect.addEventListener('change', (e) => { updateLanguage(e.target.value); saveLanguagePreference(e.target.value); }); }
+         // Listeners for How to Use Modal
+        if (howToUseButton) { howToUseButton.addEventListener('click', () => guideModal.classList.add('show')); }
+        if (guideCloseButton) { guideCloseButton.addEventListener('click', () => guideModal.classList.remove('show')); }
+        if (guideModal) { guideModal.addEventListener('click', (e) => { if (e.target === guideModal) guideModal.classList.remove('show'); }); } // Close on overlay click
+
 
         // --- Initial Setup ---
         const initialLang = loadLanguagePreference(); updateLanguage(initialLang);
