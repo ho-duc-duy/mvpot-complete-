@@ -113,7 +113,7 @@
         @keyframes spin-all { 0% { transform: rotate(0deg) scale(0.2); } 100% { transform: rotate(360deg) scale(0.2); } } @keyframes spin-top { 0% { transform: rotate(-45deg); } 100% { transform: rotate(315deg); } } @keyframes spin-bot { 0%, 35% { transform: rotate(0deg); } 80%, 100% { transform: rotate(-360deg); } } @keyframes spin-left { 0%, 35% { transform: rotate(175deg); } 80%, 100% { transform: rotate(535deg); } } @keyframes spin-last { 0%, 10% { transform: rotate(-280deg); } 90%, 100% { transform: rotate(-640deg); } }
         #loading-overlay p { font-weight: 500; color: var(--text-primary); margin-top: 1rem; font-size: 1.2em; text-align: center; max-width: 80%; }
 
-        /* --- Navigation (Unchanged + New Button Style) --- */
+        /* --- Navigation (MODIFIED for settings box) --- */
         .main-nav { background-color: rgba(44, 44, 48, 0.8); backdrop-filter: blur(10px); color: var(--text-primary); position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.3); display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; height: var(--nav-height); }
         .logo { font-weight: 600; font-size: 1.4rem; color: var(--text-primary); text-decoration: none; user-select: none; display: flex; align-items: center; gap: 0.5rem; }
         .logo img { max-height: 40px; width: auto; object-fit: contain; vertical-align: middle; }
@@ -122,12 +122,10 @@
         .main-nav ul li a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: var(--accent-gradient); transform: scaleX(0); transform-origin: right; transition: transform 0.4s cubic-bezier(0.19, 1, 0.22, 1); }
         .main-nav ul li a:hover, .main-nav ul li a.active { color: var(--text-primary); background-color: rgba(255, 255, 255, 0.05); }
         .main-nav ul li a.active::after { transform: scaleX(1); transform-origin: left; }
-        #settings-box { display: flex; align-items: center; gap: 0.6rem; }
-        #settings-box label { font-size: 0.9rem; color: var(--text-secondary); }
-        #settings-box select { padding: 0.4rem 0.6rem; border-radius: var(--border-radius-sm); border: 1px solid var(--border-color); background-color: var(--bg-card); color: var(--text-primary); font-size: 0.9rem; cursor: pointer; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
-        #settings-box select:focus { outline: none; border-color: var(--accent-primary); box-shadow: 0 0 0 2px rgba(106, 142, 231, 0.3); }
-        /* New Icon Button Style */
-        .main-nav #settings-box .btn-icon { background: none; border: none; color: var(--text-secondary); padding: 0.4rem; margin-left: 0.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: var(--border-radius-sm); transition: color 0.3s ease, background-color 0.3s ease; }
+        /* #settings-box only contains the button now */
+        #settings-box { display: flex; align-items: center; }
+        /* Removed label and select specific styles from here */
+        .main-nav #settings-box .btn-icon { background: none; border: none; color: var(--text-secondary); padding: 0.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: var(--border-radius-sm); transition: color 0.3s ease, background-color 0.3s ease; }
         .main-nav #settings-box .btn-icon:hover { color: var(--text-primary); background-color: rgba(255, 255, 255, 0.05); }
         .main-nav #settings-box .btn-icon svg { width: 20px; height: 20px; fill: currentColor; }
 
@@ -415,6 +413,17 @@
         .main-footer a:hover { color: var(--accent-secondary); }
 
         /* --- Utility Placeholders (Unchanged) --- */
+        .sr-only { /* For accessibility, hide visually but keep for screen readers */
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
         .placeholder-notice { font-style: italic; color: var(--text-secondary); opacity: 0.8; text-align: center; padding: 1rem; font-size: 0.9em; }
         #tab-content-requirements ul .placeholder-notice { padding: 0; text-align: left; list-style: none; margin-left: 1.8rem; }
         #tab-content-requirements ul .placeholder-notice::before { display: none; }
@@ -443,14 +452,65 @@
         #close-guide-modal { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 1.8rem; color: var(--text-secondary); cursor: pointer; padding: 5px; line-height: 1; transition: color 0.2s ease, transform 0.2s ease; }
         #close-guide-modal:hover { color: var(--text-primary); transform: scale(1.1) rotate(90deg); }
 
-        /* --- START: Music Player Modal Styles (Unchanged) --- */
-        #music-modal { position: fixed; inset: 0; background-color: rgba(26, 26, 29, 0.8); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1003; padding: 1rem; opacity: 0; transition: opacity 0.3s ease-in-out; }
-        #music-modal.show { display: flex; opacity: 1; }
-        #music-modal-content { background-color: var(--bg-card); padding: 2rem; border-radius: var(--border-radius-md); max-width: 400px; width: 90%; position: relative; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4); border: 1px solid var(--border-color); transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center; }
-        #music-modal.show #music-modal-content { transform: scale(1); }
-        #music-modal-content h3 { font-size: 1.5rem; font-weight: 600; color: var(--accent-primary); margin-bottom: 1.5rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--border-color); }
-        #close-music-modal { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 1.8rem; color: var(--text-secondary); cursor: pointer; padding: 5px; line-height: 1; transition: color 0.2s ease, transform 0.2s ease; }
-        #close-music-modal:hover { color: var(--text-primary); transform: scale(1.1) rotate(90deg); }
+        /* --- START: Settings Modal Styles (Formerly Music Modal) --- */
+        #settings-modal { position: fixed; inset: 0; background-color: rgba(26, 26, 29, 0.8); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1003; padding: 1rem; opacity: 0; transition: opacity 0.3s ease-in-out; }
+        #settings-modal.show { display: flex; opacity: 1; }
+        #settings-modal-content { background-color: var(--bg-card); padding: 2rem; border-radius: var(--border-radius-md); max-width: 400px; width: 90%; position: relative; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4); border: 1px solid var(--border-color); transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); text-align: center; }
+        #settings-modal.show #settings-modal-content { transform: scale(1); }
+        #settings-modal-content > h3 { /* Main Modal Title */
+            font-size: 1.5rem; font-weight: 600; color: var(--accent-primary); margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem; border-bottom: 1px solid var(--border-color);
+        }
+        #close-settings-modal { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 1.8rem; color: var(--text-secondary); cursor: pointer; padding: 5px; line-height: 1; transition: color 0.2s ease, transform 0.2s ease; }
+        #close-settings-modal:hover { color: var(--text-primary); transform: scale(1.1) rotate(90deg); }
+
+        /* Styles for sections within the modal */
+        #settings-modal-content .settings-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left; /* Align content left for sections */
+        }
+        #settings-modal-content .settings-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        #settings-modal-content .settings-section h4 { /* Sub-headings like Language, Background Music */
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            text-align: center; /* Center sub-headings */
+        }
+        /* Language Select specific styling inside modal */
+        #settings-modal-content #language-select {
+            width: 100%;
+            max-width: 280px; /* Adjust as needed */
+            display: block; /* To allow margin auto to work */
+            margin: 0 auto; /* Center the select box */
+            padding: 0.6rem 0.8rem;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg-color);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            appearance: none; -webkit-appearance: none; -moz-appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23a9a9b3" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 20px;
+            padding-right: 3rem; /* Make space for arrow */
+        }
+        #settings-modal-content #language-select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(106, 142, 231, 0.2);
+        }
+
+        /* Music Controls within settings modal */
         .music-controls { display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin-top: 1rem; }
         .music-controls button#play-pause-music-button { background-color: var(--input-bg-color); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.8rem; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; transition: background-color 0.3s ease, transform 0.1s ease; }
         .music-controls button#play-pause-music-button:hover { background-color: var(--bg-card-hover); transform: scale(1.05); }
@@ -460,7 +520,7 @@
         .music-controls input[type="range"]::-webkit-slider-thumb { height: 18px; width: 18px; border-radius: 50%; background: var(--accent-primary); cursor: pointer; -webkit-appearance: none; margin-top: -6px; box-shadow: var(--box-shadow-glow); }
         .music-controls input[type="range"]::-moz-range-track { width: 100%; height: 8px; cursor: pointer; background: var(--border-color); border-radius: var(--border-radius-sm); border: 1px solid var(--bg-dark); }
         .music-controls input[type="range"]::-moz-range-thumb { height: 18px; width: 18px; border-radius: 50%; background: var(--accent-primary); cursor: pointer; border: none; box-shadow: var(--box-shadow-glow); }
-        /* --- END: Music Player Modal Styles --- */
+        /* --- END: Settings Modal Styles --- */
 
 
         /* --- Responsive Adjustments --- */
@@ -469,7 +529,6 @@
             .container { max-width: 90%; }
             .main-nav ul { gap: 1rem; }
             .main-nav ul li a { font-size: 0.95rem; padding: 0.4rem 0.6rem; }
-            #settings-box label { display: none; }
             #settings-box { gap: 0.4rem; }
             .main-nav #settings-box .btn-icon { padding: 0.3rem; }
             .input-sidebar { padding: 1.5rem 1rem; }
@@ -478,8 +537,8 @@
             .results-tabs button { padding: 0.6rem 1rem; font-size: 0.9rem; }
             .tab-content { padding: 1.5rem; }
             #guide-modal-content { padding: 2rem; }
-            #music-modal-content { padding: 1.5rem; max-width: 360px; }
-            #music-modal-content h3 { font-size: 1.3rem; }
+            #settings-modal-content { padding: 1.5rem; max-width: 360px; }
+            #settings-modal-content > h3 { font-size: 1.3rem; }
             .music-controls { gap: 1rem; }
             .music-controls button#play-pause-music-button { width: 45px; height: 45px; }
             .music-controls button#play-pause-music-button svg { width: 20px; height: 20px; }
@@ -514,7 +573,7 @@
             #how-to-use-button { bottom: 15px; right: 15px; padding: 0.5rem 1rem; font-size: 0.85rem; }
             #guide-modal-content { padding: 1.5rem; max-height: 80vh; }
             #guide-modal-content h3 { font-size: 1.5rem; }
-            #close-guide-modal, #close-music-modal { top: 10px; right: 15px; font-size: 1.6rem; }
+            #close-guide-modal, #close-settings-modal { top: 10px; right: 15px; font-size: 1.6rem; }
             .new-loader-content { transform: scale(0.18); }
             #tab-content-budget .budget-columns-container { grid-template-columns: 1fr; gap: 1rem; }
             #tab-content-budget .budget-column { min-height: auto; }
@@ -582,8 +641,8 @@
             #tab-content-fonts .font-sample { font-size: 1em; }
              #how-to-use-button { bottom: 10px; right: 10px; padding: 0.4rem 0.8rem; font-size: 0.8rem; }
              #guide-modal-content { padding: 1.5rem 1rem; }
-             #music-modal-content { padding: 1.5rem 1rem; max-width: 90%;}
-             #music-modal-content h3 { font-size: 1.2rem; margin-bottom: 1rem;}
+             #settings-modal-content { padding: 1.5rem 1rem; max-width: 90%;}
+             #settings-modal-content > h3 { font-size: 1.2rem; margin-bottom: 1rem;}
              .music-controls { flex-direction: column; gap: 0.8rem; }
              .music-controls input[type="range"] { max-width: 100%; width: 100%; }
              .new-loader-container { width: 80px; height: 80px; }
@@ -630,11 +689,14 @@
             <li><a data-page="pricing" class="nav-link" data-lang-en="Pricing" data-lang-es="Precios" data-lang-vi="Giá cả" data-lang-ja="価格" data-lang-zhcn="定价">Pricing</a></li>
         </ul>
         <div id="settings-box">
-            <label for="language-select" data-lang-en="Language:" data-lang-es="Idioma:" data-lang-vi="Ngôn ngữ:" data-lang-ja="言語：" data-lang-zhcn="语言：">Language:</label>
-            <select id="language-select">
-                <option value="en">English</option> <option value="es">Español</option> <option value="vi">Tiếng Việt</option> <option value="ja">日本語</option> <option value="zh-CN">中文</option>
-            </select>
-            <button id="music-settings-button" class="btn-icon" aria-label="Music Settings">
+            <!-- Language select moved to modal -->
+            <button id="settings-trigger-button" class="btn-icon"
+                    data-lang-en-aria-label="Settings"
+                    data-lang-es-aria-label="Ajustes"
+                    data-lang-vi-aria-label="Cài đặt"
+                    data-lang-ja-aria-label="設定"
+                    data-lang-zhcn-aria-label="设置"
+                    aria-label="Settings">
                 <!-- SVG will be injected by JS -->
             </button>
         </div>
@@ -797,8 +859,43 @@
     <!-- Guide Modal (Unchanged) -->
     <div id="guide-modal"> <div id="guide-modal-content"> <button id="close-guide-modal" aria-label="Close Guide">&times;</button> <h3 data-lang-en="How to Use" data-lang-es="Cómo Usar" data-lang-vi="Cách dùng" data-lang-ja="使い方" data-lang-zhcn="如何使用">How to Use</h3> <h4 data-lang-en="1. Input Details" data-lang-es="1. Ingresa Detalles" data-lang-vi="1. Nhập chi tiết" data-lang-ja="1. 詳細入力" data-lang-zhcn="1. 输入详情">1. Input Details</h4> <p data-lang-en="On 'Generate' page:" data-lang-es="En pág 'Generar':" data-lang-vi="Trang 'Tạo':" data-lang-ja="「生成」ページ：" data-lang-zhcn="“生成”页：">On 'Generate' page:</p> <ul> <li data-lang-en="Lyrics: Paste or generate." data-lang-es="Letra: Pega o genera." data-lang-vi="Lời: Dán hoặc tạo." data-lang-ja="歌詞：貼付/生成。" data-lang-zhcn="歌词：粘贴/生成。">Lyrics: Paste or generate.</li> <li data-lang-en="Keywords: Add mood/style." data-lang-es="Palabras Clave: Añade ánimo/estilo." data-lang-vi="Từ khóa: Thêm tâm trạng/phong cách." data-lang-ja="キーワード：ムード/スタイル追加。" data-lang-zhcn="关键词：加情绪/风格。">Keywords: Add mood/style.</li> <li data-lang-en="Genre: Select." data-lang-es="Género: Selecciona." data-lang-vi="Thể loại: Chọn." data-lang-ja="ジャンル：選択。" data-lang-zhcn="流派：选择。">Genre: Select.</li> <li data-lang-en="Track (Optional): Upload/record." data-lang-es="Pista (Opc.): Sube/graba." data-lang-vi="Track (Tùy chọn): Tải/ghi âm." data-lang-ja="トラック（任意）：アップ/録音。" data-lang-zhcn="音轨（可选）：上传/录制。">Track (Optional): Upload/record.</li> </ul> <h4 data-lang-en="2. Generate Concept" data-lang-es="2. Genera Concepto" data-lang-vi="2. Tạo Ý tưởng" data-lang-ja="2. コンセプト生成" data-lang-zhcn="2. 生成概念">2. Generate Concept</h4> <p data-lang-en="Click 'Generate Concept'." data-lang-es="Clic 'Generar Concepto'." data-lang-vi="Nhấn 'Tạo Ý tưởng'." data-lang-ja="「コンセプト生成」クリック。" data-lang-zhcn="点“生成概念”。">Click 'Generate Concept'.</p> <h4 data-lang-en="3. Choose/Regenerate" data-lang-es="3. Elige/Regenera" data-lang-vi="3. Chọn/Tạo lại" data-lang-ja="3. 選択/再生成" data-lang-zhcn="3. 选择/重生成">3. Choose/Regenerate</h4> <ul> <li data-lang-en="Pick: Get full details." data-lang-es="Elegir: Obtén detalles." data-lang-vi="Chọn: Xem chi tiết." data-lang-ja="選択：詳細取得。" data-lang-zhcn="选择：获详情。">Pick: Get full details.</li> <li data-lang-en="Generate New: Try again." data-lang-es="Generar Nuevo: Intenta de nuevo." data-lang-vi="Tạo Mới: Thử lại." data-lang-ja="新規生成：再試行。" data-lang-zhcn="生成新的：重试。">Generate New: Try again.</li> </ul> <h4 data-lang-en="4. Explore & Download" data-lang-es="4. Explora y Descarga" data-lang-vi="4. Khám phá & Tải" data-lang-ja="4. 探索＆DL" data-lang-zhcn="4. 探索下载">4. Explore & Download</h4> <p data-lang-en="Use tabs. Download text/images." data-lang-es="Usa pestañas. Descarga texto/imágenes." data-lang-vi="Dùng tab. Tải text/ảnh." data-lang-ja="タブ使用。テキスト/画像DL。" data-lang-zhcn="用选项卡。下载文本/图。">Use tabs. Download text/images.</p> <p style="margin-top: 2rem; text-align: center; font-style: italic;" data-lang-en="Enjoy!" data-lang-es="¡Disfruta!" data-lang-vi="Thưởng thức!" data-lang-ja="楽しんで！" data-lang-zhcn="享受！">Enjoy!</p> </div> </div>
 
-    <!-- Music Settings Modal (Unchanged) -->
-    <div id="music-modal"> <div id="music-modal-content"> <button id="close-music-modal" aria-label="Close Music Settings">&times;</button> <h3 data-lang-en="Background Music" data-lang-es="Música Fondo" data-lang-vi="Nhạc Nền" data-lang-ja="背景音楽" data-lang-zhcn="背景音乐">Background Music</h3> <div class="music-controls"> <button id="play-pause-music-button" aria-label="Play Music"> <!-- SVG injected --> </button> <input type="range" id="volume-slider" min="0" max="100" value="50" aria-label="Volume"> </div> </div> </div>
+    <!-- Settings Modal (Replaces Music Modal) -->
+    <div id="settings-modal">
+        <div id="settings-modal-content">
+            <button id="close-settings-modal"
+                    data-lang-en-aria-label="Close Settings"
+                    data-lang-es-aria-label="Cerrar Ajustes"
+                    data-lang-vi-aria-label="Đóng Cài đặt"
+                    data-lang-ja-aria-label="設定を閉じる"
+                    data-lang-zhcn-aria-label="关闭设置"
+                    aria-label="Close Settings">&times;</button>
+            <h3 data-lang-en="Settings" data-lang-es="Ajustes" data-lang-vi="Cài đặt" data-lang-ja="設定" data-lang-zhcn="设置">Settings</h3>
+
+            <div class="settings-section language-setting-container">
+                <h4 data-lang-en="Language" data-lang-es="Idioma" data-lang-vi="Ngôn ngữ" data-lang-ja="言語" data-lang-zhcn="语言">Language</h4>
+                <!-- The label for "language-select" can be sr-only if the H4 is deemed sufficient context -->
+                <label for="language-select" class="sr-only" data-lang-en="Select Language" data-lang-es="Seleccionar Idioma" data-lang-vi="Chọn Ngôn ngữ" data-lang-ja="言語選択" data-lang-zhcn="选择语言">Select Language</label>
+                <select id="language-select">
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                    <option value="vi">Tiếng Việt</option>
+                    <option value="ja">日本語</option>
+                    <option value="zh-CN">中文</option>
+                </select>
+            </div>
+
+            <div class="settings-section">
+                <h4 data-lang-en="Background Music" data-lang-es="Música de Fondo" data-lang-vi="Nhạc Nền" data-lang-ja="背景音楽" data-lang-zhcn="背景音乐">Background Music</h4>
+                <div class="music-controls">
+                    <button id="play-pause-music-button" aria-label="Play Music">
+                        <!-- SVG injected by JS -->
+                    </button>
+                    <input type="range" id="volume-slider" min="0" max="100" value="50" aria-label="Volume">
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <footer class="main-footer">
         <div class="container">
@@ -806,7 +903,6 @@
         </div>
     </footer>
 
-    <!-- ========= START JAVASCRIPT (No changes needed here for this request) ========= -->
     <script type="module">
 
     // Import necessary modules from Three.js
@@ -820,7 +916,7 @@
         const exploreButton = document.getElementById('explore-button');
         const backButtons = document.querySelectorAll('.btn-back');
         const loadingOverlay = document.getElementById('loading-overlay');
-        const languageSelect = document.getElementById('language-select');
+        const languageSelect = document.getElementById('language-select'); // This ID remains the same
         const howToUseButton = document.getElementById('how-to-use-button');
         const guideModal = document.getElementById('guide-modal');
         const closeGuideModal = document.getElementById('close-guide-modal');
@@ -840,13 +936,11 @@
         const resultsTabsContainer = document.querySelector('.results-tabs');
         const tabContentArea = document.querySelector('.tab-content-area');
 
-        // --- Modified Download Button References ---
         const downloadActionArea = document.getElementById('download-action-area');
-        const prepareTextDownloadButton = document.getElementById('prepare-text-download-button'); // Renamed
-        const finalizeTextDownloadButton = document.getElementById('finalize-text-download-button'); // New button
+        const prepareTextDownloadButton = document.getElementById('prepare-text-download-button');
+        const finalizeTextDownloadButton = document.getElementById('finalize-text-download-button');
         const downloadAllImagesButton = document.getElementById('download-all-images-button');
         const imageDownloadFormatSelect = document.getElementById('image-download-format-select');
-        // --- End Modified Download Button References ---
 
         const featureForm = document.getElementById('feature-form');
         const generateConceptButton = document.getElementById('generate-concept-button');
@@ -870,10 +964,11 @@
         const pricingColumns = document.querySelectorAll('.pricing-column');
         const pricingCheckmarkSpans = document.querySelectorAll('.feature-value.icon-check');
 
+        // MODIFIED: References for the new Settings Modal
         const backgroundMusic = document.getElementById('background-music');
-        const musicSettingsButton = document.getElementById('music-settings-button');
-        const musicModal = document.getElementById('music-modal');
-        const closeMusicModal = document.getElementById('close-music-modal');
+        const settingsTriggerButton = document.getElementById('settings-trigger-button'); // Formerly musicSettingsButton
+        const settingsModal = document.getElementById('settings-modal');                 // Formerly musicModal
+        const closeSettingsModal = document.getElementById('close-settings-modal');     // Formerly closeMusicModal
         const playPauseMusicButton = document.getElementById('play-pause-music-button');
         const volumeSlider = document.getElementById('volume-slider');
 
@@ -881,13 +976,13 @@
         // --- State Variables ---
         let currentInputs = null; let currentLang = 'en'; let activePage = 'home'; let generateStep = 'initial'; let currentConceptText = ''; let currentDetailedResultsText = ''; let musicIsPlaying = false; let musicInitialized = false;
         let storedPageData = { feature: { inputs: null, conceptText: '', detailedResultsText: '', step: 'initial', formValues: null, imagePlaceholders: [] }, pricing: {} };
-        let isTextDownloadModeActive = false; // New state for tab selection mode
+        let isTextDownloadModeActive = false;
 
         let mediaRecorder; let audioChunks = []; let isRecording = false; let recordedAudioBlob = null;
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition; let finalTranscript = ''; let isSpeechRecognitionSupported = !!SpeechRecognition;
 
-        const svgIconGear = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l-.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22-.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>`;
+        const svgIconGear = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49 1c.52.4 1.08.73 1.69.98l-.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49.42l.38-2.65c.61-.25 1.17.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22-.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>`;
         const svgIconPlay = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
         const svgIconPause = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
         const svgCheckmark = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20px" height="20px"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>`;
@@ -924,7 +1019,6 @@
             'tab-content-moodboard': 'moodboard',
             'tab-content-fonts': 'fonts',
             'tab-content-palette': 'palette'
-            // 'video-demo' and 'album-cover' are not text downloadable for now
         };
 
 
@@ -936,9 +1030,8 @@
                  const imageDataToStore = [];
                  document.querySelectorAll('#tab-content-visuals .image-placeholder, #tab-content-moodboard .image-placeholder').forEach((figure) => { const img = figure.querySelector('img'); const figcaption = figure.querySelector('figcaption'); const seedSuffix = figure.dataset.seedSuffix; const tabId = figure.closest('#tab-content-visuals') ? 'visuals' : 'moodboard'; if (img && img.src && figcaption && seedSuffix && !img.src.startsWith('data:')) { imageDataToStore.push({ seedSuffix: seedSuffix, tabId: tabId, src: img.src, alt: img.alt, figcaptionHTML: figcaption.innerHTML }); } });
                  storedPageData.feature = { inputs: currentInputs ? JSON.parse(JSON.stringify(currentInputs)) : null, conceptText: currentConceptText, detailedResultsText: currentDetailedResultsText, step: generateStep, formValues: { lyrics: lyricsInput.value, keywords: keywordsInput.value, genre: genreSelect.value, transcript: transcriptOutput.value, transcriptVisible: transcriptGroup.style.display === 'block', trackFileName: trackUploadInput.value ? trackUploadInput.files[0]?.name : null }, imagePlaceholders: imageDataToStore };
-                 // Ensure text download mode is reset when leaving feature page
                  if (isTextDownloadModeActive) {
-                    toggleTextDownloadMode(false); // Deactivate
+                    toggleTextDownloadMode(false);
                  }
              }
 
@@ -976,7 +1069,7 @@
                 textElement.dataset.lastKey = messageKey;
             }
             loadingOverlay.classList.add('show');
-            if (isTextDownloadModeActive) { // If loading happens during selection mode, cancel it
+            if (isTextDownloadModeActive) {
                 toggleTextDownloadMode(false);
             }
             [generateConceptButton, generateLyricsButton, pickConceptButton, regenerateConceptButtonAlt, recordAudioButton,
@@ -995,9 +1088,8 @@
 
             const detailsShown = (generateStep === 'details_shown');
             if(prepareTextDownloadButton) prepareTextDownloadButton.disabled = !detailsShown;
-            // finalizeTextDownloadButton is handled by its own logic (isTextDownloadModeActive and selection)
             if(downloadAllImagesButton) downloadAllImagesButton.disabled = !detailsShown;
-            updateFinalizeButtonState(); // Re-evaluate finalize button
+            updateFinalizeButtonState();
         }
 
 
@@ -1022,7 +1114,7 @@
               if(validationError) { displayError(errorMsg, errorKey); focusEl?.focus(); return; }
              currentInputs = { lyrics, keywords, selectedGenre, singingTranscript }; currentDetailedResultsText = ''; if (storedPageData.feature && storedPageData.feature.imagePlaceholders) { storedPageData.feature.imagePlaceholders = []; }
              clearErrors();
-             if (isTextDownloadModeActive) toggleTextDownloadMode(false); // Cancel selection mode if active
+             if (isTextDownloadModeActive) toggleTextDownloadMode(false);
              updateGeneratePageUI('loading');
              const prompt = `\nYou are an AI assistant specialized in generating creative concepts for music videos.\nAnalyze the following song details:\n**Lyrics:**\n\`\`\`\n${lyrics}\n\`\`\`${singingTranscript ? `\n**Singing Transcript (Optional Context):**\n\`\`\`\n${singingTranscript}\n\`\`\`\n` : ''}\n**Keywords/Theme:** ${keywords}\n**Music Genre:** ${selectedGenre}\n\nGenerate **ONLY** the "Concept / Key Visual" section for a music video based on these details. Provide a concise, compelling core concept description (around 2-5 sentences). Mention 1-2 key visual motifs or scenes. Output *only the description text itself*, without any headers like "## Concept / Key Visual".`;
              const generatedText = await callGeminiAPI(prompt, "generatingConcept", "Generating Concept...");
@@ -1033,7 +1125,7 @@
               if (!currentInputs || !currentConceptText) { displayError(getTranslatedText(null, 'errorExploreNoConcept', false, "Generate concept first."), 'errorExploreNoConcept'); return; }
               if(pickConceptButton) pickConceptButton.disabled = true; if(regenerateConceptButtonAlt) regenerateConceptButtonAlt.disabled = true;
               if (storedPageData.feature && storedPageData.feature.imagePlaceholders) { storedPageData.feature.imagePlaceholders = []; }
-              if (isTextDownloadModeActive) toggleTextDownloadMode(false); // Cancel selection mode if active
+              if (isTextDownloadModeActive) toggleTextDownloadMode(false);
               updateGeneratePageUI('loading');
              const { lyrics, keywords, selectedGenre, singingTranscript } = currentInputs;
              const prompt = `\nYou are an AI assistant specialized in generating creative concepts for music videos.\nBased on the original song details:\n**Lyrics:**\n\`\`\`\n${lyrics}\n\`\`\`${singingTranscript ? `\n**Singing Transcript (Optional Context):**\n\`\`\`\n${singingTranscript}\n\`\`\`\n` : ''}\n**Keywords/Theme:** ${keywords}\n**Music Genre:** ${selectedGenre}\n\nAnd this CHOSEN "Concept / Key Visual":\n\`\`\`\n${currentConceptText.replace(/`/g, '\\`')} \n\`\`\`\n\nProvide the following detailed sections for the music video. Structure *exactly* like this in English:\n\n## Requirements for MV\n(* or - list item: Detail about location, casting, props, wardrobe, cinematography, VFX, editing style, etc. Be specific and relevant.)\n\n## Estimated Budget\n(**Low Budget:** ~$Range (Optional). Description of approach.\n- Example Item - $Cost (Optional, list a few key cost drivers if applicable)\n\n**Mid Budget:** ~$Range (Optional). Description of approach, potentially scaling up elements from Low.\n- Example Item - $Cost\n\n**High Budget:** ~$Range (Optional). Description of approach, allowing for higher production value.\n- Example Item - $Cost\n)\n\n## Visual Demo (Key Images)\n(1. Vivid description of a key scene or visual moment suitable for image generation.\n2. Another vivid description for image generation.\n3. A third vivid description for image generation.)\n\n## Moodboard Influences\n(A short sentence describing the overall mood and visual style.\n* Specific visual element or reference suitable for image generation (e.g., Film noir lighting, rainy cityscape).\n* Another specific element for image generation (e.g., Wes Anderson symmetrical composition, pastel diner).\n* Style reference for image generation (e.g., Surrealist painting style, dreamlike forest).\n* Color influence (e.g., Muted pastels).\n* Textural element (e.g., Grainy film stock).\n)\n\n## Typography/Font Suggestion\n(Suggest ONE suitable font combination (1 or 2 fonts).\n**Font Combination:** [Font Name 1] & [Font Name 2 (Optional)]\n*Reason:* [Explain why this combination (or single font) fits the song's lyrics, theme, genre, and mood. Be specific.]\n*Sample Title (Using Font 1):* "[Create a short, relevant sample sentence using the first font]"\n*[Optional] Sample Body (Using Font 2):* "[Create a short, relevant sample sentence using the second font, if applicable]"\nProvide actual, common font names (e.g., 'Montserrat', 'Playfair Display', 'Roboto Mono'). Ensure samples showcase the font's feel.)\n\n## Color Palette\n(List 3-5 colors. Indicate the DOMINANT color first. For each color, provide its name, hex code, and a brief application suggestion for the MV. Use the exact format below, one color per line.)\nDominant Color Name (#XXXXXX) - Application: [Use this for main backgrounds or character outfits to set the core mood.]\nSecondary Color Name (#YYYYYY) - Application: [Apply to secondary elements like set dressing or subtle gradients.]\nAccent Color Name (#ZZZZZZ) - Application: [Use sparingly to highlight key props, text overlays, or create visual contrast.]\n(Add more secondary/accent colors if appropriate, following the same format)\n\nAdhere strictly to the format: Use the exact headers (##), use bullet points (* or -) for Requirements and Moodboard lists, use numbering (1., 2., 3.) for Visual Demo, use the bold format **Level Budget:** for budget tiers. For Fonts, use the exact format with **Font Combination:**, *Reason:*, *Sample Title:*, *Sample Body:*. For Colors, use the exact format 'Color Name (#XXXXXX) - Application: [description]', starting with 'Dominant'. Provide detailed, relevant content for each section. Use plausible USD ($) ranges for budget. Ensure Visual Demo and Moodboard list items are descriptive image prompts.`;
@@ -1043,7 +1135,7 @@
 
         function handleRegenerateConceptAlt() { handleGenerateConcept(); }
 
-        function parseAndDisplayDetailedResults(text) { console.log("--- Parsing Detailed AI Response for Tabs---"); const lines = text.split('\n'); let currentSectionKey = null; let currentTargetTabId = null; let contentBuffer = ''; let foundAnySection = false; const processedTabIds = new Set(); let unrecognizedHeaders = []; const conceptTabContent = document.getElementById('tab-content-concept'); if (conceptTabContent && currentConceptText) { processSectionContent('tab-content-concept', 'Concept / Key Visual', currentConceptText); processedTabIds.add('tab-content-concept'); foundAnySection = true; } else { console.warn("Could not inject stored concept text for #tab-content-concept."); } lines.forEach((line, lineIndex) => { const trimmedLine = line.trim(); let matchedHeader = false; let sectionTitleMatch = null; let targetTabIdMatch = null; if (trimmedLine.startsWith('##')) { for (const title in sectionsToTabs) { const escapedTitle = title.trim().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&').replace(/\\s\*\\\/\\s\*/, '\\s*\\/?\\s*'); const headerRegex = new RegExp(`^##\\s*\\*?\\*?${escapedTitle}\\*?\\*?\\s*$`, 'i'); if (headerRegex.test(trimmedLine)) { sectionTitleMatch = title; targetTabIdMatch = sectionsToTabs[title]; matchedHeader = true; console.log(`>>> MATCHED Header: ${sectionTitleMatch} -> #${targetTabIdMatch}`); break; } } if (!matchedHeader && trimmedLine.startsWith('##')) { console.warn(`Unrecognized header: "${trimmedLine}"`); unrecognizedHeaders.push(trimmedLine); } } if (matchedHeader && sectionTitleMatch && targetTabIdMatch) { if (currentSectionKey && currentTargetTabId && contentBuffer.trim()) { if (currentTargetTabId !== 'tab-content-concept') { console.log(`Processing buffered content for: ${currentSectionKey} -> #${currentTargetTabId}`); try { processSectionContent(currentTargetTabId, currentSectionKey, contentBuffer.trim()); processedTabIds.add(currentTargetTabId); foundAnySection = true; } catch (processError) { handleProcessingErrorInTab(currentTargetTabId, currentSectionKey, processError); processedTabIds.add(currentTargetTabId); } } } currentSectionKey = sectionTitleMatch; currentTargetTabId = targetTabIdMatch; contentBuffer = ''; } else if (currentSectionKey && currentTargetTabId) { if (!unrecognizedHeaders.includes(trimmedLine)) { contentBuffer += line + '\n'; } } }); if (currentSectionKey && currentTargetTabId && contentBuffer.trim()) { if (currentTargetTabId !== 'tab-content-concept') { console.log(`Processing final content for: ${currentSectionKey} -> #${currentTargetTabId}`); try { processSectionContent(currentTargetTabId, currentSectionKey, contentBuffer.trim()); processedTabIds.add(currentTargetTabId); foundAnySection = true; } catch (processError) { handleProcessingErrorInTab(currentTargetTabId, currentSectionKey, processError); processedTabIds.add(currentTargetTabId); } } } console.log("--- Finished Parsing Details ---"); console.log("Found any detailed section (incl. concept):", foundAnySection); console.log("Processed Tab IDs:", Array.from(processedTabIds)); Object.keys(tabTitles).forEach(tabId => { if (!processedTabIds.has(tabId)) { const contentDiv = document.getElementById(tabId); const sectionTitleKey = Object.keys(sectionsToTabs).find(key => sectionsToTabs[key] === tabId); if (contentDiv && sectionTitleKey && (tabId === 'tab-content-video-demo' || tabId === 'tab-content-album-cover')) { contentDiv.innerHTML = `<p class="placeholder-notice" data-lang-en="Coming soon..." data-lang-es="Próximamente..." data-lang-vi="Sắp ra mắt..." data-lang-ja="近日公開..." data-lang-zhcn="即将推出...">${getTranslatedText(null, 'comingSoonGeneral', false, "Coming soon...")}</p>`; contentDiv.classList.add('placeholder-notice'); } else if (contentDiv && sectionTitleKey) { console.warn(`Tab content for "${tabTitles[tabId]}" (#${tabId}) not found/processed. Setting placeholder.`); setPlaceholderForMissingTab(contentDiv, sectionTitleKey); } else if (contentDiv) { console.warn(`Tab content for #${tabId} not found, unknown section key.`); contentDiv.innerHTML = `<p class="placeholder-notice">${getTranslatedText(null, 'placeholderGeneric', false, 'Content unavailable.')}</p>`; contentDiv.classList.add('placeholder-notice'); } } }); if (!foundAnySection && !currentConceptText /* Only error if no concept was there to begin with */) { console.error("Parsing detailed results failed: No sections processed."); displayError(getTranslatedText(null, 'errorParsingFailed', false, "Could not parse details."), 'errorParsingFailed'); } }
+        function parseAndDisplayDetailedResults(text) { console.log("--- Parsing Detailed AI Response for Tabs---"); const lines = text.split('\n'); let currentSectionKey = null; let currentTargetTabId = null; let contentBuffer = ''; let foundAnySection = false; const processedTabIds = new Set(); let unrecognizedHeaders = []; const conceptTabContent = document.getElementById('tab-content-concept'); if (conceptTabContent && currentConceptText) { processSectionContent('tab-content-concept', 'Concept / Key Visual', currentConceptText); processedTabIds.add('tab-content-concept'); foundAnySection = true; } else { console.warn("Could not inject stored concept text for #tab-content-concept."); } lines.forEach((line, lineIndex) => { const trimmedLine = line.trim(); let matchedHeader = false; let sectionTitleMatch = null; let targetTabIdMatch = null; if (trimmedLine.startsWith('##')) { for (const title in sectionsToTabs) { const escapedTitle = title.trim().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&').replace(/\\s\*\\\/\\s\*/, '\\s*\\/?\\s*'); const headerRegex = new RegExp(`^##\\s*\\*?\\*?${escapedTitle}\\*?\\*?\\s*$`, 'i'); if (headerRegex.test(trimmedLine)) { sectionTitleMatch = title; targetTabIdMatch = sectionsToTabs[title]; matchedHeader = true; console.log(`>>> MATCHED Header: ${sectionTitleMatch} -> #${targetTabIdMatch}`); break; } } if (!matchedHeader && trimmedLine.startsWith('##')) { console.warn(`Unrecognized header: "${trimmedLine}"`); unrecognizedHeaders.push(trimmedLine); } } if (matchedHeader && sectionTitleMatch && targetTabIdMatch) { if (currentSectionKey && currentTargetTabId && contentBuffer.trim()) { if (currentTargetTabId !== 'tab-content-concept') { console.log(`Processing buffered content for: ${currentSectionKey} -> #${currentTargetTabId}`); try { processSectionContent(currentTargetTabId, currentSectionKey, contentBuffer.trim()); processedTabIds.add(currentTargetTabId); foundAnySection = true; } catch (processError) { handleProcessingErrorInTab(currentTargetTabId, currentSectionKey, processError); processedTabIds.add(currentTargetTabId); } } } currentSectionKey = sectionTitleMatch; currentTargetTabId = targetTabIdMatch; contentBuffer = ''; } else if (currentSectionKey && currentTargetTabId) { if (!unrecognizedHeaders.includes(trimmedLine)) { contentBuffer += line + '\n'; } } }); if (currentSectionKey && currentTargetTabId && contentBuffer.trim()) { if (currentTargetTabId !== 'tab-content-concept') { console.log(`Processing final content for: ${currentSectionKey} -> #${currentTargetTabId}`); try { processSectionContent(currentTargetTabId, currentSectionKey, contentBuffer.trim()); processedTabIds.add(currentTargetTabId); foundAnySection = true; } catch (processError) { handleProcessingErrorInTab(currentTargetTabId, currentSectionKey, processError); processedTabIds.add(currentTargetTabId); } } } console.log("--- Finished Parsing Details ---"); console.log("Found any detailed section (incl. concept):", foundAnySection); console.log("Processed Tab IDs:", Array.from(processedTabIds)); Object.keys(tabTitles).forEach(tabId => { if (!processedTabIds.has(tabId)) { const contentDiv = document.getElementById(tabId); const sectionTitleKey = Object.keys(sectionsToTabs).find(key => sectionsToTabs[key] === tabId); if (contentDiv && sectionTitleKey && (tabId === 'tab-content-video-demo' || tabId === 'tab-content-album-cover')) { contentDiv.innerHTML = `<p class="placeholder-notice" data-lang-en="Coming soon..." data-lang-es="Próximamente..." data-lang-vi="Sắp ra mắt..." data-lang-ja="近日公開..." data-lang-zhcn="即将推出...">${getTranslatedText(null, 'comingSoonGeneral', false, "Coming soon...")}</p>`; contentDiv.classList.add('placeholder-notice'); } else if (contentDiv && sectionTitleKey) { console.warn(`Tab content for "${tabTitles[tabId]}" (#${tabId}) not found/processed. Setting placeholder.`); setPlaceholderForMissingTab(contentDiv, sectionTitleKey); } else if (contentDiv) { console.warn(`Tab content for #${tabId} not found, unknown section key.`); contentDiv.innerHTML = `<p class="placeholder-notice">${getTranslatedText(null, 'placeholderGeneric', false, 'Content unavailable.')}</p>`; contentDiv.classList.add('placeholder-notice'); } } }); if (!foundAnySection && !currentConceptText ) { console.error("Parsing detailed results failed: No sections processed."); displayError(getTranslatedText(null, 'errorParsingFailed', false, "Could not parse details."), 'errorParsingFailed'); } }
         function handleProcessingErrorInTab(targetTabId, sectionKey, error) { console.error(`Error processing section "${sectionKey}" for tab #${targetTabId}:`, error); const contentDiv = document.getElementById(targetTabId); if (contentDiv) { contentDiv.innerHTML = `<p class="placeholder-notice error">${getTranslatedText(null, 'errorDisplayingSection', false, 'Error displaying section content.')}</p>`; contentDiv.classList.add('placeholder-notice'); } }
 
         function processSectionContent(targetTabId, sectionTitleKey, content) { const contentDiv = document.getElementById(targetTabId); if (!contentDiv) { console.error(`Target tab content div #${targetTabId} not found!`); return; } contentDiv.innerHTML = ''; contentDiv.classList.remove('placeholder-notice'); let sectionHasContent = false; try { if (targetTabId === 'tab-content-visuals') { const container = document.createElement('div'); container.className = 'image-placeholder-container'; contentDiv.appendChild(container); const descs = content.split(/^\s*[1-9][0-9]*[\.\)\-]\s+/gm).filter(Boolean).map(d => d.trim().replace(/\n$/, '')); if (descs.length > 0) { descs.slice(0, 3).forEach((d, i) => { if(d) { createImagePlaceholder(container, d, `v-${i}`, 'visuals'); sectionHasContent = true; } }); } if (!sectionHasContent) { container.innerHTML = `<p class="placeholder-notice">${getTranslatedText(null, 'noVisualsFound', false, 'No key image descriptions provided.')}</p>`; container.classList.add('placeholder-notice'); } const note = document.createElement('small'); note.dataset.langEn = "Illustrative images based on descriptions."; note.dataset.placeholderKey="visualsNotePlaceholder"; note.textContent = getTranslatedText(note, '', false, note.dataset.langEn); contentDiv.appendChild(note); } else if (targetTabId === 'tab-content-moodboard') { const descEl = document.createElement('p'); descEl.id = 'moodboard-description'; contentDiv.appendChild(descEl); const imgContainer = document.createElement('div'); imgContainer.className = 'image-placeholder-container'; imgContainer.id = 'moodboard-images'; contentDiv.appendChild(imgContainer); const lines = content.trim().split('\n'); let mainDesc = '', items = []; let readingDesc = true; for (const line of lines) { const trimmed = line.trim(); if (trimmed.match(/^[\*\-]\s+/)) { readingDesc = false; items.push(trimmed.replace(/^[\*\-]\s+/, '').trim()); } else if (readingDesc && trimmed) { mainDesc += line + '\n'; } else if (!readingDesc && trimmed && items.length > 0) { items[items.length - 1] += '\n' + trimmed; } } mainDesc = mainDesc.trim(); items = items.filter(Boolean); if (mainDesc) { descEl.innerHTML = mainDesc.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>'); descEl.style.display = 'block'; descEl.classList.remove('placeholder-notice'); sectionHasContent = true; } else { descEl.innerHTML = getTranslatedText(null, 'moodboardDescPlaceholder', false, 'Moodboard description missing.'); descEl.style.display = 'block'; descEl.classList.add('placeholder-notice'); descEl.dataset.placeholderKey="moodboardDescPlaceholder"; } if (items.length > 0) { imgContainer.innerHTML = ''; imgContainer.classList.remove('placeholder-notice'); items.slice(0, 5).forEach((d, i) => { if(d) { createImagePlaceholder(imgContainer, d, `m-${i}`, 'moodboard'); sectionHasContent = true; } }); } else { imgContainer.innerHTML = `<p class="placeholder-notice" data-placeholder-key="moodboardImgsPlaceholder">${getTranslatedText(null, 'noMoodboardItemsFound', false, 'No moodboard images provided.')}</p>`; imgContainer.classList.add('placeholder-notice'); } if (sectionHasContent) { const note = document.createElement('small'); note.dataset.langEn = "Visual styles and elements for inspiration."; note.dataset.placeholderKey="moodboardNotePlaceholder"; note.textContent = getTranslatedText(note, '', false, note.dataset.langEn); contentDiv.appendChild(note); } else if (!mainDesc && items.length === 0) { contentDiv.innerHTML = `<p class="placeholder-notice" data-placeholder-key="moodboardDescPlaceholder">${getTranslatedText(null, 'moodboardDescPlaceholder', false, 'Moodboard description missing.')}</p><div class="image-placeholder-container placeholder-notice"><p data-placeholder-key="moodboardImgsPlaceholder">${getTranslatedText(null, 'moodboardImgsPlaceholder', false, 'No moodboard images provided.')}</p></div>`; contentDiv.classList.add('placeholder-notice'); } } else if (targetTabId === 'tab-content-budget') { let container = contentDiv.querySelector('.budget-columns-container'); if (!container) { container = document.createElement('div'); container.className = 'budget-columns-container'; contentDiv.appendChild(container); } else { container.innerHTML = ''; } container.classList.remove('placeholder-notice'); const budgetRegex = /\*\*(Low\s*Budget|Mid\s*Budget|High\s*Budget)\*\*\s*:?\s*([\s\S]*?)(?=\n?\s*\*\*(?:Low|Mid|High)\s*Budget\*\*|$)/gi; const budgetLevels = {}; let match; let parsingSuccess = false; while ((match = budgetRegex.exec(content)) !== null) { parsingSuccess = true; const levelTitle = match[1].replace(/\s+/g, ' ').trim(); const levelKey = levelTitle.split(' ')[0]; let rawContent = match[2].trim(); let range = ''; let description = ''; const rangePatterns = [ /[~\$€£]?\s*[\d,.]+\s*[kKmM]?\b\s*[-–—]\s*[~\$€£]?\s*[\d,.]+\s*[kKmM]?\b(?:\s*USD|EUR|GBP)?/i, /[~\$€£]?\s*[\d,.]+\s*[kKmM]?\b\s*\+(?:\s*USD|EUR|GBP)?/i, /[~\$€£]?\s*[\d,.]+\s*[kKmM]?\b(?:\s*USD|EUR|GBP)?/i ]; for (const pattern of rangePatterns) { const rangeMatch = rawContent.match(new RegExp(`^\\s*\\(?(${pattern.source})\\)?\\s*`, 'i')); if (rangeMatch) { range = rangeMatch[1].trim(); description = rawContent.substring(rangeMatch[0].length).trim(); break; } } if (!range) description = rawContent; budgetLevels[levelKey] = { title: levelTitle, range: range, description: description }; } const order = ["Low", "Mid", "High"]; let anyColumnHasContent = false; order.forEach(levelKey => { const colDiv = document.createElement('div'); colDiv.className = 'budget-column'; const titleH3 = document.createElement('h3'); const descP = document.createElement('p'); if (budgetLevels[levelKey]) { const data = budgetLevels[levelKey]; titleH3.textContent = data.title + (data.range ? ` (${data.range})` : ''); let processedDesc = data.description; let itemBoxesHTML = ''; const itemCostRegex = /^\s*[-*]\s*(.+?)\s*[-–—:]\s*([\$\€\£]?\s*[\d,.]+\s*[kKmM]?\b(?:\s*[-–—]\s*[\$\€\£]?\s*[\d,.]+\s*[kKmM]?\b)?(?:\s*USD|\s*EUR|\s*GBP)?)\s*$/gm; processedDesc = processedDesc.replace(itemCostRegex, (matchStr, item, cost) => { itemBoxesHTML += `<div class="budget-item-box">${item.trim()}: <strong>${cost.trim()}</strong></div>`; return ''; }).trim(); processedDesc = processedDesc.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>'); descP.innerHTML = processedDesc + itemBoxesHTML; if(descP.innerHTML.trim() === ''){ descP.innerHTML = `(${getTranslatedText(null, 'budgetDetailsMissing', false, 'Details missing')})`; descP.classList.add('placeholder-notice'); } else { anyColumnHasContent = true; } } else { titleH3.textContent = getTranslatedText(null, `budget${levelKey}Title`, false, `${levelKey} Budget`); descP.textContent = `(${getTranslatedText(null, 'budgetDetailsMissing', false, `Details missing.`)})`; descP.classList.add('placeholder-notice'); colDiv.classList.add('placeholder-notice'); } colDiv.appendChild(titleH3); colDiv.appendChild(descP); container.appendChild(colDiv); }); if (!parsingSuccess && content.trim()) { container.innerHTML = `<div class="raw-budget-output"><pre>${content}</pre></div>`; container.classList.add('placeholder-notice'); console.warn("Budget parsing failed, raw display."); } else if (!anyColumnHasContent && !parsingSuccess) { container.innerHTML = `<p class="placeholder-notice">${getTranslatedText(null, 'noBudgetContentFound', false, 'No budget details provided.')}</p>`; container.classList.add('placeholder-notice'); } else { sectionHasContent = true; } let note = contentDiv.querySelector('small'); if (!note) { note = document.createElement('small'); note.dataset.langEn = "Note: Budgets are conceptual estimates..."; note.dataset.placeholderKey="budgetNotePlaceholder"; contentDiv.appendChild(note); } note.textContent = getTranslatedText(note, '', false, note.dataset.langEn); } else if (targetTabId === 'tab-content-requirements') { const listEl = document.createElement('ul'); contentDiv.appendChild(listEl); const items = content.trim().split(/^\s*[\*\-]\s+/gm).filter(Boolean).map(item => item.trim().replace(/\n$/, '')); if (items.length > 0) { items.forEach(item => { const li = document.createElement('li'); li.innerHTML = item.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>'); listEl.appendChild(li); }); sectionHasContent = true; } else { listEl.innerHTML = `<li class="placeholder-notice" data-placeholder-key="requirementsPlaceholder">${getTranslatedText(null, 'noRequirementsFound', false, 'No requirements listed.')}</li>`; listEl.classList.add('placeholder-notice'); } } else if (targetTabId === 'tab-content-fonts') { const suggestionDiv = document.createElement('div'); suggestionDiv.className = 'font-suggestion'; const combinationMatch = content.match(/\*\*Font Combination:\*\*\s*(.*?)(?:\s*&\s*(.*?))?\s*$/im); const reasonMatch = content.match(/\*Reason:\*\s*([\s\S]*?)(?=\n\s*\*Sample|\n\s*$)/i); const sampleTitleMatch = content.match(/\*Sample Title(?: \(Using Font 1\))?:\*\s*"(.*?)"/i); const sampleBodyMatch = content.match(/\*Sample Body(?: \(Using Font 2\))?:\*\s*"(.*?)"/i); if (combinationMatch && reasonMatch && sampleTitleMatch) { sectionHasContent = true; const font1 = combinationMatch[1]?.trim(); const font2 = combinationMatch[2]?.trim(); const reason = reasonMatch[1]?.trim(); const sampleTitle = sampleTitleMatch[1]?.trim(); const sampleBody = sampleBodyMatch?.[1]?.trim(); const comboH3 = document.createElement('h3'); comboH3.textContent = font1 + (font2 ? ` & ${font2}` : ''); suggestionDiv.appendChild(comboH3); const reasonP = document.createElement('p'); reasonP.className = 'font-reason'; reasonP.innerHTML = reason.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>'); suggestionDiv.appendChild(reasonP); const sampleTitleDiv = document.createElement('div'); sampleTitleDiv.className = 'font-sample'; sampleTitleDiv.style.fontFamily = `'${font1}', ${fontFamilyFallback(font1)}`; sampleTitleDiv.innerHTML = `<strong>${getTranslatedText(null, 'fontSampleTitleLabel', false, 'Title:')}</strong> "${sampleTitle}"`; suggestionDiv.appendChild(sampleTitleDiv); if (font2 && sampleBody) { const sampleBodyDiv = document.createElement('div'); sampleBodyDiv.className = 'font-sample'; sampleBodyDiv.style.fontFamily = `'${font2}', ${fontFamilyFallback(font2)}`; sampleBodyDiv.innerHTML = `<strong>${getTranslatedText(null, 'fontSampleBodyLabel', false, 'Body:')}</strong> "${sampleBody}"`; suggestionDiv.appendChild(sampleBodyDiv); } contentDiv.appendChild(suggestionDiv); } else { console.warn("Font parsing failed."); } if (!sectionHasContent) { contentDiv.innerHTML = `<p class="placeholder-notice" data-placeholder-key="fontsPlaceholder">${getTranslatedText(null, 'noFontsFound', false, 'No font suggestions provided.')}</p>`; contentDiv.classList.add('placeholder-notice'); } } else if (targetTabId === 'tab-content-palette') { const container = document.createElement('div'); container.className = 'color-palette-display'; contentDiv.appendChild(container); sectionHasContent = createColorSwatches(container, content.trim()); if (!sectionHasContent) { container.innerHTML = `<p class="placeholder-notice" data-placeholder-key="palettePlaceholder">${getTranslatedText(null, 'noColorsFound', false, 'No color palette provided.')}</p>`; container.classList.add('placeholder-notice'); } } else if (targetTabId === 'tab-content-concept') { const pEl = document.createElement('p'); pEl.style.whiteSpace = 'pre-wrap'; const processedContent = content.trim().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); pEl.innerHTML = processedContent; contentDiv.appendChild(pEl); if (processedContent) sectionHasContent = true; } else if (targetTabId === 'tab-content-video-demo' || targetTabId === 'tab-content-album-cover') {
@@ -1066,33 +1158,29 @@
 
         function clearTabContents() { if (!tabContents) return; tabContents.forEach(tab => { const tabId = tab.id; const sectionTitleKey = Object.keys(sectionsToTabs).find(key => sectionsToTabs[key] === tabId); if (sectionTitleKey) setPlaceholderForMissingTab(tab, sectionTitleKey); else { tab.innerHTML = `<p class="placeholder-notice">${getTranslatedText(null, 'placeholderGeneric', false, 'Cleared.')}</p>`; tab.classList.add('placeholder-notice'); } }); resultsTabsContainer?.querySelectorAll('.tab-link.active').forEach(link => link.classList.remove('active')); tabContentArea?.querySelectorAll('.tab-content.active').forEach(content => content.classList.remove('active')); }
         function clearErrors() { errorMessageDiv.style.display = 'none'; errorMessageDiv.textContent = ''; errorMessageDiv.removeAttribute('data-error-key'); }
-        function resetGeneratePageUI() { clearTabContents(); conceptTextOutput.textContent = getTranslatedText(null, 'conceptPlaceholder', false, 'Concept text will appear here...'); conceptTextOutput.classList.add('placeholder-notice'); currentConceptText = ''; currentDetailedResultsText = ''; currentInputs = null; if (storedPageData.feature) { storedPageData.feature.imagePlaceholders = []; } else { storedPageData.feature = { imagePlaceholders: [] }; } if (isTextDownloadModeActive) toggleTextDownloadMode(false); // Ensure mode is reset
+        function resetGeneratePageUI() { clearTabContents(); conceptTextOutput.textContent = getTranslatedText(null, 'conceptPlaceholder', false, 'Concept text will appear here...'); conceptTextOutput.classList.add('placeholder-notice'); currentConceptText = ''; currentDetailedResultsText = ''; currentInputs = null; if (storedPageData.feature) { storedPageData.feature.imagePlaceholders = []; } else { storedPageData.feature = { imagePlaceholders: [] }; } if (isTextDownloadModeActive) toggleTextDownloadMode(false);
              updateGeneratePageUI('initial'); console.log("Reset Generate Page UI to initial state."); }
         function updateGeneratePageUI(newState) { generateStep = newState; console.log("Updating Generate UI State:", newState); if (initialPrompt) initialPrompt.style.display = (newState === 'initial') ? 'flex' : 'none'; if (conceptDisplayArea) conceptDisplayArea.style.display = (newState === 'concept_shown') ? 'flex' : 'none'; if (tabbedResultsArea) tabbedResultsArea.style.display = (newState === 'details_shown') ? 'flex' : 'none'; if (downloadActionArea) downloadActionArea.style.display = (newState === 'details_shown') ? 'flex' : 'none'; if(generateConceptButton) generateConceptButton.disabled = (newState === 'loading'); if(pickConceptButton) pickConceptButton.disabled = (newState !== 'concept_shown'); if(regenerateConceptButtonAlt) regenerateConceptButtonAlt.disabled = (newState !== 'concept_shown');
             const detailsShown = (newState === 'details_shown');
             if(prepareTextDownloadButton) prepareTextDownloadButton.disabled = !detailsShown;
             if(downloadAllImagesButton) downloadAllImagesButton.disabled = !detailsShown;
             if (newState !== 'details_shown' && isTextDownloadModeActive) {
-                toggleTextDownloadMode(false); // Cancel selection mode if UI changes
+                toggleTextDownloadMode(false);
             }
-            updateFinalizeButtonState(); // Update finalize button based on new state AND selection
+            updateFinalizeButtonState();
             if (newState === 'details_shown') { const firstTabLink = resultsTabsContainer?.querySelector('.tab-link'); if (firstTabLink && !resultsTabsContainer?.querySelector('.tab-link.active')) { activateTab(firstTabLink); } } }
         function activateTab(tabLinkElement) { if (!tabLinkElement || !tabContents) return;
-            // If in text download selection mode, do NOT switch tabs, only toggle selection
             if (isTextDownloadModeActive) {
-                // Allow selection only for tabs that have corresponding text data
                 const targetTabId = tabLinkElement.dataset.tabTarget;
-                if (tabTargetToSectionKey[targetTabId]) { // Check if it's a downloadable text tab
+                if (tabTargetToSectionKey[targetTabId]) {
                     tabLinkElement.classList.toggle('selected-for-download');
                     updateFinalizeButtonState();
                 } else {
-                    // Optionally provide feedback that this tab cannot be selected for text download
                     console.log(`Tab ${targetTabId} is not selectable for text download.`);
                 }
-                return; // Prevent normal tab switching
+                return;
             }
 
-            // Normal tab switching logic
             const targetId = tabLinkElement.dataset.tabTarget;
             const targetContent = document.getElementById(targetId);
             tabLinks.forEach(link => link.classList.remove('active'));
@@ -1107,15 +1195,21 @@
         function displayError(message, errorKey = 'errorUnknown') { message = String(message || getTranslatedText(null, errorKey, false, 'Unknown error.')); errorMessageDiv.textContent = message; errorMessageDiv.dataset.errorKey = errorKey; errorMessageDiv.style.display = 'block'; hideLoading(); console.error("Displayed error:", message, `(Key: ${errorKey})`); if (outputArea?.contains(errorMessageDiv)) { errorMessageDiv.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }
 
         const internalTranslations = {
-             fontSampleTitleLabel: { en: "Title:", es: "Título:", vi: "Tiêu đề:", ja: "タイトル：", zhcn: "标题：" }, fontSampleBodyLabel: { en: "Body:", es: "Cuerpo:", vi: "Nội dung:", ja: "本文：", zhcn: "正文：" }, fontsPlaceholder: { en: "Font suggestions...", es: "Sugerencias de fuentes...", vi: "Gợi ý phông chữ...", ja: "フォントの提案...", zhcn: "字体建议..." }, noFontsFound: { en: "No font suggestions.", es: "No sugerencias de fuentes.", vi: "Không có gợi ý phông chữ.", ja: "フォントの提案なし。", zhcn: "无字体建议。" }, errorParsingFailed: { en: "Parse error. AI response format incorrect?", es: "Error de análisis. ¿Formato IA incorrecto?", vi: "Lỗi phân tích. Định dạng AI sai?", ja: "解析エラー。AI形式不正？", zhcn: "解析错误。AI 格式不正确？" }, generatedViaBackend: { en: "Gen. via Server", es: "Gen. vía Servidor", vi: "Tạo bởi Máy chủ", ja: "サーバー生成", zhcn: "服务器生成" }, placeholderReason: { en: "Placeholder", es: "Marcador", vi: "Giữ chỗ", ja: "プレースホルダ", zhcn: "占位符" }, errorBackendProxy: { en: "Img Gen Error:", es: "Error Gen Imagen:", vi: "Lỗi Tạo ảnh:", ja: "画像生成エラー：", zhcn: "图像生成错误：" }, errorBackendFetch: { en: "Network error fetching image.", es: "Error de red al obtener imagen.", vi: "Lỗi mạng lấy ảnh.", ja: "画像取得ネットワークエラー。", zhcn: "获取图像网络错误。" }, errorCorsOrNetwork: { en: "Network/CORS error calling API.", es: "Error Red/CORS llamando API.", vi: "Lỗi Mạng/CORS gọi API.", ja: "APIネットワーク/CORSエラー。", zhcn: "API 网络/CORS 错误。" }, validationLyricsMissing: { en: "Provide/generate lyrics.", es: "Proporciona/genera letra.", vi: "Cung cấp/tạo lời.", ja: "歌詞を提供/生成。", zhcn: "提供/生成歌词。" }, validationKeywordsMissing: { en: "Provide keywords.", es: "Proporciona palabras clave.", vi: "Cung cấp từ khóa.", ja: "キーワード提供。", zhcn: "提供关键词。" }, validationGenreMissing: { en: "Select genre.", es: "Selecciona género.", vi: "Chọn thể loại.", ja: "ジャンル選択。", zhcn: "选择流派。" }, errorApiKeyInvalid: { en: "API Key invalid/missing.", es: "Clave API inválida/faltante.", vi: "Khóa API sai/thiếu.", ja: "APIキー不正/欠落。", zhcn: "API 密钥无效/丢失。" }, errorApiHttp: { en: "API fail: ${errorDetail}", es: "Fallo API: ${errorDetail}", vi: "API thất bại: ${errorDetail}", ja: "API失敗：${errorDetail}", zhcn: "API 失败：${errorDetail}" }, errorApiBlocked: { en: "Blocked by safety (Reason: ${reason}).", es: "Bloqueado por seguridad (Razón: ${reason}).", vi: "Bị chặn an toàn (Lý do: ${reason}).", ja: "安全ブロック（理由：${reason}）。", zhcn: "安全阻止（原因：${reason}）。" }, errorApiGeneral: { en: "API Error: ${errorMessage}", es: "Error API: ${errorMessage}", vi: "Lỗi API: ${errorMessage}", ja: "APIエラー：${errorMessage}", zhcn: "API 错误：${errorMessage}" }, errorApiNoCandidate: { en: "No API response candidate.", es: "Sin candidato API.", vi: "Không có phản hồi API.", ja: "API応答候補なし。", zhcn: "无 API 响应候选项。" }, errorApiEmptyResponse: { en: "Empty AI response.", es: "Respuesta IA vacía.", vi: "Phản hồi AI trống.", ja: "AI応答空。", zhcn: "AI 响应为空。" }, statusRequestingMic: { en: "Requesting mic...", es: "Solicitando micro...", vi: "Yêu cầu mic...", ja: "マイク要求中...", zhcn: "请求麦克风..." }, statusRecording: { en: "Recording...", es: "Grabando...", vi: "Đang ghi...", ja: "録音中...", zhcn: "录音中..." }, statusTranscribing: { en: "Transcribing...", es: "Transcribiendo...", vi: "Chuyển ghi...", ja: "文字起こし中...", zhcn: "转录中..." }, statusStopping: { en: "Stopping...", es: "Deteniendo...", vi: "Đang dừng...", ja: "停止中...", zhcn: "停止中..." }, stoppedStatus: { en: "Stopped.", es: "Detenido.", vi: "Đã dừng.", ja: "停止。", zhcn: "已停止。" }, recordTranscriptComplete: { en: "Rec & transcript done.", es: "Grab. y transcr. listo.", vi: "Ghi & bản ghi xong.", ja: "録音・文字起こし完了。", zhcn: "录音转录完成。" }, recordCompleteNoTranscript: { en: "Rec done (no transcript).", es: "Grab. lista (sin transcr.).", vi: "Ghi xong (ko bản ghi).", ja: "録音完了（文字起こし無）。", zhcn: "录音完成（无转录）。" }, transcriptCompleteNoRecord: { en: "Transcript done (no rec).", es: "Transcr. lista (sin grab.).", vi: "Bản ghi xong (ko ghi).", ja: "文字起こし完了（録音無）。", zhcn: "转录完成（无录音）。" }, statusFileSelected: { en: "File selected.", es: "Archivo seleccionado.", vi: "Đã chọn tệp.", ja: "ファイル選択済。", zhcn: "文件已选。" }, statusAudioNotSupported: { en: "Audio recording unsupported.", es: "Grabación audio no soportada.", vi: "Ghi âm không hỗ trợ.", ja: "録音非対応。", zhcn: "不支持录音。" }, statusSpeechRecNotSupported: { en: "Speech recognition unsupported.", es: "Reconoc. voz no soportado.", vi: "Nhận dạng giọng nói không hỗ trợ.", ja: "音声認識非対応。", zhcn: "不支持语音识别。" }, micErrorGeneric: { en: "Mic access error.", es: "Error acceso micro.", vi: "Lỗi truy cập mic.", ja: "マイクアクセスエラー。", zhcn: "麦克风错误。" }, micErrorPermission: { en: "Mic permission denied.", es: "Permiso micro denegado.", vi: "Quyền mic bị từ chối.", ja: "マイク許可拒否。", zhcn: "麦克风权限拒绝。" }, micErrorNotFound: { en: "No mic found.", es: "No se encontró micro.", vi: "Không tìm thấy mic.", ja: "マイク未検出。", zhcn: "未找到麦克风。" }, micErrorHardware: { en: "Mic hardware error.", es: "Error hardware micro.", vi: "Lỗi phần cứng mic.", ja: "マイクHWエラー。", zhcn: "麦克风硬件错误。" }, statusRecordingError: { en: "Rec. error: ${errorName}", es: "Error grab.: ${errorName}", vi: "Lỗi ghi: ${errorName}", ja: "録音エラー：${errorName}", zhcn: "录音错误：${errorName}" }, transcriptionErrorGeneric: { en: "Transcr. error: ${errorParam}", es: "Error transcr.: ${errorParam}", vi: "Lỗi chuyển ghi: ${errorParam}", ja: "文字起こしエラー：${errorParam}", zhcn: "转录错误：${errorParam}" }, transcriptionErrorNoSpeech: { en: "No speech detected.", es: "No se detectó habla.", vi: "Không phát hiện giọng nói.", ja: "音声未検出。", zhcn: "未检测到语音。" }, transcriptionErrorMicProblem: { en: "Transcr. failed (mic issue?).", es: "Fallo transcr. (¿micro?).", vi: "Chuyển ghi thất bại (lỗi mic?).", ja: "文字起こし失敗（マイク？）。", zhcn: "转录失败（麦克风问题？）。" }, transcriptionErrorPermission: { en: "Transcr. needs mic permission.", es: "Transcr. necesita permiso micro.", vi: "Chuyển ghi cần quyền mic.", ja: "文字起こしマイク許可要。", zhcn: "转录需麦克风权限。" }, transcriptionErrorNetwork: { en: "Transcr. network error.", es: "Error red transcr.", vi: "Lỗi mạng chuyển ghi.", ja: "文字起こしNWエラー。", zhcn: "转录网络错误。" }, budgetLowTitle: { en: "Low Budget", es: "Bajo Presupuesto", vi: "Ngân sách thấp", ja: "低予算", zhcn:"低预算"}, budgetMidTitle: { en: "Mid Budget", es: "Presupuesto Medio", vi: "Ngân sách trung bình", ja: "中予算", zhcn:"中预算"}, budgetHighTitle: { en: "High Budget", es: "Alto Presupuesto", vi: "Ngân sách cao", ja: "高予算", zhcn:"高预算"}, budgetDetailsMissing: { en: "Details missing.", es: "Detalles faltantes.", vi: "Thiếu chi tiết.", ja: "詳細なし。", zhcn:"缺细节。"}, noVisualsFound: { en: "No visuals.", es: "No visuales.", vi: "Không hình ảnh.", ja: "ビジュアルなし。", zhcn:"无视觉。"}, noMoodboardItemsFound: { en: "No moodboard items.", es: "No elementos moodboard.", vi: "Không mục moodboard.", ja: "ムードボード項目なし。", zhcn:"无情绪板项目。"}, noBudgetContentFound: { en: "No budget details.", es: "No detalles presupuesto.", vi: "Không chi tiết ngân sách.", ja: "予算詳細なし。", zhcn:"无预算细节。"}, noRequirementsFound: { en: "No requirements.", es: "No requisitos.", vi: "Không yêu cầu.", ja: "要件なし。", zhcn:"无要求。"}, noColorsFound: { en: "No colors.", es: "No colores.", vi: "Không màu sắc.", ja: "色なし。", zhcn:"无颜色。"}, placeholderGeneric: { en: "Content unavailable.", es: "Contenido no disponible.", vi: "Nội dung không có.", ja: "内容利用不可。", zhcn:"内容不可用。"}, errorDisplayingSection: { en: "Error displaying section.", es: "Error mostrando sección.", vi: "Lỗi hiển thị phần.", ja: "セクション表示エラー。", zhcn:"显示部分错误。"}, errorExploreNoConcept: { en: "Generate concept first.", es: "Genera concepto primero.", vi: "Tạo ý tưởng trước.", ja: "まずコンセプト生成。", zhcn:"先生成概念。"}, generatingConcept: { en: "Generating Concept...", es: "Generando Concepto...", vi: "Đang tạo ý tưởng...", ja: "コンセプト生成中...", zhcn:"生成概念中..."}, fetchingDetails: { en: "Fetching Details...", es: "Obteniendo Detalles...", vi: "Lấy chi tiết...", ja: "詳細取得中...", zhcn:"获取细节中..."}, generatingCreativeSparks: { en: "Generating sparks...", es: "Generando chispas...", vi: "Tạo tia sáng...", ja: "火花生成中...", zhcn:"生成火花中..."}, conceptPlaceholder: { en: "Concept appears here...", es: "Concepto aquí...", vi: "Ý tưởng ở đây...", ja: "コンセプト表示...", zhcn: "概念在此显示..." }, requirementsPlaceholder: { en: "Requirements list...", es: "Lista requisitos...", vi: "Danh sách yêu cầu...", ja: "要件リスト...", zhcn: "要求列表..." }, budgetPlaceholder: { en: "Budget details...", es: "Detalles presupuesto...", vi: "Chi tiết ngân sách...", ja: "予算詳細...", zhcn: "预算细节..." }, budgetNotePlaceholder: { en: "Note: Budgets are estimates...", es: "Nota: Presupuestos estimados...", vi: "Lưu ý: Ngân sách ước tính...", ja: "注：予算は見積もり...", zhcn: "注：预算为估算..." }, visualsPlaceholder: { en: "Visual descriptions...", es: "Descripciones visuales...", vi: "Mô tả hình ảnh...", ja: "ビジュアル説明...", zhcn: "视觉描述..." }, visualsNotePlaceholder: { en: "Illustrative images.", es: "Imágenes ilustrativas.", vi: "Ảnh minh họa.", ja: "説明画像。", zhcn: "说明图片。" }, moodboardDescPlaceholder: { en: "Moodboard description...", es: "Descripción moodboard...", vi: "Mô tả moodboard...", ja: "ムードボード説明...", zhcn: "情绪板描述..." }, moodboardImgsPlaceholder: { en: "Moodboard images...", es: "Imágenes moodboard...", vi: "Ảnh moodboard...", ja: "ムードボード画像...", zhcn: "情绪板图片..." }, moodboardNotePlaceholder: { en: "Visuals for inspiration.", es: "Visuales para inspiración.", vi: "Hình ảnh cảm hứng.", ja: "インスピレーション用ビジュアル。", zhcn: "灵感视觉。" }, palettePlaceholder: { en: "Color palette...", es: "Paleta colores...", vi: "Bảng màu...", ja: "カラーパレット...", zhcn: "调色板..." }, preparingDownload: { en: "Preparing Download...", es: "Preparando Descarga...", vi: "Chuẩn bị Tải xuống...", ja: "ダウンロード準備中...", zhcn: "准备下载..." }, errorDownloadPrep: { en: "Failed to prepare download.", es: "Fallo al preparar descarga.", vi: "Lỗi chuẩn bị tải xuống.", ja: "ダウンロード準備失敗。", zhcn: "准备下载失败。" }, downloadingImages: { en: "Downloading Images for ZIP...", es: "Descargando Imágenes para ZIP...", vi: "Đang tải Ảnh cho ZIP...", ja: "ZIP用画像ダウンロード中...", zhcn: "正在下载ZIP图片..." }, errorImageFetchZip: { en: "Error fetching image for ZIP.", es: "Error al obtener imagen para ZIP.", vi: "Lỗi lấy ảnh cho ZIP.", ja: "ZIP用画像取得エラー。", zhcn: "获取ZIP图片错误。" }, errorZipCreation: { en: "Error creating ZIP file.", es: "Error al crear archivo ZIP.", vi: "Lỗi tạo tệp ZIP.", ja: "ZIPファイル作成エラー。", zhcn: "创建ZIP文件错误。" }, noImagesToDownload: { en: "No images to download.", es: "No hay imágenes para descargar.", vi: "Không có ảnh để tải.", ja: "ダウンロードする画像がありません。", zhcn: "没有可下载的图像。" }, backgroundMusicTitle: { en: "Background Music", es: "Música de Fondo", vi: "Nhạc Nền", ja: "背景音楽", zhcn: "背景音乐" }, playMusic: { en: "Play Music", es: "Reproducir Música", vi: "Phát Nhạc", ja: "音楽を再生", zhcn: "播放音乐" }, pauseMusic: { en: "Pause Music", es: "Pausar Música", vi: "Tạm Dừng Nhạc", ja: "音楽を一時停止", zhcn: "暂停音乐" }, musicSettings: { en: "Music Settings", es: "Ajustes de Música", vi: "Cài Đặt Nhạc", ja: "音楽設定", zhcn: "音乐设置" }, closeMusicSettings: { en: "Close Music Settings", es: "Cerrar Ajustes de Música", vi: "Đóng Cài Đặt Nhạc", ja: "音楽設定を閉じる", zhcn: "关闭音乐设置" }, imageFormatLabel: { en: "Image Format:", es: "Formato Imagen:", vi: "Định dạng Ảnh:", ja: "画像形式：", zhcn: "图片格式：" }, tiffNotSupportedAlert: { en: "TIFF format is not supported by browsers for direct download. Images will be downloaded as PNG instead.", es: "El formato TIFF no es compatible con los navegadores para descarga directa. Las imágenes se descargarán como PNG.", vi: "Định dạng TIFF không được trình duyệt hỗ trợ tải xuống trực tiếp. Hình ảnh sẽ được tải xuống dưới dạng PNG.", ja: "TIFF形式はブラウザによる直接ダウンロードに対応していません。画像は代わりにPNGとしてダウンロードされます。", zhcn: "浏览器不支持直接下载TIFF格式。图像将以PNG格式下载。" },
+             fontSampleTitleLabel: { en: "Title:", es: "Título:", vi: "Tiêu đề:", ja: "タイトル：", zhcn: "标题：" }, fontSampleBodyLabel: { en: "Body:", es: "Cuerpo:", vi: "Nội dung:", ja: "本文：", zhcn: "正文：" }, fontsPlaceholder: { en: "Font suggestions...", es: "Sugerencias de fuentes...", vi: "Gợi ý phông chữ...", ja: "フォントの提案...", zhcn: "字体建议..." }, noFontsFound: { en: "No font suggestions.", es: "No sugerencias de fuentes.", vi: "Không có gợi ý phông chữ.", ja: "フォントの提案なし。", zhcn: "无字体建议。" }, errorParsingFailed: { en: "Parse error. AI response format incorrect?", es: "Error de análisis. ¿Formato IA incorrecto?", vi: "Lỗi phân tích. Định dạng AI sai?", ja: "解析エラー。AI形式不正？", zhcn: "解析错误。AI 格式不正确？" }, generatedViaBackend: { en: "Gen. via Server", es: "Gen. vía Servidor", vi: "Tạo bởi Máy chủ", ja: "サーバー生成", zhcn: "服务器生成" }, placeholderReason: { en: "Placeholder", es: "Marcador", vi: "Giữ chỗ", ja: "プレースホルダ", zhcn: "占位符" }, errorBackendProxy: { en: "Img Gen Error:", es: "Error Gen Imagen:", vi: "Lỗi Tạo ảnh:", ja: "画像生成エラー：", zhcn: "图像生成错误：" }, errorBackendFetch: { en: "Network error fetching image.", es: "Error de red al obtener imagen.", vi: "Lỗi mạng lấy ảnh.", ja: "画像取得ネットワークエラー。", zhcn: "获取图像网络错误。" }, errorCorsOrNetwork: { en: "Network/CORS error calling API.", es: "Error Red/CORS llamando API.", vi: "Lỗi Mạng/CORS gọi API.", ja: "APIネットワーク/CORSエラー。", zhcn: "API 网络/CORS 错误。" }, validationLyricsMissing: { en: "Provide/generate lyrics.", es: "Proporciona/genera letra.", vi: "Cung cấp/tạo lời.", ja: "歌詞を提供/生成。", zhcn: "提供/生成歌词。" }, validationKeywordsMissing: { en: "Provide keywords.", es: "Proporciona palabras clave.", vi: "Cung cấp từ khóa.", ja: "キーワード提供。", zhcn: "提供关键词。" }, validationGenreMissing: { en: "Select genre.", es: "Selecciona género.", vi: "Chọn thể loại.", ja: "ジャンル選択。", zhcn: "选择流派。" }, errorApiKeyInvalid: { en: "API Key invalid/missing.", es: "Clave API inválida/faltante.", vi: "Khóa API sai/thiếu.", ja: "APIキー不正/欠落。", zhcn: "API 密钥无效/丢失。" }, errorApiHttp: { en: "API fail: ${errorDetail}", es: "Fallo API: ${errorDetail}", vi: "API thất bại: ${errorDetail}", ja: "API失敗：${errorDetail}", zhcn: "API 失败：${errorDetail}" }, errorApiBlocked: { en: "Blocked by safety (Reason: ${reason}).", es: "Bloqueado por seguridad (Razón: ${reason}).", vi: "Bị chặn an toàn (Lý do: ${reason}).", ja: "安全ブロック（理由：${reason}）。", zhcn: "安全阻止（原因：${reason}）。" }, errorApiGeneral: { en: "API Error: ${errorMessage}", es: "Error API: ${errorMessage}", vi: "Lỗi API: ${errorMessage}", ja: "APIエラー：${errorMessage}", zhcn: "API 错误：${errorMessage}" }, errorApiNoCandidate: { en: "No API response candidate.", es: "Sin candidato API.", vi: "Không có phản hồi API.", ja: "API応答候補なし。", zhcn: "无 API 响应候选项。" }, errorApiEmptyResponse: { en: "Empty AI response.", es: "Respuesta IA vacía.", vi: "Phản hồi AI trống.", ja: "AI応答空。", zhcn: "AI 响应为空。" }, statusRequestingMic: { en: "Requesting mic...", es: "Solicitando micro...", vi: "Yêu cầu mic...", ja: "マイク要求中...", zhcn: "请求麦克风..." }, statusRecording: { en: "Recording...", es: "Grabando...", vi: "Đang ghi...", ja: "録音中...", zhcn: "录音中..." }, statusTranscribing: { en: "Transcribing...", es: "Transcribiendo...", vi: "Chuyển ghi...", ja: "文字起こし中...", zhcn: "转录中..." }, statusStopping: { en: "Stopping...", es: "Deteniendo...", vi: "Đang dừng...", ja: "停止中...", zhcn: "停止中..." }, stoppedStatus: { en: "Stopped.", es: "Detenido.", vi: "Đã dừng.", ja: "停止。", zhcn: "已停止。" }, recordTranscriptComplete: { en: "Rec & transcript done.", es: "Grab. y transcr. listo.", vi: "Ghi & bản ghi xong.", ja: "録音・文字起こし完了。", zhcn: "录音转录完成。" }, recordCompleteNoTranscript: { en: "Rec done (no transcript).", es: "Grab. lista (sin transcr.).", vi: "Ghi xong (ko bản ghi).", ja: "録音完了（文字起こし無）。", zhcn: "录音完成（无转录）。" }, transcriptCompleteNoRecord: { en: "Transcript done (no rec).", es: "Transcr. lista (sin grab.).", vi: "Bản ghi xong (ko ghi).", ja: "文字起こし完了（録音無）。", zhcn: "转录完成（无录音）。" }, statusFileSelected: { en: "File selected.", es: "Archivo seleccionado.", vi: "Đã chọn tệp.", ja: "ファイル選択済。", zhcn: "文件已选。" }, statusAudioNotSupported: { en: "Audio recording unsupported.", es: "Grabación audio no soportada.", vi: "Ghi âm không hỗ trợ.", ja: "録音非対応。", zhcn: "不支持录音。" }, statusSpeechRecNotSupported: { en: "Speech recognition unsupported.", es: "Reconoc. voz no soportado.", vi: "Nhận dạng giọng nói không hỗ trợ.", ja: "音声認識非対応。", zhcn: "不支持语音识别。" }, micErrorGeneric: { en: "Mic access error.", es: "Error acceso micro.", vi: "Lỗi truy cập mic.", ja: "マイクアクセスエラー。", zhcn: "麦克风错误。" }, micErrorPermission: { en: "Mic permission denied.", es: "Permiso micro denegado.", vi: "Quyền mic bị từ chối.", ja: "マイク許可拒否。", zhcn: "麦克风权限拒绝。" }, micErrorNotFound: { en: "No mic found.", es: "No se encontró micro.", vi: "Không tìm thấy mic.", ja: "マイク未検出。", zhcn: "未找到麦克风。" }, micErrorHardware: { en: "Mic hardware error.", es: "Error hardware micro.", vi: "Lỗi phần cứng mic.", ja: "マイクHWエラー。", zhcn: "麦克风硬件错误。" }, statusRecordingError: { en: "Rec. error: ${errorName}", es: "Error grab.: ${errorName}", vi: "Lỗi ghi: ${errorName}", ja: "録音エラー：${errorName}", zhcn: "录音错误：${errorName}" }, transcriptionErrorGeneric: { en: "Transcr. error: ${errorParam}", es: "Error transcr.: ${errorParam}", vi: "Lỗi chuyển ghi: ${errorParam}", ja: "文字起こしエラー：${errorParam}", zhcn: "转录错误：${errorParam}" }, transcriptionErrorNoSpeech: { en: "No speech detected.", es: "No se detectó habla.", vi: "Không phát hiện giọng nói.", ja: "音声未検出。", zhcn: "未检测到语音。" }, transcriptionErrorMicProblem: { en: "Transcr. failed (mic issue?).", es: "Fallo transcr. (¿micro?).", vi: "Chuyển ghi thất bại (lỗi mic?).", ja: "文字起こし失敗（マイク？）。", zhcn: "转录失败（麦克风问题？）。" }, transcriptionErrorPermission: { en: "Transcr. needs mic permission.", es: "Transcr. necesita permiso micro.", vi: "Chuyển ghi cần quyền mic.", ja: "文字起こしマイク許可要。", zhcn: "转录需麦克风权限。" }, transcriptionErrorNetwork: { en: "Transcr. network error.", es: "Error red transcr.", vi: "Lỗi mạng chuyển ghi.", ja: "文字起こしNWエラー。", zhcn: "转录网络错误。" }, budgetLowTitle: { en: "Low Budget", es: "Bajo Presupuesto", vi: "Ngân sách thấp", ja: "低予算", zhcn:"低预算"}, budgetMidTitle: { en: "Mid Budget", es: "Presupuesto Medio", vi: "Ngân sách trung bình", ja: "中予算", zhcn:"中预算"}, budgetHighTitle: { en: "High Budget", es: "Alto Presupuesto", vi: "Ngân sách cao", ja: "高予算", zhcn:"高预算"}, budgetDetailsMissing: { en: "Details missing.", es: "Detalles faltantes.", vi: "Thiếu chi tiết.", ja: "詳細なし。", zhcn:"缺细节。"}, noVisualsFound: { en: "No visuals.", es: "No visuales.", vi: "Không hình ảnh.", ja: "ビジュアルなし。", zhcn:"无视觉。"}, noMoodboardItemsFound: { en: "No moodboard items.", es: "No elementos moodboard.", vi: "Không mục moodboard.", ja: "ムードボード項目なし。", zhcn:"无情绪板项目。"}, noBudgetContentFound: { en: "No budget details.", es: "No detalles presupuesto.", vi: "Không chi tiết ngân sách.", ja: "予算詳細なし。", zhcn:"无预算细节。"}, noRequirementsFound: { en: "No requirements.", es: "No requisitos.", vi: "Không yêu cầu.", ja: "要件なし。", zhcn:"无要求。"}, noColorsFound: { en: "No colors.", es: "No colores.", vi: "Không màu sắc.", ja: "色なし。", zhcn:"无颜色。"}, placeholderGeneric: { en: "Content unavailable.", es: "Contenido no disponible.", vi: "Nội dung không có.", ja: "内容利用不可。", zhcn:"内容不可用。"}, errorDisplayingSection: { en: "Error displaying section.", es: "Error mostrando sección.", vi: "Lỗi hiển thị phần.", ja: "セクション表示エラー。", zhcn:"显示部分错误。"}, errorExploreNoConcept: { en: "Generate concept first.", es: "Genera concepto primero.", vi: "Tạo ý tưởng trước.", ja: "まずコンセプト生成。", zhcn:"先生成概念。"}, generatingConcept: { en: "Generating Concept...", es: "Generando Concepto...", vi: "Đang tạo ý tưởng...", ja: "コンセプト生成中...", zhcn:"生成概念中..."}, fetchingDetails: { en: "Fetching Details...", es: "Obteniendo Detalles...", vi: "Lấy chi tiết...", ja: "詳細取得中...", zhcn:"获取细节中..."}, generatingCreativeSparks: { en: "Generating sparks...", es: "Generando chispas...", vi: "Tạo tia sáng...", ja: "火花生成中...", zhcn:"生成火花中..."}, conceptPlaceholder: { en: "Concept appears here...", es: "Concepto aquí...", vi: "Ý tưởng ở đây...", ja: "コンセプト表示...", zhcn: "概念在此显示..." }, requirementsPlaceholder: { en: "Requirements list...", es: "Lista requisitos...", vi: "Danh sách yêu cầu...", ja: "要件リスト...", zhcn: "要求列表..." }, budgetPlaceholder: { en: "Budget details...", es: "Detalles presupuesto...", vi: "Chi tiết ngân sách...", ja: "予算詳細...", zhcn: "预算细节..." }, budgetNotePlaceholder: { en: "Note: Budgets are estimates...", es: "Nota: Presupuestos estimados...", vi: "Lưu ý: Ngân sách ước tính...", ja: "注：予算は見積もり...", zhcn: "注：预算为估算..." }, visualsPlaceholder: { en: "Visual descriptions...", es: "Descripciones visuales...", vi: "Mô tả hình ảnh...", ja: "ビジュアル説明...", zhcn: "视觉描述..." }, visualsNotePlaceholder: { en: "Illustrative images.", es: "Imágenes ilustrativas.", vi: "Ảnh minh họa.", ja: "説明画像。", zhcn: "说明图片。" }, moodboardDescPlaceholder: { en: "Moodboard description...", es: "Descripción moodboard...", vi: "Mô tả moodboard...", ja: "ムードボード説明...", zhcn: "情绪板描述..." }, moodboardImgsPlaceholder: { en: "Moodboard images...", es: "Imágenes moodboard...", vi: "Ảnh moodboard...", ja: "ムードボード画像...", zhcn: "情绪板图片..." }, moodboardNotePlaceholder: { en: "Visuals for inspiration.", es: "Visuales para inspiración.", vi: "Hình ảnh cảm hứng.", ja: "インスピリレーション用ビジュアル。", zhcn: "灵感视觉。" }, palettePlaceholder: { en: "Color palette...", es: "Paleta colores...", vi: "Bảng màu...", ja: "カラーパレット...", zhcn: "调色板..." }, preparingDownload: { en: "Preparing Download...", es: "Preparando Descarga...", vi: "Chuẩn bị Tải xuống...", ja: "ダウンロード準備中...", zhcn: "准备下载..." }, errorDownloadPrep: { en: "Failed to prepare download.", es: "Fallo al preparar descarga.", vi: "Lỗi chuẩn bị tải xuống.", ja: "ダウンロード準備失敗。", zhcn: "准备下载失败。" }, downloadingImages: { en: "Downloading Images for ZIP...", es: "Descargando Imágenes para ZIP...", vi: "Đang tải Ảnh cho ZIP...", ja: "ZIP用画像ダウンロード中...", zhcn: "正在下载ZIP图片..." }, errorImageFetchZip: { en: "Error fetching image for ZIP.", es: "Error al obtener imagen para ZIP.", vi: "Lỗi lấy ảnh cho ZIP.", ja: "ZIP用画像取得エラー。", zhcn: "获取ZIP图片错误。" }, errorZipCreation: { en: "Error creating ZIP file.", es: "Error al crear archivo ZIP.", vi: "Lỗi tạo tệp ZIP.", ja: "ZIPファイル作成エラー。", zhcn: "创建ZIP文件错误。" }, noImagesToDownload: { en: "No images to download.", es: "No hay imágenes para descargar.", vi: "Không có ảnh để tải.", ja: "ダウンロードする画像がありません。", zhcn: "没有可下载的图像。" },
+            settingsModalTitle: { en: "Settings", es: "Ajustes", vi: "Cài đặt", ja: "設定", zhcn: "设置" },
+            settingsModalLanguageSubheading: { en: "Language", es: "Idioma", vi: "Ngôn ngữ", ja: "言語", zhcn: "语言" },
+            backgroundMusicTitle: { en: "Background Music", es: "Música de Fondo", vi: "Nhạc Nền", ja: "背景音楽", zhcn: "背景音乐" },
+            settingsTriggerButtonAria: { en: "Settings", es: "Ajustes", vi: "Cài đặt", ja: "設定", zhcn: "设置" },
+            closeSettingsModalAria: { en: "Close Settings", es: "Cerrar Ajustes", vi: "Đóng Cài đặt", ja: "設定を閉じる", zhcn: "关闭设置" },
+            playMusic: { en: "Play Music", es: "Reproducir Música", vi: "Phát Nhạc", ja: "音楽を再生", zhcn: "播放音乐" },
+            pauseMusic: { en: "Pause Music", es: "Pausar Música", vi: "Tạm Dừng Nhạc", ja: "音楽を一時停止", zhcn: "暂停音乐" },
+            imageFormatLabel: { en: "Image Format:", es: "Formato Imagen:", vi: "Định dạng Ảnh:", ja: "画像形式：", zhcn: "图片格式：" }, tiffNotSupportedAlert: { en: "TIFF format is not supported by browsers for direct download. Images will be downloaded as PNG instead.", es: "El formato TIFF no es compatible con los navegadores para descarga directa. Las imágenes se descargarán como PNG.", vi: "Định dạng TIFF không được trình duyệt hỗ trợ tải xuống trực tiếp. Hình ảnh sẽ được tải xuống dưới dạng PNG.", ja: "TIFF形式はブラウザによる直接ダウンロードに対応していません。画像は代わりにPNGとしてダウンロードされます。", zhcn: "浏览器不支持直接下载TIFF格式。图像将以PNG格式下载。" },
             pricing: { en: "Pricing", es: "Precios", vi: "Giá cả", ja: "価格", zhcn: "定价" }, subscription: { en: "Subscription", es: "Suscripción", vi: "Đăng ký", ja: "サブスクリプション", zhcn: "订阅" }, freeTrial: { en: "Free Trial", es: "Prueba Gratuita", vi: "Dùng thử miễn phí", ja: "無料トライアル", zhcn: "免费试用" }, medium: { en: "Medium", es: "Medio", vi: "Trung bình", ja: "ミディアム", zhcn: "中级" }, pro: { en: "Pro", es: "Pro", vi: "Pro", ja: "プロ", zhcn: "专业" }, popular: { en: "Popular", es: "Popular", vi: "Phổ biến", ja: "人気", zhcn: "热门" }, comingSoon: { en: "Coming soon...", es: "Próximamente...", vi: "Sắp ra mắt...", ja: "近日公開...", zhcn: "即将推出..." }, monthlyPrice: { en: "Monthly price", es: "Precio mensual", vi: "Giá hàng tháng", ja: "月額料金", zhcn: "月费" }, desktopMobile: { en: "Desktop & Mobile", es: "Escritorio y Móvil", vi: "Máy tính & Di động", ja: "デスクトップ＆モバイル", zhcn: "桌面和移动" }, generationAttempts: { en: "Generation attempts", es: "Intentos de generación", vi: "Lượt tạo", ja: "生成試行回数", zhcn: "生成次数" }, regenerateConcept: { en: "Re-generate concept", es: "Re-generar concepto", vi: "Tạo lại ý tưởng", ja: "コンセプト再生成", zhcn: "重新生成概念" }, videoDemoGenerate: { en: "Video demo generate", es: "Generar demo de video", vi: "Tạo demo video", ja: "ビデオデモ生成", zhcn: "视频演示生成" }, unlimited: { en: "Unlimited", es: "Ilimitados", vi: "Không giới hạn", ja: "無制限", zhcn: "无限" },
-            // New Translations for Text Download Mode
             prepareTextDownloadSelect: { en: "Select Sections for Text Download", es: "Seleccionar Secciones para Descargar Texto", vi: "Chọn Mục để Tải Văn bản", ja: "テキストDLセクション選択", zhcn: "选择文本下载部分" },
             prepareTextDownloadCancel: { en: "Cancel Text Selection", es: "Cancelar Selección de Texto", vi: "Hủy Chọn Văn bản", ja: "テキスト選択をキャンセル", zhcn: "取消文本选择" },
             finalizeTextDownload: { en: "Download Selected Text (.txt)", es: "Descargar Texto Seleccionado (.txt)", vi: "Tải Văn bản Đã chọn (.txt)", ja: "選択テキストをDL (.txt)", zhcn: "下载选定文本 (.txt)" },
             noSectionsSelectedError: { en: "Please select at least one section to download.", es: "Seleccione al menos una sección para descargar.", vi: "Vui lòng chọn ít nhất một mục để tải xuống.", ja: "ダウンロードするセクションを少なくとも1つ選択してください。", zhcn: "请至少选择一个部分进行下载。" },
             noContentToDownload: { en: "No content available for selected sections.", es: "No hay contenido disponible para las secciones seleccionadas.", vi: "Không có nội dung cho các mục đã chọn.", ja: "選択したセクションに利用可能なコンテンツがありません。", zhcn: "所选部分没有可用内容。" },
-            // New Tab Translations (already present, just confirming)
             videoDemoTab: { en: "Video demo", es: "Demo de Video", vi: "Demo Video", ja: "ビデオデモ", zhcn: "视频演示" },
             albumCoverTab: { en: "Album cover", es: "Portada Álbum", vi: "Bìa Album", ja: "アルバムカバー", zhcn: "专辑封面" },
             comingSoonGeneral: { en: "Coming soon...", es: "Próximamente...", vi: "Sắp ra mắt...", ja: "近日公開...", zhcn: "即将推出..." }
@@ -1126,58 +1220,50 @@
             let key = 'lang' + capitalizedBase;
             if (suffix) {
                 let camelSuffix = suffix.replace(/[-_](.)/g, (_, c) => c.toUpperCase());
-                camelSuffix = camelSuffix.charAt(0).toUpperCase() + camelSuffix.slice(1);
+                if (camelSuffix) {
+                    camelSuffix = camelSuffix.charAt(0).toUpperCase() + camelSuffix.slice(1);
+                }
                 key += camelSuffix;
             }
             return key.charAt(0).toLowerCase() + key.slice(1);
         }
 
-        function getTranslatedText(element, keyOrSuffix = '', isPlaceholderAttr = false, fallbackText = '') {
-            // Handle specific new keys for button states first
-            if (keyOrSuffix === 'prepareTextDownloadSelect' && internalTranslations.prepareTextDownloadSelect) {
-                return internalTranslations.prepareTextDownloadSelect[currentLang] || internalTranslations.prepareTextDownloadSelect['en'] || fallbackText;
-            }
-            if (keyOrSuffix === 'prepareTextDownloadCancel' && internalTranslations.prepareTextDownloadCancel) {
-                return internalTranslations.prepareTextDownloadCancel[currentLang] || internalTranslations.prepareTextDownloadCancel['en'] || fallbackText;
-            }
-            if (keyOrSuffix === 'finalizeTextDownload' && internalTranslations.finalizeTextDownload) { // For the finalize button
-                return internalTranslations.finalizeTextDownload[currentLang] || internalTranslations.finalizeTextDownload['en'] || fallbackText;
-            }
 
-
+        function getTranslatedText(element, keyOrSuffix = '', isAttributeTarget = false, fallbackText = '') {
             if (internalTranslations[keyOrSuffix] && internalTranslations[keyOrSuffix][currentLang]) {
                 return internalTranslations[keyOrSuffix][currentLang];
             } else if (internalTranslations[keyOrSuffix] && internalTranslations[keyOrSuffix]['en']) {
                 return internalTranslations[keyOrSuffix]['en'];
             }
+
             let translation = '';
             if (element) {
-                // Determine the suffix based on the element's specific data attributes for multi-state buttons
-                let dynamicSuffix = keyOrSuffix; // Default to passed suffix
-                if (element.id === 'prepare-text-download-button') { // Special handling for this button
-                    dynamicSuffix = isTextDownloadModeActive ? 'cancel' : 'select';
+                let actualSuffix = keyOrSuffix;
+                if (element.id === 'prepare-text-download-button') {
+                    actualSuffix = isTextDownloadModeActive ? 'cancel' : 'select';
+                } else if (element.id === 'record-audio-button') {
+                     actualSuffix = isRecording ? 'stop' : 'record';
+                } else if (element.id === 'settings-trigger-button' && keyOrSuffix === 'aria-label') { // Check for settings trigger button
+                    actualSuffix = 'ariaLabel'; // Assuming data-lang-en-aria-label etc.
+                } else if (element.id === 'close-settings-modal' && keyOrSuffix === 'aria-label') {
+                    actualSuffix = 'ariaLabel';
                 }
 
-                const primaryDataKey = formatDatasetKey(currentLang, dynamicSuffix);
-                const englishDataKey = formatDatasetKey('en', dynamicSuffix);
-                const baseLangKey = formatDatasetKey(currentLang); // Fallback to base key if suffixed not found
+
+                const primaryDataKey = formatDatasetKey(currentLang, actualSuffix);
+                const englishDataKey = formatDatasetKey('en', actualSuffix);
+                const baseLangKey = formatDatasetKey(currentLang);
                 const baseEnKey = formatDatasetKey('en');
 
-                // Prioritize suffixed keys if a suffix was determined
-                if (dynamicSuffix && dynamicSuffix !== '') {
-                    translation = element.dataset[primaryDataKey] ?? element.dataset[englishDataKey];
-                }
+                translation = element.dataset[primaryDataKey] ?? element.dataset[englishDataKey] ?? element.dataset[baseLangKey] ?? element.dataset[baseEnKey];
 
-                // If no suffixed translation found, try base keys
-                if (!translation) {
-                    translation = element.dataset[baseLangKey] ?? element.dataset[baseEnKey];
-                }
-            }
-            if ((translation === undefined || translation === null || translation === '') && currentLang === 'en') {
-                if (isPlaceholderAttr && element?.hasAttribute('placeholder')) {
-                    translation = element.getAttribute('placeholder');
-                } else if (!isPlaceholderAttr && element?.textContent && element.childNodes.length === 1 && element.childNodes[0].nodeType === Node.TEXT_NODE) {
-                    translation = element.textContent;
+                if ((translation === undefined || translation === null || translation === '') && currentLang === 'en') {
+                    if (isAttributeTarget) {
+                        if(actualSuffix.toLowerCase().includes('placeholder')) translation = element.getAttribute('placeholder');
+                        else if (actualSuffix.toLowerCase().includes('arialabel')) translation = element.getAttribute('aria-label'); // Matched camelCase
+                    } else if (element.textContent && element.childNodes.length === 1 && element.childNodes[0].nodeType === Node.TEXT_NODE) {
+                        translation = element.textContent;
+                    }
                 }
             }
             return String(translation ?? fallbackText).trim();
@@ -1185,68 +1271,90 @@
 
 
         function updateLanguage(langCode) {
-            currentLang = langCode; console.log(`Switching UI language to: ${langCode}`); document.documentElement.lang = langCode;
-            const currentTranslatableElements = document.querySelectorAll('[data-lang-en], [data-lang-en-placeholder], #music-modal-content h3, #image-format-selector-container label, #pricing-page [data-lang-en], #prepare-text-download-button, #finalize-text-download-button');
+            currentLang = langCode;
+            console.log(`Switching UI language to: ${langCode}`);
+            document.documentElement.lang = langCode;
+
+            const currentTranslatableElements = document.querySelectorAll(
+                '[data-lang-en], [data-lang-en-placeholder], [data-lang-en-aria-label]'
+            );
+
             currentTranslatableElements.forEach(el => {
-                 const isPlaceholderTarget = (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') && (el.hasAttribute('data-lang-en-placeholder') || el.hasAttribute('placeholder'));
-                 let keySuffix = ''; // Default empty suffix
-                 if (el.dataset.langEnRecord) keySuffix = 'record';
-                 else if (el.dataset.langEnStop) keySuffix = 'stop';
-                 else if (isPlaceholderTarget) keySuffix = 'placeholder';
+                let translated = false;
+                const isPlaceholderTarget = el.hasAttribute('data-lang-en-placeholder') || ((el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') && el.hasAttribute('placeholder'));
+                const isAriaLabelTarget = el.hasAttribute('data-lang-en-aria-label') || el.hasAttribute('aria-label');
 
-                 // Special handling for multi-state buttons
-                 if (el.id === 'prepare-text-download-button') {
-                     keySuffix = isTextDownloadModeActive ? 'cancel' : 'select';
-                 } else if (el.id === 'finalize-text-download-button') {
-                    // This button's text doesn't change state, uses its base data-lang-*
-                    keySuffix = ''; // Or a specific key if you add one, e.g., 'finalize'
-                 }
 
-                 const fallbackValue = isPlaceholderTarget ?
-                                       (el.dataset[formatDatasetKey('en', keySuffix)] || el.getAttribute('data-lang-en-placeholder') || el.getAttribute('placeholder')) :
-                                       (el.dataset[formatDatasetKey('en', keySuffix)] || el.getAttribute('data-lang-en') || el.textContent);
-                 let translation = getTranslatedText(el, keySuffix, isPlaceholderTarget, fallbackValue);
+                let suffix = '';
+                if (isPlaceholderTarget) suffix = 'placeholder';
+                if (isAriaLabelTarget) suffix = 'ariaLabel'; // Use camelCase for consistency with formatDatasetKey
 
-                 if (isPlaceholderTarget) { el.placeholder = translation; }
-                 else if (el.tagName === 'TITLE') { document.title = translation; }
-                 else {
-                     // Update text content for elements that should be updated
-                     const safeTags = ['BUTTON', 'P', 'SMALL', 'LABEL', 'H1', 'H2', 'H3', 'H4', 'LI', 'A', 'OPTION', 'SPAN', 'DIV'];
-                     const shouldUpdateDirectly = // Conditions where direct textContent update is safe
-                           (safeTags.includes(el.tagName) && !el.children.length) || // Element has no children
-                           (Array.from(el.childNodes).every(n => n.nodeType === Node.TEXT_NODE)) || // Only text nodes
-                           (el.id === 'initial-prompt' && el.querySelector('p')) ||
-                           el.closest('#image-format-selector-container') ||
-                           el.closest('#pricing-page .pricing-tier') ||
-                           el.closest('#pricing-page .coming-soon') ||
-                           el.closest('#pricing-page .feature-name') ||
-                           el.closest('#pricing-page .feature-value:not(.icon-check)') ||
-                           el.closest('#pricing-page .popular-badge') ||
-                           el.id === 'prepare-text-download-button' ||
-                           el.id === 'finalize-text-download-button';
 
-                     if (shouldUpdateDirectly) {
-                          const targetEl = (el.id === 'initial-prompt' && el.querySelector('p')) ? el.querySelector('p') : el;
-                          targetEl.textContent = translation;
-                     } else if (el.querySelector('span[data-lang-en]') && !el.classList.contains('tab-link')) {
-                         // Handle elements with a single translatable child span (like nav links, buttons with fixed icons)
-                         const childSpan = el.querySelector('span[data-lang-en]');
-                         if (childSpan) {
-                             childSpan.textContent = translation;
+                const fallbackValue = isPlaceholderTarget ? (el.dataset[formatDatasetKey('en', 'placeholder')] || el.getAttribute('placeholder')) :
+                                      isAriaLabelTarget ? (el.dataset[formatDatasetKey('en', 'ariaLabel')] || el.getAttribute('aria-label')) :
+                                      (el.dataset[formatDatasetKey('en')] || el.textContent);
+
+                let translation = getTranslatedText(el, suffix, isPlaceholderTarget || isAriaLabelTarget, fallbackValue);
+
+                if (isAriaLabelTarget) {
+                    // If getTranslatedText didn't find a specific suffixed version,
+                    // try the direct key from internalTranslations if element ID matches.
+                    if (el.id === 'settings-trigger-button' && internalTranslations.settingsTriggerButtonAria) {
+                        translation = internalTranslations.settingsTriggerButtonAria[currentLang] || internalTranslations.settingsTriggerButtonAria['en'];
+                    } else if (el.id === 'close-settings-modal' && internalTranslations.closeSettingsModalAria) {
+                        translation = internalTranslations.closeSettingsModalAria[currentLang] || internalTranslations.closeSettingsModalAria['en'];
+                    }
+                    el.setAttribute('aria-label', translation);
+                    translated = true;
+                }
+                if (isPlaceholderTarget) {
+                    el.placeholder = translation;
+                    translated = true;
+                }
+
+                // Text content
+                if (el.hasAttribute('data-lang-en')) {
+                     let textTranslation = '';
+                     if (el.id === 'prepare-text-download-button') {
+                         textTranslation = getTranslatedText(el, '', false, fallbackValue);
+                     } else if (el.id === 'record-audio-button') {
+                         textTranslation = getTranslatedText(el, '', false, fallbackValue);
+                     } else if (el.closest('#settings-modal-content')) { // Handle elements within settings modal
+                         if (el.tagName === 'H3') textTranslation = getTranslatedText(null, 'settingsModalTitle', false, fallbackValue);
+                         else if (el.tagName === 'H4' && el.closest('.language-setting-container')) textTranslation = getTranslatedText(null, 'settingsModalLanguageSubheading', false, fallbackValue);
+                         else if (el.tagName === 'H4' && el.nextElementSibling?.classList.contains('music-controls')) textTranslation = getTranslatedText(null, 'backgroundMusicTitle', false, fallbackValue);
+                         else if (el.classList.contains('sr-only') && el.htmlFor === 'language-select') textTranslation = getTranslatedText(null, 'settingsModalLanguageSubheading', false, fallbackValue); // For the sr-only label
+                         else textTranslation = getTranslatedText(el, '', false, fallbackValue); // Default for others in modal
+                     } else {
+                         textTranslation = getTranslatedText(el, '', false, fallbackValue);
+                     }
+
+
+                    if (el.tagName === 'TITLE') {
+                        document.title = textTranslation;
+                    } else if (el.classList.contains('tab-link')) {
+                        const textSpan = el.querySelector('span:not(.pro-badge-tab):not(.sr-only)');
+                        if (textSpan) textSpan.textContent = textTranslation;
+                        const badgeSpan = el.querySelector('.pro-badge-tab');
+                        if (badgeSpan) badgeSpan.textContent = getTranslatedText(badgeSpan, '', false, badgeSpan.textContent);
+                    } else if (el.id === 'initial-prompt' && el.querySelector('p')) {
+                         el.querySelector('p').textContent = textTranslation;
+                    } else if (el.closest('#image-format-selector-container') && el.tagName === 'LABEL') {
+                        el.textContent = textTranslation;
+                    } else if (el.closest('#pricing-page') && (el.classList.contains('pricing-tier') || el.classList.contains('coming-soon') || el.classList.contains('feature-name') || (el.classList.contains('feature-value') && !el.classList.contains('icon-check')) || el.classList.contains('popular-badge'))) {
+                        el.textContent = textTranslation;
+                    } else if (el.matches('h1, h2, h3:not(#settings-modal-content > h3), h4:not(#settings-modal-content .settings-section h4), p, li, option, small, a > span:not([class])') || (el.tagName === 'SPAN' && !el.classList.length && el.parentElement.matches('a, li, p'))) {
+                         let targetTextElement = el;
+                         if (el.classList.contains('logo') && el.querySelector('span[data-lang-en]')) {
+                             targetTextElement = el.querySelector('span[data-lang-en]');
                          }
-                     } else if (el.classList.contains('tab-link')) {
-                          // Special handling for tab links to preserve icon and badge
-                          const textSpan = el.querySelector('span:not(.pro-badge-tab)'); // Target the main text span
-                          const badgeSpan = el.querySelector('.pro-badge-tab');
-                          if (textSpan) {
-                              textSpan.textContent = translation; // Update only the text span
-                          }
-                          if (badgeSpan) {
-                             badgeSpan.textContent = getTranslatedText(badgeSpan, '', false, badgeSpan.textContent); // Update badge text if needed
-                          }
-                      }
-                 }
-             });
+                         targetTextElement.textContent = textTranslation;
+                    } else if (el.tagName === 'BUTTON' && !isAriaLabelTarget && !isPlaceholderTarget && !el.querySelector('svg') && !el.closest('#settings-modal-content')) { // Exclude modal buttons handled above
+                        el.textContent = textTranslation;
+                    }
+                }
+            });
+
             if (recordAudioButton) updateRecordingUI(isRecording);
             if (recordStatus?.dataset?.statusKey) { let statusKey = recordStatus.dataset.statusKey; let fallback = recordStatus.dataset.statusFallback || ''; let statusClass = Array.from(recordStatus.classList).find(c => ['complete', 'error', 'recording', 'transcribing'].includes(c)) || ''; let isPersistent = statusClass === 'complete' || statusClass === 'error'; updateRecordStatus(getTranslatedText(null, statusKey, false, fallback), statusClass, isPersistent, statusKey); } else if (!isRecording) clearRecordStatus();
             if (loadingOverlay.classList.contains('show')) { const loadingP = loadingOverlay.querySelector('p'); if (loadingP?.dataset.lastKey) loadingP.textContent = getTranslatedText(loadingP, loadingP.dataset.lastKey, false, 'Loading...'); }
@@ -1262,8 +1370,14 @@
                 });
             }
              if (generateStep === 'concept_shown' && conceptTextOutput?.classList.contains('placeholder-notice')) { conceptTextOutput.textContent = getTranslatedText(null, 'conceptPlaceholder', false, 'Concept text will appear here...'); }
-            if (musicSettingsButton) { musicSettingsButton.setAttribute('aria-label', getTranslatedText(null, 'musicSettings', false, 'Music Settings')); }
-            if (closeMusicModal) { closeMusicModal.setAttribute('aria-label', getTranslatedText(null, 'closeMusicSettings', false, 'Close Music Settings')); }
+            // Update Settings Trigger Button Aria Label
+            if (settingsTriggerButton) {
+                settingsTriggerButton.setAttribute('aria-label', getTranslatedText(settingsTriggerButton, 'ariaLabel', true, 'Settings'));
+            }
+            // Update Settings Modal Close Button Aria Label
+            if (closeSettingsModal) {
+                closeSettingsModal.setAttribute('aria-label', getTranslatedText(closeSettingsModal, 'ariaLabel', true, 'Close Settings'));
+            }
             updatePlayPauseMusicButtonUI(musicIsPlaying);
             document.querySelectorAll('.feature-value[data-lang-en="Unlimited"]').forEach(el => { el.textContent = getTranslatedText(el, 'unlimited', false, 'Unlimited'); });
             document.querySelectorAll('#tab-content-video-demo .placeholder-notice, #tab-content-album-cover .placeholder-notice').forEach(el => { el.textContent = getTranslatedText(null, 'comingSoonGeneral', false, "Coming soon..."); });
@@ -1289,11 +1403,11 @@
             if (prepareTextDownloadButton) {
                 const keySuffix = isTextDownloadModeActive ? 'cancel' : 'select';
                 prepareTextDownloadButton.textContent = getTranslatedText(prepareTextDownloadButton, keySuffix, false, isTextDownloadModeActive ? 'Cancel Selection' : 'Select Sections');
-                prepareTextDownloadButton.classList.toggle('btn-warning', isTextDownloadModeActive); // Use warning for cancel
+                prepareTextDownloadButton.classList.toggle('btn-warning', isTextDownloadModeActive);
                 prepareTextDownloadButton.classList.toggle('btn-secondary', !isTextDownloadModeActive);
             }
 
-            if (!isTextDownloadModeActive) { // When exiting mode
+            if (!isTextDownloadModeActive) {
                 tabLinks.forEach(link => link.classList.remove('selected-for-download'));
             }
             updateFinalizeButtonState();
@@ -1306,7 +1420,6 @@
             finalizeTextDownloadButton.disabled = !canFinalize;
         }
 
-        // --- Download Functionality (MODIFIED for tab selection) ---
         function gatherAllTextData(selectedSectionKeys = []) {
             let fullText = `MV CONCEPT REPORT\nGenerated by MVPot (${new Date().toLocaleString()})\n\n`;
             const getCleanText = (el) => el ? el.innerText.trim() : 'N/A';
@@ -1360,7 +1473,7 @@
             const selectedTabElements = document.querySelectorAll('.results-tabs button.selected-for-download');
             const selectedSectionKeys = Array.from(selectedTabElements)
                 .map(tabEl => tabTargetToSectionKey[tabEl.dataset.tabTarget])
-                .filter(Boolean); // Filter out undefined if a tab has no mapping
+                .filter(Boolean);
 
             if (selectedSectionKeys.length === 0) {
                 displayError(getTranslatedText(null, "noSectionsSelectedError", false, "Please select at least one section."), "noSectionsSelectedError");
@@ -1374,7 +1487,7 @@
                 const contentToCheck = textData.replace(/MV CONCEPT REPORT\nGenerated by MVPot \([\s\S]*?\)\n\n/, '').replace(/N\/A\n*/g, '').trim();
                 if (contentToCheck === "") {
                      displayError(getTranslatedText(null, "noContentToDownload", false, "No content available for selected sections."), "noContentToDownload");
-                     toggleTextDownloadMode(false); // Exit selection mode
+                     toggleTextDownloadMode(false);
                      return;
                 }
                 const blob = new Blob([textData], { type: 'text/plain;charset=utf-8' });
@@ -1385,11 +1498,11 @@
                 link.click();
                 document.body.removeChild(link);
                 URL.revokeObjectURL(link.href);
-                toggleTextDownloadMode(false); // Exit selection mode after successful download
+                toggleTextDownloadMode(false);
             } catch (err) {
                 console.error("Error preparing selected text download:", err);
                 displayError(getTranslatedText(null, "errorDownloadPrep", false, "Failed to prepare text download."), "errorDownloadPrep");
-                toggleTextDownloadMode(false); // Exit selection mode on error
+                toggleTextDownloadMode(false);
             } finally {
                 hideLoading();
             }
@@ -1416,30 +1529,25 @@
             if (closeGuideModal) { closeGuideModal.addEventListener('click', () => { playSound(hoverSound); hideGuideModal(); }); closeGuideModal.addEventListener('mouseenter', () => playSound(hoverSound)); }
             if (guideModal) guideModal.addEventListener('click', (e) => { if (e.target === guideModal) { hideGuideModal(); } });
 
-            tabLinks = resultsTabsContainer?.querySelectorAll('.tab-link'); // Ensure fresh selection
+            tabLinks = resultsTabsContainer?.querySelectorAll('.tab-link');
             if (tabLinks) {
                  tabLinks.forEach(link => {
                      link.addEventListener('click', (e) => {
-                         // If in text download mode, prevent default tab switch and handle selection
                          if (isTextDownloadModeActive) {
-                             e.preventDefault(); // Stop normal tab switching
-                             playSound(clickSound); // Sound for selection click
-                             // Allow selection only for tabs that have corresponding text data
+                             e.preventDefault();
+                             playSound(clickSound);
                              const targetTabId = link.dataset.tabTarget;
                              if (tabTargetToSectionKey[targetTabId]) {
                                  link.classList.toggle('selected-for-download');
                                  updateFinalizeButtonState();
                              } else {
                                  console.log(`Tab ${targetTabId} is not selectable for text download.`);
-                                 // Optional: Briefly indicate non-selectable (e.g., slight shake animation)
                              }
                          } else {
-                             // Normal tab switching
-                             playSound(hoverSound); // Original sound for tab switch
-                             activateTab(link); // activateTab now handles the "isTextDownloadModeActive" check internally
+                             playSound(hoverSound);
+                             activateTab(link);
                          }
                      });
-                     // Keep hover sound for non-selection mode
                      link.addEventListener('mouseenter', () => {
                          if (!isTextDownloadModeActive) {
                              playSound(hoverSound);
@@ -1448,7 +1556,6 @@
                  });
             }
 
-            // --- New Download Event Listeners ---
             if (prepareTextDownloadButton) {
                  prepareTextDownloadButton.addEventListener('click', () => {
                      playSound(clickSound);
@@ -1470,12 +1577,34 @@
                  });
                  downloadAllImagesButton.addEventListener('mouseenter', () => playSound(hoverSound));
             }
-            // --- END New Download Event Listeners ---
-
             if (imageDownloadFormatSelect) { imageDownloadFormatSelect.addEventListener('change', () => playSound(hoverSound)); }
-            if (musicSettingsButton) { musicSettingsButton.innerHTML = svgIconGear; musicSettingsButton.addEventListener('click', () => { playSound(hoverSound); musicModal.classList.add('show'); }); musicSettingsButton.addEventListener('mouseenter', () => playSound(hoverSound)); }
-            if (closeMusicModal) { closeMusicModal.addEventListener('click', () => { playSound(hoverSound); musicModal.classList.remove('show'); }); }
-            if (musicModal) { musicModal.addEventListener('click', (e) => { if (e.target === musicModal) { musicModal.classList.remove('show'); } }); }
+
+            // --- Settings Modal Event Listeners ---
+            if (settingsTriggerButton) {
+                settingsTriggerButton.innerHTML = svgIconGear;
+                settingsTriggerButton.addEventListener('click', () => {
+                    playSound(hoverSound);
+                    if (settingsModal) settingsModal.classList.add('show');
+                    updateLanguage(currentLang); // Ensure modal content is translated
+                });
+                settingsTriggerButton.addEventListener('mouseenter', () => playSound(hoverSound));
+            }
+            if (closeSettingsModal) {
+                closeSettingsModal.addEventListener('click', () => {
+                    playSound(hoverSound);
+                    if (settingsModal) settingsModal.classList.remove('show');
+                });
+                 closeSettingsModal.addEventListener('mouseenter', () => playSound(hoverSound));
+            }
+            if (settingsModal) {
+                settingsModal.addEventListener('click', (e) => {
+                    if (e.target === settingsModal) {
+                        settingsModal.classList.remove('show');
+                    }
+                });
+            }
+            // --- End Settings Modal Event Listeners ---
+
             if (playPauseMusicButton && backgroundMusic) { playPauseMusicButton.addEventListener('click', () => { playSound(clickSound); if (backgroundMusic.paused) { backgroundMusic.play().catch(error => console.warn("Play failed:", error)); } else { backgroundMusic.pause(); } }); playPauseMusicButton.addEventListener('mouseenter', () => playSound(hoverSound)); }
             if (volumeSlider && backgroundMusic) { volumeSlider.addEventListener('input', () => { const newVolume = volumeSlider.value / 100; backgroundMusic.volume = newVolume; try { localStorage.setItem('musicVolume', newVolume.toString()); } catch(e) { console.warn("Cannot save volume", e); } }); }
             if (backgroundMusic) { backgroundMusic.addEventListener('play', () => { musicIsPlaying = true; updatePlayPauseMusicButtonUI(true); }); backgroundMusic.addEventListener('pause', () => { musicIsPlaying = false; updatePlayPauseMusicButtonUI(false); }); }
@@ -1502,7 +1631,7 @@
         setupEventListeners();
         injectCheckmarks();
         const initialLangLoaded = loadLanguagePreference();
-        updateLanguage(initialLangLoaded); // This will also set the initial text for prepareTextDownloadButton
+        updateLanguage(initialLangLoaded);
         initializeMusicPlayer();
         showPage('home');
 
@@ -1511,7 +1640,6 @@
 
     }); // End DOMContentLoaded
     </script>
-    <!-- ========= END JAVASCRIPT ========= -->
 
 </body>
 </html>
