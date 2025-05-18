@@ -168,7 +168,14 @@
         .main-nav #settings-box .btn-icon { background: none; border: none; color: var(--text-secondary); padding: 0.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: var(--border-radius-sm); transition: color 0.3s ease, background-color 0.3s ease; }
         .main-nav #settings-box .btn-icon:hover { color: var(--text-primary); background-color: rgba(255, 255, 255, 0.05); }
         .main-nav #settings-box .btn-icon svg { width: 20px; height: 20px; fill: currentColor; }
-        
+        /* Style for the new PNG settings icon */
+        .main-nav #settings-box .btn-icon .settings-icon-png {
+            width: 20px;
+            height: 20px;
+            display: block; /* Or inline-block, depending on desired layout within flex */
+        }
+
+
         /* Hamburger Menu Button */
         #hamburger-menu {
             display: none; /* Hidden by default */
@@ -177,7 +184,7 @@
             color: var(--text-primary);
             cursor: pointer;
             padding: 0.5rem;
-            z-index: 1001; 
+            z-index: 1001;
         }
         #hamburger-menu svg {
             width: 28px; /* Adjust size as needed */
@@ -664,7 +671,7 @@
                 position: relative; /* For absolute positioning of mobile menu */
             }
             .main-nav .logo { order: 0; padding: 0.5rem 0; } /* Logo first */
-            
+
             #hamburger-menu {
                 display: flex; /* Show hamburger */
                 align-items: center;
@@ -761,7 +768,11 @@
              .main-nav { padding: 0 0.75rem; } /* Further reduced padding */
              /* Hamburger and settings icon might need slight size adjustment if too cramped */
              #hamburger-menu svg { width: 24px; height: 24px; }
-             .main-nav #settings-box .btn-icon svg { width: 18px; height: 18px;}
+             /* .main-nav #settings-box .btn-icon svg { width: 18px; height: 18px;} */ /* Replaced by PNG styling */
+             .main-nav #settings-box .btn-icon .settings-icon-png {
+                width: 18px;
+                height: 18px;
+             }
              .main-nav #settings-box { margin-left: 0.3rem; }
 
 
@@ -882,6 +893,7 @@
                     data-lang-ja-aria-label="設定"
                     data-lang-zhcn-aria-label="设置"
                     aria-label="Settings">
+                <!-- Icon will be injected by JS -->
             </button>
         </div>
     </nav>
@@ -1197,7 +1209,7 @@
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition; let finalTranscript = ''; let isSpeechRecognitionSupported = !!SpeechRecognition;
 
-        const svgIconGear = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69-.98l-2.49 1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49 1c.52.4 1.08.73 1.69.98l-.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49.42l.38-2.65c.61-.25 1.17.59 1.69.98l2.49 1c.23.09.49 0 .61.22l2-3.46c.12-.22-.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>`;
+        // const svgIconGear = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69-.98l-2.49 1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49 1c.52.4 1.08.73 1.69.98l-.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49.42l.38-2.65c.61-.25 1.17.59 1.69.98l2.49 1c.23.09.49 0 .61.22l2-3.46c.12-.22-.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>`;
         const svgIconPlay = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
         const svgIconPause = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
         const svgCheckmark = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20px" height="20px"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>`;
@@ -2169,7 +2181,7 @@ Adhere strictly to the format: Use the exact headers (##), use bullet points (* 
             if (selectedSectionKeys.includes('requirements')) {
                 fullText += "## REQUIREMENTS FOR MV\n";
                 const reqItems = document.getElementById('tab-content-requirements')?.querySelectorAll('ul li:not(.placeholder-notice)');
-                if (reqItems && reqItems.length > 0) { reqItems.forEach(li => fullText += `- ${li.innerText.trim()}\n`); } else { fullText += "N/A\n"; }
+                                if (reqItems && reqItems.length > 0) { reqItems.forEach(li => fullText += `- ${li.innerText.trim()}\n`); } else { fullText += "N/A\n"; }
                 fullText += "\n";
             }
             if (selectedSectionKeys.includes('budget')) {
@@ -2407,7 +2419,14 @@ Adhere strictly to the format: Use the exact headers (##), use bullet points (* 
             if (imageDownloadFormatSelect) { imageDownloadFormatSelect.addEventListener('change', () => playSound(hoverSound)); }
 
             if (settingsTriggerButton) {
-                settingsTriggerButton.innerHTML = svgIconGear;
+                // Inject PNG image instead of SVG
+                const settingsIconImg = document.createElement('img');
+                settingsIconImg.src = 'gear.png';
+                settingsIconImg.alt = 'Settings Icon';
+                settingsIconImg.classList.add('settings-icon-png'); // Add class for styling
+                settingsTriggerButton.innerHTML = ''; // Clear previous content
+                settingsTriggerButton.appendChild(settingsIconImg);
+
                 settingsTriggerButton.addEventListener('click', () => {
                     playSound(hoverSound);
                     if (settingsModal) settingsModal.classList.add('show');
@@ -2446,7 +2465,7 @@ Adhere strictly to the format: Use the exact headers (##), use bullet points (* 
         }
 
         let scene, camera, renderer, model, clock; let modelVelocity = new THREE.Vector3(); let modelSize = new THREE.Vector3(); let boundaries = { x: 0, y: 0 }; const modelSpeed = 1.5;
-        function init3DBackground() { if (!bgCanvas) { console.error("BG canvas not found!"); return; } console.log("Init 3D background..."); scene = new THREE.Scene(); clock = new THREE.Clock(); camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); camera.position.z = 10; renderer = new THREE.WebGLRenderer({ canvas: bgCanvas, alpha: true, antialias: true }); renderer.setSize(window.innerWidth, window.innerHeight); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); scene.add(new THREE.AmbientLight(0xffffff, 1.5)); const dirLight = new THREE.DirectionalLight(0xffffff, 2); dirLight.position.set(5, 10, 7.5); scene.add(dirLight); const loader = new GLTFLoader(); const modelPath = '/xe-ban-hu-tiu(vertice-color-baked).glb'; loader.load(modelPath, (gltf) => { console.log("Model loaded."); model = gltf.scene; const box = new THREE.Box3().setFromObject(model); box.getSize(modelSize); const maxDim = Math.max(modelSize.x, modelSize.y, modelSize.z); const scaleFactor = 2.5 / maxDim; model.scale.set(scaleFactor, scaleFactor, scaleFactor); model.position.set(0, 0, 0); box.setFromObject(model); box.getSize(modelSize); console.log("Scaled Size:", modelSize); calculateBoundaries(); modelVelocity.set(Math.random() - 0.5, Math.random() - 0.5, 0).normalize().multiplyScalar(modelSpeed); scene.add(model); animate3D(); }, undefined, (error) => { console.error('Error loading model:', error); bgCanvas.style.display = 'none'; }); }
+        function init3DBackground() { if (!bgCanvas) { console.error("BG canvas not found!"); return; } console.log("Init 3D background..."); scene = new THREE.Scene(); clock = new THREE.Clock(); camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); camera.position.z = 10; renderer = new THREE.WebGLRenderer({ canvas: bgCanvas, alpha: true, antialias: true }); renderer.setSize(window.innerWidth, window.innerHeight); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); scene.add(new THREE.AmbientLight(0xffffff, 1.5)); const dirLight = new THREE.DirectionalLight(0xffffff, 2); dirLight.position.set(5, 10, 7.5); scene.add(dirLight); const loader = new GLTFLoader(); const modelPath = '/mascot.glb'; loader.load(modelPath, (gltf) => { console.log("Model loaded."); model = gltf.scene; const box = new THREE.Box3().setFromObject(model); box.getSize(modelSize); const maxDim = Math.max(modelSize.x, modelSize.y, modelSize.z); const scaleFactor = 2.5 / maxDim; model.scale.set(scaleFactor, scaleFactor, scaleFactor); model.position.set(0, 0, 0); box.setFromObject(model); box.getSize(modelSize); console.log("Scaled Size:", modelSize); calculateBoundaries(); modelVelocity.set(Math.random() - 0.5, Math.random() - 0.5, 0).normalize().multiplyScalar(modelSpeed); scene.add(model); animate3D(); }, undefined, (error) => { console.error('Error loading model:', error); bgCanvas.style.display = 'none'; }); }
         function calculateBoundaries() { if (!camera) return; const distance = camera.position.z; const vFOV = THREE.MathUtils.degToRad(camera.fov); const height = 2 * Math.tan(vFOV / 2) * distance; const width = height * camera.aspect; boundaries.x = width / 2; boundaries.y = height / 2; }
         function onWindowResize() {
             if (!camera || !renderer) return;
