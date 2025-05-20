@@ -884,6 +884,16 @@
             <li><a href="#home-about-section" data-scroll-to="home-about-section" class="nav-link" data-lang-en="About" data-lang-es="Acerca de" data-lang-vi="Giới thiệu" data-lang-ja="概要" data-lang-zhcn="关于">About</a></li>
             <li><a data-page="feature" class="nav-link" data-lang-en="Generate" data-lang-es="Generar" data-lang-vi="Tạo" data-lang-ja="生成" data-lang-zhcn="生成">Generate</a></li>
             <li><a data-page="pricing" class="nav-link" data-lang-en="Pricing" data-lang-es="Precios" data-lang-vi="Giá cả" data-lang-ja="価格" data-lang-zhcn="定价">Pricing</a></li>
+            <li>
+                <a href="https://forms.office.com/pages/responsepage.aspx?id=cTYy0b7NF0S01L2yS1Exa_LJCmAYC6hElQOVUA5GmmJUM0JPUUEzSU9RUEVZSUJRQVNDNVVQTUlTVS4u&route=shorturl"
+                   target="_blank"
+                   class="nav-link"
+                   data-lang-en="Feedback"
+                   data-lang-es="Comentarios"
+                   data-lang-vi="Phản hồi"
+                   data-lang-ja="フィードバック"
+                   data-lang-zhcn="反馈">Feedback</a>
+            </li>
         </ul>
         <div id="settings-box">
             <button id="settings-trigger-button" class="btn-icon"
@@ -1209,7 +1219,7 @@
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let recognition; let finalTranscript = ''; let isSpeechRecognitionSupported = !!SpeechRecognition;
 
-        // const svgIconGear = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69-.98l-2.49 1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49 1c.52.4 1.08.73 1.69.98l-.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49.42l.38-2.65c.61-.25 1.17.59 1.69.98l2.49 1c.23.09.49 0 .61.22l2-3.46c.12-.22-.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>`;
+        // const svgIconGear = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69-.98l-2.49 1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49 1c.52.4 1.08.73 1.69.98l-.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49.42l.38-2.65c.61-.25 1.17.59 1.69.98l2.49 1c.23.09.49 0 .61.22l2-3.46c.12-.22-.07.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>`;
         const svgIconPlay = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
         const svgIconPause = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
         const svgCheckmark = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20px" height="20px"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>`;
@@ -1280,6 +1290,7 @@
                     // If we are on the home page, the click handler for the scroll-to link
                     // will manage its active state in conjunction with the 'Home' link.
                 }
+                // External links (like the new Feedback link) are not affected here regarding 'active' state for page changes.
             });
 
 
@@ -2034,38 +2045,59 @@ Adhere strictly to the format: Use the exact headers (##), use bullet points (* 
                                       isAriaLabelTarget ? (el.dataset[formatDatasetKey('en', 'ariaLabel')] || el.getAttribute('aria-label')) :
                                       (el.dataset[formatDatasetKey('en')] || el.textContent);
 
-                let translation = getTranslatedText(el, suffix, isPlaceholderTarget || isAriaLabelTarget, fallbackValue);
+                let textTranslation = getTranslatedText(el, suffix, isPlaceholderTarget || isAriaLabelTarget, fallbackValue); // Changed 'translation' to 'textTranslation' for clarity
 
                 if (isAriaLabelTarget) {
                     if (el.id === 'settings-trigger-button' && internalTranslations.settingsTriggerButtonAria) {
-                        translation = internalTranslations.settingsTriggerButtonAria[currentLang] || internalTranslations.settingsTriggerButtonAria['en'];
+                        textTranslation = internalTranslations.settingsTriggerButtonAria[currentLang] || internalTranslations.settingsTriggerButtonAria['en'];
                     } else if (el.id === 'close-settings-modal' && internalTranslations.closeSettingsModalAria) {
-                        translation = internalTranslations.closeSettingsModalAria[currentLang] || internalTranslations.closeSettingsModalAria['en'];
+                        textTranslation = internalTranslations.closeSettingsModalAria[currentLang] || internalTranslations.closeSettingsModalAria['en'];
                     } else if (el.id === 'hamburger-menu' && internalTranslations.hamburgerMenuAria) {
-                        translation = internalTranslations.hamburgerMenuAria[currentLang] || internalTranslations.hamburgerMenuAria['en'];
+                        textTranslation = internalTranslations.hamburgerMenuAria[currentLang] || internalTranslations.hamburgerMenuAria['en'];
                     }
-                    el.setAttribute('aria-label', translation);
+                    el.setAttribute('aria-label', textTranslation);
                     translated = true;
                 }
-                if (isPlaceholderTarget) {
-                    el.placeholder = translation;
+                                if (isPlaceholderTarget) {
+                    // If textTranslation was already determined by aria-label, we might not want to override placeholder
+                    // unless placeholder-specific logic exists or it's a different translation.
+                    // For now, let's assume textTranslation is the general one if not specifically for aria-label.
+                    // If suffix was 'placeholder', getTranslatedText would have handled it.
+                    // If suffix was empty and textTranslation got a general value, use that.
+                    el.placeholder = textTranslation;
                     translated = true;
                 }
 
                 if (el.hasAttribute('data-lang-en')) {
-                     let textTranslation = '';
-                     if (el.id === 'prepare-text-download-button') {
-                         textTranslation = getTranslatedText(el, '', false, fallbackValue);
-                     } else if (el.id === 'record-audio-button') {
-                         textTranslation = getTranslatedText(el, '', false, fallbackValue);
-                     } else if (el.closest('#settings-modal-content')) {
-                         if (el.tagName === 'H3') textTranslation = getTranslatedText(null, 'settingsModalTitle', false, fallbackValue);
-                         else if (el.tagName === 'H4' && el.closest('.language-setting-container')) textTranslation = getTranslatedText(null, 'settingsModalLanguageSubheading', false, fallbackValue);
-                         else if (el.tagName === 'H4' && el.nextElementSibling?.classList.contains('music-controls')) textTranslation = getTranslatedText(null, 'backgroundMusicTitle', false, fallbackValue);
-                         else if (el.classList.contains('sr-only') && el.htmlFor === 'language-select') textTranslation = getTranslatedText(null, 'settingsModalLanguageSubheading', false, fallbackValue);
-                         else textTranslation = getTranslatedText(el, '', false, fallbackValue);
-                     } else {
-                         textTranslation = getTranslatedText(el, '', false, fallbackValue);
+                     // Get the base text translation if not already handled by aria-label or placeholder
+                     if (!translated || (translated && (isAriaLabelTarget || isPlaceholderTarget) && suffix === '')) {
+                        // This condition ensures we only re-fetch general text if:
+                        // 1. It wasn't translated at all yet (neither aria nor placeholder)
+                        // 2. It was translated for aria/placeholder, but 'suffix' was empty, meaning textTranslation
+                        //    might still hold a general fallback from getTranslatedText. We re-evaluate for general content.
+                        //    This logic might need refinement if a single data-lang-en is meant for multiple targets differently.
+
+                        // Let's simplify: if we are here, it means we are processing the general text content
+                        // of an element that has a data-lang-en attribute.
+                        // We should re-fetch the general text if suffix was specific (ariaLabel/placeholder)
+                        // or if it wasn't translated at all.
+                        let generalTextTranslation = getTranslatedText(el, '', false, fallbackValue);
+
+
+                        if (el.id === 'prepare-text-download-button') {
+                             generalTextTranslation = getTranslatedText(el, '', false, fallbackValue);
+                         } else if (el.id === 'record-audio-button') {
+                             generalTextTranslation = getTranslatedText(el, '', false, fallbackValue);
+                         } else if (el.closest('#settings-modal-content')) {
+                             if (el.tagName === 'H3') generalTextTranslation = getTranslatedText(null, 'settingsModalTitle', false, fallbackValue);
+                             else if (el.tagName === 'H4' && el.closest('.language-setting-container')) generalTextTranslation = getTranslatedText(null, 'settingsModalLanguageSubheading', false, fallbackValue);
+                             else if (el.tagName === 'H4' && el.nextElementSibling?.classList.contains('music-controls')) generalTextTranslation = getTranslatedText(null, 'backgroundMusicTitle', false, fallbackValue);
+                             else if (el.classList.contains('sr-only') && el.htmlFor === 'language-select') generalTextTranslation = getTranslatedText(null, 'settingsModalLanguageSubheading', false, fallbackValue); // For the label of language select
+                             else generalTextTranslation = getTranslatedText(el, '', false, fallbackValue);
+                         } else {
+                             generalTextTranslation = getTranslatedText(el, '', false, fallbackValue);
+                         }
+                         textTranslation = generalTextTranslation; // Use this specifically for text content
                      }
 
 
@@ -2089,6 +2121,10 @@ Adhere strictly to the format: Use the exact headers (##), use bullet points (* 
                          let targetTextElement = el;
                          if (el.classList.contains('logo') && el.querySelector('span[data-lang-en]')) {
                              targetTextElement = el.querySelector('span[data-lang-en]');
+                         }
+                         // Check if the element is the new Feedback link before setting textContent
+                         if (el.getAttribute('href') === "https://forms.office.com/pages/responsepage.aspx?id=cTYy0b7NF0S01L2yS1Exa_LJCmAYC6hElQOVUA5GmmJUM0JPUUEzSU9RUEVZSUJRQVNDNVVQTUlTVS4u&route=shorturl") {
+                            // Already has data-lang-en, textTranslation should be correct from getTranslatedText
                          }
                          targetTextElement.textContent = textTranslation;
                     } else if (el.tagName === 'BUTTON' && !isAriaLabelTarget && !isPlaceholderTarget && !el.querySelector('svg') && !el.closest('#settings-modal-content')) {
@@ -2310,6 +2346,7 @@ Adhere strictly to the format: Use the exact headers (##), use bullet points (* 
                 link.addEventListener('click', (e) => {
                     const pageTarget = link.getAttribute('data-page');
                     const scrollToTargetId = link.getAttribute('data-scroll-to');
+                    const isExternalLink = link.getAttribute('target') === '_blank'; // Check for external links
 
                     playSound(hoverSound);
 
@@ -2317,10 +2354,16 @@ Adhere strictly to the format: Use the exact headers (##), use bullet points (* 
                         e.preventDefault();
                         showPage(pageTarget);
                         navLinks.forEach(nl => {
-                            if (nl.getAttribute('data-scroll-to')) {
+                            if (nl.getAttribute('data-scroll-to')) { // Deactivate any "About" like links
+                                nl.classList.remove('active');
+                            }
+                             // Remove active from external links when a page link is clicked
+                            if (nl.getAttribute('target') === '_blank') {
                                 nl.classList.remove('active');
                             }
                         });
+                        // Make sure the clicked page link is active
+                        link.classList.add('active');
                     } else if (scrollToTargetId) {
                         e.preventDefault();
                         if (activePage !== 'home') {
@@ -2337,6 +2380,12 @@ Adhere strictly to the format: Use the exact headers (##), use bullet points (* 
                             document.querySelector('.nav-link[data-page="home"]')?.classList.add('active');
                             link.classList.add('active');
                         }
+                    } else if (isExternalLink) {
+                        // For external links like "Feedback", don't prevent default.
+                        // Optionally, you could remove 'active' from other links if desired,
+                        // but typically external links don't maintain an active state within the site's nav.
+                        // For this case, we'll just let it open in a new tab.
+                        // No specific active state management for external links themselves.
                     }
                      // Close mobile nav if open
                     if (mainNavUl && mainNavUl.classList.contains('mobile-nav-open')) {
